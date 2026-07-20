@@ -13,6 +13,43 @@
 
 서버·데이터베이스 없이 순수 정적 파일로 빌드되므로 무료로 호스팅됩니다.
 
+## 프로젝트 추가·수정 방법 (코드 수정 불필요)
+
+프로젝트 목록과 상세 내용(수행 과정·성과)은 `content/projects/` 폴더의 **마크다운
+파일**에서 관리됩니다. 파일 하나 = 프로젝트 하나이며, 파일을 수정하고 `main`에
+커밋하면 2~3분 내 사이트에 자동 반영됩니다. 로컬 환경 없이 **GitHub 웹사이트에서
+바로** 편집할 수 있습니다.
+
+### 기존 프로젝트 내용 수정 (진행 상황 업데이트)
+
+1. GitHub에서 `content/projects/` 폴더의 해당 `.md` 파일 열기
+2. 연필 아이콘(Edit this file) 클릭
+3. 본문(수행 과정·성과)이나 상단 필드 수정 후 **Commit changes** (main 브랜치에 커밋)
+4. Actions 탭에서 배포가 끝나면(2~3분) 사이트에 반영됨
+
+### 새 프로젝트 추가
+
+1. `content/projects/_TEMPLATE.md`를 열어 내용 복사
+2. `content/projects/` 폴더에서 **Add file → Create new file**
+3. 파일명은 `영문-소문자-하이픈.md` 형식 (예: `smart-factory-dashboard.md`) —
+   파일명이 상세 페이지 주소가 됩니다
+4. 템플릿의 필드와 본문을 채우고 커밋
+
+### 주요 필드
+
+| 필드 | 설명 |
+| --- | --- |
+| `title` | 한글 표시 제목 (대표 카드·상세 페이지) |
+| `repoName` | 아카이브 목록에 표시되는 저장소명 |
+| `category` | 필터 분류 (`AI · DATA`, `AUTOMATION` 등 — 새 분류도 자동 인식) |
+| `summary` | 아카이브 목록의 한 줄 설명 (필수) |
+| `status` | `ongoing`(진행 중 — IN PROGRESS 배지 표시) 또는 `completed` |
+| `featured` | 대표 프로젝트(SELECTED WORK) 노출 순서. 빼면 미노출 |
+| `order` | 아카이브 목록 정렬 순서 |
+
+`---` 아래 본문은 자유로운 마크다운입니다 (`## 개요`, `## 수행 과정`, `## 성과` 등).
+현장 개선 과제 4건은 `content/field-projects.json`에서 같은 방식으로 수정합니다.
+
 ## 로컬 개발
 
 ```bash
@@ -20,8 +57,8 @@ npm install     # 의존성 설치 (최초 1회)
 npm run dev     # 개발 서버 실행 → http://localhost:3000
 ```
 
-콘텐츠는 대부분 `app/page.tsx`의 데이터 배열(`featured`, `experience`, `archive` 등)에
-있으므로, 해당 배열만 수정하면 사이트 내용이 갱신됩니다. 스타일은 `app/globals.css`에 있습니다.
+사이트 구조·스타일을 바꾸려면: 페이지 골격은 `app/page.tsx`(경력·역량 섹션 포함),
+프로젝트 상세 페이지는 `app/projects/[slug]/page.tsx`, 스타일은 `app/globals.css`.
 
 정적 빌드 결과를 확인하려면:
 

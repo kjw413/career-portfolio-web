@@ -1,42 +1,13 @@
-"use client";
-
-import { useState } from "react";
+import Link from "next/link";
+import Archive from "./archive";
+import fieldProjects from "../content/field-projects.json";
+import { getCategories, getFeaturedProjects, getProjects } from "../lib/projects";
 
 const metrics = [
   { value: "5개 공장", label: "데이터 통합 범위" },
   { value: "3–5%", label: "에너지 예측 MAPE" },
   { value: "1,000h", label: "임베디드 집중 교육" },
   { value: "6:1", label: "사내 AI 과정 선발" },
-];
-
-const featured = [
-  {
-    number: "01",
-    kind: "AI · DATA · WEB",
-    title: "공장 에너지 AI 플랫폼",
-    summary:
-      "5개 공장의 에너지·생산 데이터를 통합하고 예측, 이상 진단, 보고까지 하나의 업무 흐름으로 연결했습니다.",
-    tags: ["Python", "MySQL", "Streamlit", "LangChain"],
-    href: "https://github.com/kjw413/AI-Elite-BEMS",
-  },
-  {
-    number: "02",
-    kind: "RPA · MANUFACTURING",
-    title: "MIS 데이터 수집 자동화",
-    summary:
-      "화면 기반 수집부터 공장별 원천 데이터 재가공까지 자동화해, 반복 업무를 분석 가능한 데이터 파이프라인으로 전환했습니다.",
-    tags: ["Python", "RPA", "Excel", "ETL"],
-    href: "https://github.com/kjw413/AI-Elite_MIS_RPA",
-  },
-  {
-    number: "03",
-    kind: "EMBEDDED · VISION",
-    title: "차량용 적색 신호 인지",
-    summary:
-      "YOLOv5 객체 탐지와 임베디드 보드 IPC를 연계해 카메라 입력에서 적색 신호를 인지하고 제어기로 전달했습니다.",
-    tags: ["YOLOv5", "Linux", "OpenCV", "IPC"],
-    href: "https://github.com/kjw413/telechips-embedded-school-pmsa-project",
-  },
 ];
 
 const capabilities = [
@@ -107,28 +78,10 @@ const experience = [
   },
 ];
 
-const archive = [
-  { category: "AI · DATA", title: "AI-Elite-BEMS", description: "5개 공장 에너지·생산 데이터의 조회–예측–진단–보고 통합 플랫폼", stack: "Python · MySQL · Streamlit · LangChain", href: "https://github.com/kjw413/AI-Elite-BEMS", visibility: "PUBLIC" },
-  { category: "AUTOMATION", title: "AI-Elite_MIS_RPA", description: "생산실적·유틸리티·재공품 MIS 수집과 표준 데이터셋 생성 자동화", stack: "Python · RPA · Excel · ETL", href: "https://github.com/kjw413/AI-Elite_MIS_RPA", visibility: "PUBLIC" },
-  { category: "AI · DATA", title: "trading-bot", description: "한·미 주식 이벤트 기반 백테스트, 모의투자, 리스크 관리 및 퀀트 팩터 시스템", stack: "Python · Parquet · Backtest · Quant", href: "https://github.com/kjw413/trading-bot", visibility: "PRIVATE" },
-  { category: "AUTOMATION", title: "investment_checker_RPA", description: "ERP와 실제 투자 이력을 비교해 미등록·계정 누락 후보를 탐지하는 검증 도구", stack: "Python · Excel · Validation · RPA", href: "https://github.com/kjw413/investment_checker_RPA", visibility: "PRIVATE" },
-  { category: "SOFTWARE", title: "Masking", description: "엑셀의 지정 셀을 안전하게 익명화하고 보고서와 대응표를 생성하는 데스크톱 앱", stack: "Python · Tkinter · openpyxl · Testing", href: "https://github.com/kjw413/Masking", visibility: "PUBLIC" },
-  { category: "SOFTWARE", title: "to-do-list-app", description: "휴일·휴가를 반영한 영업일과 긴급도를 계산하는 Windows 업무 관리 앱", stack: "Python · Tkinter · JSON · PyInstaller", href: "https://github.com/kjw413/to-do-list-app", visibility: "PUBLIC" },
-  { category: "EMBEDDED", title: "telechips-embedded-school-pmsa-project", description: "임베디드 차량용 플랫폼의 통신·인지·제어 기능을 통합한 교육 프로젝트", stack: "C/C++ · Linux · FreeRTOS · YOLOv5", href: "https://github.com/kjw413/telechips-embedded-school-pmsa-project", visibility: "PUBLIC · PREPARING" },
-  { category: "CAREER", title: "career", description: "경험과 지원 직무를 연결하기 위한 커리어 자료 및 문서 아카이브", stack: "Documentation · Career Design", href: "https://github.com/kjw413/career", visibility: "PRIVATE" },
-];
-
-const fieldProjects = [
-  { num: "01", title: "2축 직교로봇 Pick & Place", label: "PLC / MOTION", text: "XG-5000과 서보 모듈을 사용해 홈–픽업–배치 시퀀스, 센서 인터록, 비상정지 로직을 구현했습니다." },
-  { num: "02", title: "예지보전 통신 검증", label: "PREDICTIVE MAINTENANCE", text: "공압기 모터·변압기 대상 데이터 통신 방식을 비교하고 UART 연결과 지연시간 단축 검증을 지원했습니다." },
-  { num: "03", title: "혼합기획팩 자동화 기획", label: "PRODUCTION ENGINEERING", text: "생산량·인원·사이클타임·다운타임·노무비를 구조화해 노동집중 공정의 자동화 타당성을 분석했습니다." },
-  { num: "04", title: "유틸리티 원단위 관리", label: "ENERGY / UTILITY", text: "전력·냉동·공압 사용량과 생산량의 관계를 해석해 일일·주간 Alert와 개선 우선순위를 설계했습니다." },
-];
-
 export default function Home() {
-  const [filter, setFilter] = useState("ALL");
-  const filters = ["ALL", "AI · DATA", "AUTOMATION", "SOFTWARE", "EMBEDDED", "CAREER"];
-  const filteredProjects = filter === "ALL" ? archive : archive.filter((project) => project.category === filter);
+  const projects = getProjects();
+  const featured = getFeaturedProjects();
+  const filters = getCategories();
 
   return (
     <main>
@@ -217,25 +170,28 @@ export default function Home() {
           </p>
         </div>
         <div className="project-grid">
-          {featured.map((project) => (
-            <a
+          {featured.map((project, index) => (
+            <Link
               className="project-card"
-              href={project.href}
-              target="_blank"
-              rel="noreferrer"
-              key={project.number}
+              href={`/projects/${project.slug}/`}
+              key={project.slug}
             >
               <div className="card-top">
-                <span>{project.number}</span>
-                <span>{project.kind}</span>
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                <span>
+                  {project.kind}
+                  {project.status === "ongoing" && (
+                    <span className="status-chip">IN PROGRESS</span>
+                  )}
+                </span>
               </div>
               <h3>{project.title}</h3>
-              <p>{project.summary}</p>
+              <p>{project.intro}</p>
               <div className="tag-row">
                 {project.tags.map((tag) => <span key={tag}>{tag}</span>)}
               </div>
-              <div className="card-link">CASE STUDY <b>↗</b></div>
-            </a>
+              <div className="card-link">CASE STUDY <b>→</b></div>
+            </Link>
           ))}
         </div>
       </section>
@@ -303,39 +259,18 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="archive-section" id="archive">
-        <div className="archive-header">
-          <div>
-            <p className="section-index">05 / GITHUB ARCHIVE</p>
-            <h2>전체 프로젝트 저장소</h2>
-          </div>
-          <div className="filter-row" role="group" aria-label="프로젝트 분야 필터">
-            {filters.map((item) => (
-              <button
-                type="button"
-                className={filter === item ? "active" : ""}
-                aria-pressed={filter === item}
-                onClick={() => setFilter(item)}
-                key={item}
-              >
-                {item}
-              </button>
-            ))}
-          </div>
-        </div>
-        <div className="archive-list" aria-live="polite">
-          {filteredProjects.map((project, index) => (
-            <a href={project.href} target="_blank" rel="noreferrer" className="archive-row" key={project.title}>
-              <span className="archive-num">{String(index + 1).padStart(2, "0")}</span>
-              <div className="archive-title"><small>{project.category}</small><h3>{project.title}</h3></div>
-              <p>{project.description}</p>
-              <div className="archive-stack">{project.stack}</div>
-              <span className="visibility">{project.visibility}</span>
-              <span className="archive-arrow">↗</span>
-            </a>
-          ))}
-        </div>
-      </section>
+      <Archive
+        filters={filters}
+        projects={projects.map((project) => ({
+          slug: project.slug,
+          category: project.category,
+          repoName: project.repoName,
+          summary: project.summary,
+          stack: project.stack,
+          visibility: project.visibility,
+          ongoing: project.status === "ongoing",
+        }))}
+      />
 
       <section className="qualification-section">
         <div className="qualification-intro">

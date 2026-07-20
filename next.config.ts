@@ -8,6 +8,8 @@ const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 const nextConfig: NextConfig = {
   output: "export",
   basePath,
+  // 정적 호스트 어디서든 하위 페이지가 동작하도록 /projects/slug/index.html 형태로 생성
+  trailingSlash: true,
   images: {
     unoptimized: true,
   },
