@@ -1,108 +1,79 @@
-# vinext-starter
+# 김종우 커리어 포트폴리오
 
-A clean full-stack starter running on
-[vinext](https://github.com/cloudflare/vinext), with optional Cloudflare D1 and
-Drizzle support.
+현장의 문제를 데이터와 시스템으로 해결하는 엔지니어 김종우의 포트폴리오 웹사이트입니다.
 
-## Prerequisites
+**배포 주소:** <https://kjw413.github.io/career-portfolio-web/>
 
-- Node.js `>=22.13.0`
-- Linux with `flock`, `curl`, and GNU `timeout`
+## 기술 스택
 
-## Sites Lifecycle
+- [Next.js 16](https://nextjs.org/) — App Router + 정적 내보내기(`output: "export"`)
+- [React 19](https://react.dev/)
+- [Tailwind CSS 4](https://tailwindcss.com/)
+- [GitHub Pages](https://pages.github.com/) + GitHub Actions 자동 배포
 
-The Sites lifecycle CLI runs the locked dependency install before returning this checkout. Edit the source under `app/`, then checkpoint when a coherent milestone is ready to inspect or share. The remote Sites builder runs `npm run build` against the pushed commit. Do not repeat install or build as a normal pre-checkpoint step.
+서버·데이터베이스 없이 순수 정적 파일로 빌드되므로 무료로 호스팅됩니다.
 
-This starter does not use `wrangler.jsonc`.
+## 로컬 개발
 
-`install:ci` is intentionally a single, non-retrying `npm ci`. It refuses a concurrent install for the same project, consumes a matching image-seeded npm cache with `--prefer-offline` while retaining registry fallback for a missing cache object, otherwise downloads and verifies the complete vinext tarball recorded in `package-lock.json`, limits npm to one socket, and terminates a stalled install. `build` applies a short timeout and then validates the Sites artifact. These helpers target Linux and use GNU `timeout`; they are not native macOS scripts.
-
-Scripts that need writable project-scoped home, npm, XDG, and temporary paths use `scripts/sites-env.sh`. The `dev` and `start` scripts honor the caller's runtime environment and keep Wrangler logs inside the checkout. The generated `.sites-runtime/` directory is disposable and ignored by Git.
-
-## Included Shape
-
-- edit site code under `app/`
-- `app/chatgpt-auth.ts` provides optional dispatch-owned ChatGPT sign-in helpers
-- `.openai/hosting.json` declares optional Sites D1 and R2 bindings
-- `vite.config.ts` simulates declared bindings for local development
-- `db/index.ts` reads the D1 binding from the Cloudflare Worker environment
-- `db/schema.ts` starts intentionally empty
-- `examples/d1/` contains an optional D1 example surface
-- `drizzle.config.ts` supports local migration generation when needed
-
-## Workspace Auth Headers
-
-OpenAI workspace sites can read the current user's email from
-`oai-authenticated-user-email`.
-
-SIWC-authenticated workspace sites may also receive
-`oai-authenticated-user-full-name` when the user's SIWC profile has a non-empty
-`name` claim. The full-name value is percent-encoded UTF-8 and is accompanied by
-`oai-authenticated-user-full-name-encoding: percent-encoded-utf-8`.
-
-Treat the full name as optional and fall back to email when it is absent:
-
-```tsx
-import { headers } from "next/headers";
-
-export default async function Home() {
-  const requestHeaders = await headers();
-  const email = requestHeaders.get("oai-authenticated-user-email");
-  const encodedFullName = requestHeaders.get("oai-authenticated-user-full-name");
-  const fullName =
-    encodedFullName &&
-    requestHeaders.get("oai-authenticated-user-full-name-encoding") ===
-      "percent-encoded-utf-8"
-      ? decodeURIComponent(encodedFullName)
-      : null;
-
-  const displayName = fullName ?? email;
-  // ...
-}
+```bash
+npm install     # 의존성 설치 (최초 1회)
+npm run dev     # 개발 서버 실행 → http://localhost:3000
 ```
 
-## Optional Dispatch-Owned ChatGPT Sign-In
+콘텐츠는 대부분 `app/page.tsx`의 데이터 배열(`featured`, `experience`, `archive` 등)에
+있으므로, 해당 배열만 수정하면 사이트 내용이 갱신됩니다. 스타일은 `app/globals.css`에 있습니다.
 
-Import the ready-to-use helpers from `app/chatgpt-auth.ts` when the site needs
-optional or required ChatGPT sign-in:
+정적 빌드 결과를 확인하려면:
 
-- Use `getChatGPTUser()` for optional signed-in UI.
-- Use `requireChatGPTUser(returnTo)` for server-rendered pages that should send
-  anonymous visitors through Sign in with ChatGPT.
-- Use `chatGPTSignInPath(returnTo)` and `chatGPTSignOutPath(returnTo)` for
-  browser links or actions.
-- Pass a same-origin relative `returnTo` path for the destination after sign-in
-  or sign-out. The helper validates and safely encodes it.
-- Mark protected pages with `export const dynamic = "force-dynamic"` because
-  they depend on per-request identity headers.
+```bash
+npm run build   # out/ 디렉터리에 정적 사이트 생성
+npx serve out   # 로컬에서 빌드 결과 미리보기
+```
 
-Dispatch owns `/signin-with-chatgpt`, `/signout-with-chatgpt`, `/callback`, the
-OAuth cookies, and identity header injection. Do not implement app routes for
-those reserved paths. Routes that do not import and call the helper remain
-anonymous-compatible.
+## 배포 (GitHub Pages)
 
-SIWC establishes identity only; it does not prove workspace membership. Use the
-Sites hosting platform's access policy controls for workspace-wide restrictions,
-or enforce explicit server-side membership or allowlist checks.
+`main` 브랜치에 푸시하면 `.github/workflows/deploy.yml` 워크플로가 자동으로
+빌드하고 GitHub Pages에 배포합니다. 별도의 서버나 유료 구독이 필요 없습니다.
 
-Use SIWC for account pages, user-specific dashboards, saved records, and write
-actions tied to the current ChatGPT user. Leave public content anonymous.
+### 최초 1회 설정
 
-## Diagnostic Commands
+워크플로가 Pages를 자동 활성화하지만, 만약 배포가 실패하면 저장소에서 한 번만
+수동 설정해 주세요:
 
-- `npm run install:ci`: perform the one bounded lockfile install
-- `npm run dev`: start the Vite/Vinext development server
-- `npm run build`: build and validate the deployable Sites artifact
-- `npm run start`: start the built Vinext application
-- `npm test`: build, validate, and verify the rendered development-preview metadata
-- `npm run validate:artifact`: recheck an existing artifact's manifest and ESM `default.fetch` export
-- `npm run db:generate`: generate Drizzle migrations after schema changes
+1. GitHub 저장소 → **Settings** → **Pages**
+2. **Build and deployment** → **Source**를 **GitHub Actions**로 선택
 
-Use build and validation commands for targeted diagnosis after a remote failure, not as part of the normal checkpoint path.
+이후에는 `main`에 푸시할 때마다 자동 배포되며, **Actions** 탭에서 진행 상황을
+확인할 수 있습니다. 수동 배포는 Actions 탭에서 "Deploy to GitHub Pages" 워크플로의
+**Run workflow** 버튼으로 실행합니다.
 
-The timeout defaults can be overridden for a controlled canary with `SITES_INSTALL_TIMEOUT`, `SITES_INSTALL_KILL_AFTER`, `SITES_BUILD_TIMEOUT`, and `SITES_BUILD_KILL_AFTER`. A timeout fails the command; the helpers never retry an unchanged install or build.
+### 커스텀 도메인 (선택)
 
-## Learn More
+개인 도메인을 연결하려면 Settings → Pages → **Custom domain**에 도메인을 입력하고,
+`next.config.ts`의 `basePath` 환경 변수 주입(워크플로의 `NEXT_PUBLIC_BASE_PATH`)을
+제거하면 됩니다. 도메인 없이도 위의 `github.io` 주소로 충분히 사용할 수 있습니다.
 
-- [vinext Documentation](https://github.com/cloudflare/vinext)
-- [Drizzle D1 Guide](https://orm.drizzle.team/docs/get-started/d1-new)
+## OpenAI Sites에서 마이그레이션한 내역
+
+이 프로젝트는 원래 ChatGPT의 사이트 제작 기능(OpenAI Sites)으로 만들어져
+vinext + Cloudflare Workers 기반 전용 스택 위에서 동작했습니다. 구독 없이도
+자유롭게 수정·배포할 수 있도록 표준 Next.js 정적 사이트로 전환했습니다.
+
+제거된 것들:
+
+- `.openai/hosting.json`, `worker/`, `build/sites-vite-plugin.ts` — OpenAI Sites/Cloudflare 전용 배포 구성
+- `vite.config.ts`, `vinext`, `wrangler` — vinext 빌드 체인 (표준 `next build`로 대체)
+- `app/chatgpt-auth.ts` — ChatGPT 로그인 헬퍼 (사이트가 사용하지 않음)
+- `db/`, `drizzle/`, `examples/` — D1 데이터베이스 예제 (사이트가 사용하지 않음)
+- `scripts/` — Sites 전용 설치·빌드·검증 스크립트
+
+사이트 화면과 콘텐츠(`app/page.tsx`, `app/globals.css`)는 그대로 유지되었습니다.
+
+## 다른 무료 호스팅 대안
+
+GitHub Pages 대신 아래 서비스에서도 무료로 배포할 수 있습니다. 모두 이 저장소를
+연결하면 자동 인식됩니다 (`NEXT_PUBLIC_BASE_PATH` 없이 빌드).
+
+- [Vercel](https://vercel.com/) — Next.js 제작사, 저장소 연결만으로 배포
+- [Netlify](https://www.netlify.com/) — 빌드 명령 `npm run build`, 배포 디렉터리 `out`
+- [Cloudflare Pages](https://pages.cloudflare.com/) — 빌드 명령 `npm run build`, 출력 디렉터리 `out`
