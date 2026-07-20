@@ -27,8 +27,12 @@ jobs:
           node-version: 22
           cache: npm
 
+      # Pages 자동 활성화는 토큰 권한상 실패할 수 있음(최초 1회는 저장소
+      # Settings → Pages → Source: GitHub Actions 수동 설정 필요).
+      # 실패해도 빌드는 계속 진행하고, 활성화 여부는 deploy 단계에서 판정된다.
       - name: Enable GitHub Pages
         uses: actions/configure-pages@v5
+        continue-on-error: true
         with:
           enablement: true
 
