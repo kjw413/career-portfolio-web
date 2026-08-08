@@ -58,23 +58,34 @@ function toStringOrNull(value: unknown): string | null {
   return typeof value === "string" && value.trim() !== "" ? value.trim() : null;
 }
 
+const PUBLIC_DIR = path.join(process.cwd(), "public");
+
+/**
+ * 아직 올리지 않은 이미지는 깨진 채로 노출하지 않고 조용히 건너뛴다.
+ * public/ 에 파일을 올리면 다음 빌드에서 자동으로 나타난다.
+ */
+function mediaExists(src: string): boolean {
+  if (!src.startsWith("/") || src.startsWith("//")) return true; // 외부 URL은 검사하지 않음
+  return fs.existsSync(path.join(PUBLIC_DIR, src.replace(/^\//, "")));
+}
+
 /** `"/projects/a.png"` 또는 `{ src, caption, tall }` 두 형태를 모두 받는다. */
 function toMedia(value: unknown): Media | null {
+  let src: string | null = null;
+  let caption: string | null = null;
+  let tall = false;
+
   if (typeof value === "string") {
-    const src = toStringOrNull(value);
-    return src ? { src: withBasePath(src), caption: null, tall: false } : null;
-  }
-  if (value && typeof value === "object") {
+    src = toStringOrNull(value);
+  } else if (value && typeof value === "object") {
     const record = value as Record<string, unknown>;
-    const src = toStringOrNull(record.src);
-    if (!src) return null;
-    return {
-      src: withBasePath(src),
-      caption: toStringOrNull(record.caption),
-      tall: record.tall === true,
-    };
+    src = toStringOrNull(record.src);
+    caption = toStringOrNull(record.caption);
+    tall = record.tall === true;
   }
-  return null;
+
+  if (!src || !mediaExists(src)) return null;
+  return { src: withBasePath(src), caption, tall };
 }
 
 function toGallery(value: unknown): Media[] {
@@ -111,6 +122,15 @@ function parseProject(fileName: string): Project {
     ? data.tags.map(String)
     : (stack?.split("·").map((s) => s.trim()) ?? []);
 
+  // 지정한 대표 이미지가 아직 없으면 갤러리의 첫 자료로 대신한다.
+  // (중복 노출을 막기 위해 대체로 쓴 항목은 갤러리에서 뺀다)
+  let cover = toMedia(data.cover);
+  let gallery = toGallery(data.gallery);
+  if (!cover && gallery.length > 0) {
+    cover = gallery[0];
+    gallery = gallery.slice(1);
+  }
+
   return {
     slug,
     title,
@@ -127,8 +147,8 @@ function parseProject(fileName: string): Project {
     status: data.status === "ongoing" ? "ongoing" : "completed",
     featured: typeof data.featured === "number" ? data.featured : null,
     order: typeof data.order === "number" ? data.order : 999,
-    cover: toMedia(data.cover),
-    gallery: toGallery(data.gallery),
+    cover,
+    gallery,
     bodyHtml: renderMarkdown(content),
   };
 }
