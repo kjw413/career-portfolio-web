@@ -14,8 +14,8 @@ status: "ongoing"
 featured: 2
 order: 2
 cover:
-  src: "/projects/universal-rpa-edit.png"
-  caption: "단계 편집 화면 — 실패 처리, 재시도 횟수, 대기 조건, 결과 검증을 단계마다 지정합니다"
+  src: "/projects/universal-rpa-flow.svg"
+  caption: "기록 → 다듬기 → 실행 → 확인의 네 단계와 계층 분리 구조 — 새 대상 프로그램 지원은 어댑터 추가로 해결합니다"
 gallery:
   - src: "/projects/universal-rpa-project.png"
     caption: "프로젝트 — 새로 만들거나 기존 폴더를 엽니다. 저장되는 것은 workflow.json · targets · inputs 세 가지뿐이라, 업무 데이터가 프로젝트에 남지 않습니다."
@@ -27,8 +27,6 @@ gallery:
     caption: "실행 — 사전 검증으로 환경을 먼저 확인한 뒤 실행합니다. 실패한 단계만 재시도하거나 중단된 지점부터 이어서 실행할 수 있고, 실행 중에는 단축키로 즉시 멈출 수 있습니다."
   - src: "/projects/universal-rpa-report.png"
     caption: "보고서 — 반복별 성공·실패·건너뜀과 마지막 체크포인트를 남깁니다. 산출물은 내용 해시와 머리글 해시까지 기록해 결과 파일이 바뀌었는지 확인할 수 있고, 실패 단계는 오류 코드와 위치가 함께 남습니다."
-  - src: "/projects/universal-rpa-flow.svg"
-    caption: "전체 흐름과 계층 분리 구조 — 새 대상 프로그램 지원은 어댑터 추가로 해결합니다"
 ---
 
 ## 개요

@@ -123,12 +123,16 @@ function parseProject(fileName: string): Project {
     : (stack?.split("·").map((s) => s.trim()) ?? []);
 
   // 지정한 대표 이미지가 아직 없으면 갤러리의 첫 자료로 대신한다.
-  // (중복 노출을 막기 위해 대체로 쓴 항목은 갤러리에서 뺀다)
   let cover = toMedia(data.cover);
   let gallery = toGallery(data.gallery);
   if (!cover && gallery.length > 0) {
     cover = gallery[0];
     gallery = gallery.slice(1);
+  }
+  // 대표 이미지와 같은 파일이 갤러리에 또 있으면 한 번만 보여준다.
+  if (cover) {
+    const coverSrc = cover.src;
+    gallery = gallery.filter((item) => item.src !== coverSrc);
   }
 
   return {
