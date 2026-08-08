@@ -118,14 +118,33 @@ h1 span { color: var(--blue); }
 .visual-note { position: absolute; right: 35px; bottom: 30px; margin: 0; text-align: right; color: #7fa9dc; font: 9px/1.7 monospace; letter-spacing: .16em; }
 @keyframes rotate { to { transform: translate(-50%, -50%) rotate(360deg); } }
 
+/* 성과 지표 — 오른쪽에서 왼쪽으로 흐르는 띠. 항목 수 제약이 없다. */
 .metrics {
-  display: grid; grid-template-columns: repeat(4, 1fr); padding: 0 clamp(24px, 5vw, 78px);
+  position: relative; overflow: hidden;
   background: white; border-bottom: 1px solid var(--line);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
 }
-.metrics div { min-height: 132px; padding: 30px clamp(18px, 3vw, 44px); display: flex; flex-direction: column; justify-content: center; border-left: 1px solid var(--line); }
-.metrics div:last-child { border-right: 1px solid var(--line); }
-.metrics strong { font-size: 30px; letter-spacing: -.04em; color: var(--blue-dark); }
-.metrics span { margin-top: 9px; color: var(--muted); font-size: 12px; }
+.metrics-track { display: flex; width: max-content; animation: metrics-scroll 52s linear infinite; }
+/* 읽는 동안 멈추도록 — 키보드 포커스에도 반응 */
+.metrics:hover .metrics-track,
+.metrics:focus-within .metrics-track { animation-play-state: paused; }
+.metrics-group { display: flex; margin: 0; padding: 0; list-style: none; }
+.metrics-group li {
+  flex: 0 0 auto; min-width: clamp(212px, 20vw, 268px); min-height: 132px;
+  padding: 30px clamp(20px, 3vw, 44px);
+  display: flex; flex-direction: column; justify-content: center;
+  border-left: 1px solid var(--line);
+}
+.metrics strong { font-size: 30px; letter-spacing: -.04em; color: var(--blue-dark); white-space: nowrap; }
+.metrics span { margin-top: 9px; color: var(--muted); font-size: 12px; white-space: nowrap; }
+@keyframes metrics-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* 움직임을 줄이는 설정에서는 흐르지 않고, 직접 밀어서 보는 띠가 된다 */
+@media (prefers-reduced-motion: reduce) {
+  .metrics { overflow-x: auto; -webkit-mask-image: none; mask-image: none; }
+  .metrics-group + .metrics-group { display: none; }
+}
 
 .projects-section { padding: 115px clamp(24px, 5vw, 78px) 130px; }
 .section-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 30px; margin-bottom: 52px; }
@@ -294,7 +313,6 @@ footer h2 { margin: 0; font-size: clamp(40px, 5vw, 72px); line-height: 1.1; lett
   .hero { grid-template-columns: 1fr; }
   .detail-meta { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .system-visual { min-height: 580px; border-left: 0; }
-  .metrics { grid-template-columns: repeat(2, 1fr); }
   .project-grid { grid-template-columns: 1fr; }
   .project-card { min-height: 340px; border-left: 1px solid var(--line); border-bottom: 1px solid var(--line); }
   .capability-grid { grid-template-columns: repeat(2, 1fr); }
@@ -317,9 +335,9 @@ footer h2 { margin: 0; font-size: clamp(40px, 5vw, 72px); line-height: 1.1; lett
   .button { width: 100%; }
   .system-visual { min-height: 500px; }
   .node-control { right: 3%; }
-  .metrics { padding: 0; }
-  .metrics div { min-height: 110px; padding: 22px; }
+  .metrics-group li { min-width: 190px; min-height: 110px; padding: 22px; }
   .metrics strong { font-size: 25px; }
+  .metrics-track { animation-duration: 38s; }
   .section-heading { align-items: flex-start; flex-direction: column; }
   .section-heading > p { display: none; }
   .projects-section { padding-top: 84px; }

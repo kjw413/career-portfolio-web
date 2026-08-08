@@ -4,9 +4,11 @@ import fieldProjects from "../content/field-projects.json";
 import { getCategories, getFeaturedProjects, getProjects } from "../lib/projects";
 
 const metrics = [
-  { value: "5개 공장", label: "데이터 통합 범위" },
+  { value: "6:1", label: "사내 AI 전문가 과정 선발" },
+  { value: "5개 공장", label: "에너지 데이터 통합 범위" },
   { value: "MAPE 7%", label: "전사 에너지 예측 오차" },
-  { value: "40분 → 3분", label: "일일 수집 업무 시간" },
+  { value: "40분 → 3분", label: "일일 MIS 수집 업무 시간" },
+  { value: "연 154h", label: "자동화로 절감한 시간" },
   { value: "1,000h", label: "임베디드 집중 교육" },
 ];
 
@@ -150,12 +152,19 @@ export default function Home() {
       </section>
 
       <section className="metrics" aria-label="주요 수치">
-        {metrics.map((metric) => (
-          <div key={metric.value}>
-            <strong>{metric.value}</strong>
-            <span>{metric.label}</span>
-          </div>
-        ))}
+        <div className="metrics-track">
+          {/* 두 번째 묶음은 끊김 없는 순환을 위한 시각적 복제본 */}
+          {[0, 1].map((copy) => (
+            <ul className="metrics-group" key={copy} aria-hidden={copy === 1 || undefined}>
+              {metrics.map((metric) => (
+                <li key={metric.value}>
+                  <strong>{metric.value}</strong>
+                  <span>{metric.label}</span>
+                </li>
+              ))}
+            </ul>
+          ))}
+        </div>
       </section>
 
       <section className="projects-section" id="projects">
