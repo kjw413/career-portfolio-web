@@ -14,9 +14,22 @@ status: "ongoing"
 featured: 3
 order: 3
 cover:
-  src: "/projects/mis-rpa-pipeline.svg"
-  caption: "수집과 가공을 분리한 3종 파이프라인과 오적재 방어 장치"
+  src: "/projects/mis-rpa-time-saving.svg"
+  caption: "하루 40분 수작업을 3분 자동 실행으로 — 연 약 154시간 절감"
+gallery:
+  - src: "/projects/mis-rpa-pipeline.svg"
+    caption: "수집과 가공을 분리한 3종 파이프라인과 오적재 방어 장치"
 ---
+
+## 성과
+
+| | 사람이 직접 | 자동 실행 |
+|---|---|---|
+| 하루 소요 시간 | 40분 | **3분** |
+
+**하루 37분, 연 250 영업일 기준 약 154시간**을 사람이 쓰지 않게 됐습니다.
+줄어든 것은 시간만이 아닙니다. 화면을 보고 옮겨 적는 과정에서 생기던 오타와
+누락, 공장을 헷갈려 다른 데이터를 붙여 넣는 실수의 경로 자체를 함께 없앴습니다.
 
 ## 개요
 

@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 300" width="1000" height="300" role="img" aria-label="MIS 데이터 수집 업무 시간 비교: 수작업 하루 40분에서 자동 실행 3분으로 92퍼센트 단축되어, 연 250 영업일 기준 약 154시간을 절감했습니다.">
+  <defs>
+    <style>
+      .bg { fill: #f8fbff; }
+      .box { fill: #ffffff; stroke: #cfdded; stroke-width: 1; }
+      .bar-before { fill: #cfdded; }
+      .bar-after { fill: #1769e0; }
+      .t-label { fill: #5e6e84; font: 700 10px ui-monospace, monospace; letter-spacing: .13em; }
+      .t-big { fill: #0a1830; font: 700 34px Arial, sans-serif; letter-spacing: -.04em; }
+      .t-big-accent { fill: #1769e0; font: 700 34px Arial, sans-serif; letter-spacing: -.04em; }
+      .t-sub { fill: #5e6e84; font: 11px Arial, "Noto Sans KR", sans-serif; }
+      .t-delta { fill: #1769e0; font: 700 13px Arial, "Noto Sans KR", sans-serif; }
+      .t-stat { fill: #0b3d91; font: 700 22px Arial, sans-serif; letter-spacing: -.03em; }
+      .t-stat-label { fill: #5e6e84; font: 10px Arial, "Noto Sans KR", sans-serif; }
+      .t-note { fill: #5e6e84; font: 9px ui-monospace, monospace; letter-spacing: .05em; }
+      .edge { fill: none; stroke: #1769e0; stroke-width: 1.5; }
+    </style>
+    <marker id="s1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#1769e0"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" width="1000" height="300"/>
+
+  <text class="t-label" x="24" y="36">하루 MIS 수집 업무 — 생산실적 · 유틸리티 · 재공품 3종 × 5개 공장</text>
+
+  <!-- BEFORE -->
+  <text class="t-label" x="24" y="76">BEFORE — 사람이 직접</text>
+  <rect class="bar-before" x="24" y="90" width="620" height="46"/>
+  <text class="t-big" x="44" y="123">40분</text>
+  <text class="t-sub" x="150" y="122">매일 · 화면 조회 → 복사 → 엑셀 정리</text>
+
+  <!-- AFTER -->
+  <text class="t-label" x="24" y="176">AFTER — 자동 실행</text>
+  <rect class="bar-after" x="24" y="190" width="46.5" height="46"/>
+  <text class="t-big-accent" x="86" y="223">3분</text>
+  <text class="t-sub" x="168" y="222">실행만 걸어두면 3종 수집 · 가공까지 완료</text>
+
+  <path class="edge" d="M 660 113 L 660 190" marker-end="url(#s1)"/>
+  <text class="t-delta" x="676" y="158">92% 단축</text>
+
+  <!-- stats -->
+  <rect class="box" x="756" y="76" width="220" height="76"/>
+  <text class="t-stat" x="776" y="112">하루 37분</text>
+  <text class="t-stat-label" x="776" y="133">사람이 쓰지 않게 된 시간</text>
+
+  <rect class="box" x="756" y="166" width="220" height="76"/>
+  <text class="t-stat" x="776" y="202">연 약 154시간</text>
+  <text class="t-stat-label" x="776" y="223">250 영업일 기준 환산</text>
+
+  <text class="t-note" x="24" y="272">줄인 것은 시간만이 아니라 실수 가능성 — 그리드 지문 검사와 빈 분모 중단으로 잘못된 데이터가 적재되는 경로를 함께 막음</text>
+</svg>

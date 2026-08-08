@@ -115,7 +115,7 @@ export default async function ProjectPage({
 
         {project.gallery.length > 0 && (
           <section className="detail-gallery">
-            <h2>화면 · 실행 기록</h2>
+            <h2>관련 자료</h2>
             {project.gallery.map((item) => (
               <figure key={item.src} className={item.tall ? "tall" : undefined}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}

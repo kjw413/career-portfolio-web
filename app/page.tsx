@@ -5,9 +5,9 @@ import { getCategories, getFeaturedProjects, getProjects } from "../lib/projects
 
 const metrics = [
   { value: "5개 공장", label: "데이터 통합 범위" },
-  { value: "3–5%", label: "에너지 예측 MAPE" },
+  { value: "MAPE 7%", label: "전사 에너지 예측 오차" },
+  { value: "40분 → 3분", label: "일일 수집 업무 시간" },
   { value: "1,000h", label: "임베디드 집중 교육" },
-  { value: "6:1", label: "사내 AI 과정 선발" },
 ];
 
 const capabilities = [

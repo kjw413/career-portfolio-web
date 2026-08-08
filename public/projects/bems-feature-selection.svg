@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 420" width="1000" height="420" role="img" aria-label="재공품 피처 선별 과정: 외부 AI가 추천한 약 80개 후보를 잔차 상관으로 23개로 줄이고, ablation과 도메인 지식 보정을 거쳐 13개 spec을 채택했으며, 학습할 수 없는 신설 라인 신호는 운영 단계 사후 보정으로 처리했습니다.">
+  <defs>
+    <style>
+      .bg { fill: #f8fbff; }
+      .box { fill: #ffffff; stroke: #cfdded; stroke-width: 1; }
+      .box-accent { fill: #eaf3ff; stroke: #1769e0; stroke-width: 1; }
+      .box-dark { fill: #0c1f3d; }
+      .t-stage { fill: #1769e0; font: 700 9px ui-monospace, monospace; letter-spacing: .12em; }
+      .t-count { fill: #0b3d91; font: 700 26px Arial, sans-serif; letter-spacing: -.03em; }
+      .t-unit { fill: #5e6e84; font: 10px Arial, "Noto Sans KR", sans-serif; }
+      .t-title { fill: #0a1830; font: 700 12.5px Arial, "Noto Sans KR", sans-serif; }
+      .t-sub { fill: #5e6e84; font: 10.5px Arial, "Noto Sans KR", sans-serif; }
+      .t-white { fill: #ffffff; font: 700 12px Arial, "Noto Sans KR", sans-serif; }
+      .t-white-sub { fill: #a9bad1; font: 10px Arial, "Noto Sans KR", sans-serif; }
+      .t-gain { fill: #0b3d91; font: 700 10px ui-monospace, monospace; }
+      .t-note { fill: #5e6e84; font: 9px ui-monospace, monospace; letter-spacing: .05em; }
+      .edge { fill: none; stroke: #1769e0; stroke-width: 1.5; }
+      .edge-soft { fill: none; stroke: #9db8d8; stroke-width: 1.2; stroke-dasharray: 3 3; }
+      .sep { fill: none; stroke: #cfdded; stroke-width: 1; stroke-dasharray: 4 4; }
+    </style>
+    <marker id="f1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#1769e0"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" width="1000" height="420"/>
+
+  <!-- funnel row -->
+  <rect class="box" x="24" y="52" width="196" height="120"/>
+  <text class="t-stage" x="42" y="76">외부 AI 추천</text>
+  <text class="t-count" x="42" y="112">약 80</text>
+  <text class="t-unit" x="42" y="130">개 후보 피처</text>
+  <text class="t-sub" x="42" y="152">raw 상관 + p-value 기준</text>
+
+  <rect class="box" x="268" y="52" width="196" height="120"/>
+  <text class="t-stage" x="286" y="76">01 잔차 상관</text>
+  <text class="t-count" x="286" y="112">23</text>
+  <text class="t-unit" x="286" y="130">개 통과 (99 중)</text>
+  <text class="t-sub" x="286" y="152">생산량 · 요일 · 월 통제</text>
+
+  <rect class="box" x="512" y="52" width="196" height="120"/>
+  <text class="t-stage" x="530" y="76">02 ABLATION</text>
+  <text class="t-title" x="530" y="104">넣은 모델 vs 뺀 모델</text>
+  <text class="t-sub" x="530" y="126">직접 학습해 검증 MAPE 비교</text>
+  <text class="t-sub" x="530" y="146">잔차 통과해도 기각되는 경우 다수</text>
+  <text class="t-sub" x="530" y="163">(김해는 통과 3개 모두 기각)</text>
+
+  <rect class="box-accent" x="756" y="52" width="220" height="120"/>
+  <text class="t-stage" x="774" y="76">03 도메인 지식 보정</text>
+  <text class="t-title" x="774" y="104">통계가 못 찾은 신호</text>
+  <text class="t-sub" x="774" y="126">공병은 생산량 지표에 미포함</text>
+  <text class="t-sub" x="774" y="144">시트 라벨링 오류 정정</text>
+  <text class="t-sub" x="774" y="162">농축유 = 살균 · 농축 부하</text>
+
+  <path class="edge" d="M 220 112 L 264 112" marker-end="url(#f1)"/>
+  <path class="edge" d="M 464 112 L 508 112" marker-end="url(#f1)"/>
+  <path class="edge" d="M 708 112 L 752 112" marker-end="url(#f1)"/>
+
+  <!-- selection bias callout -->
+  <text class="t-note" x="24" y="196">selection bias 차단 — 후보 점수는 train 구간만, 채택 판정은 val · test로</text>
+
+  <line class="sep" x1="24" y1="214" x2="976" y2="214"/>
+
+  <!-- adopted -->
+  <rect class="box-dark" x="24" y="236" width="330" height="104" rx="2"/>
+  <text class="t-white" x="44" y="264">최종 채택 — 13 plant-target specs</text>
+  <text class="t-white-sub" x="44" y="290">광주 · 남양주1 · 남양주2 · 김해 · 논산</text>
+  <text class="t-white-sub" x="44" y="310">× 전력 · 연료 · 용수</text>
+  <text class="t-white-sub" x="44" y="330">v5.1 재학습 → 운영 반영</text>
+
+  <!-- domain gains -->
+  <rect class="box" x="378" y="236" width="286" height="104"/>
+  <text class="t-stage" x="396" y="260">도메인 지식이 만든 개선</text>
+  <text class="t-sub" x="396" y="284">광주 전력 — 공병 부하 반영</text>
+  <text class="t-gain" x="612" y="284" text-anchor="end">-2.48%p</text>
+  <text class="t-sub" x="396" y="306">남양주2 용수 — 농축유 반영</text>
+  <text class="t-gain" x="612" y="306" text-anchor="end">-1.01%p</text>
+  <text class="t-sub" x="396" y="328">논산 용수 — 도메인 조합</text>
+  <text class="t-gain" x="612" y="328" text-anchor="end">-0.99%p</text>
+
+  <!-- drift correction -->
+  <rect class="box-accent" x="688" y="236" width="288" height="104"/>
+  <text class="t-stage" x="706" y="260">04 학습할 수 없는 신호</text>
+  <text class="t-sub" x="706" y="283">신설 라인은 학습 데이터에서 분산 0</text>
+  <text class="t-sub" x="706" y="300">→ information gain 0 → 모델이 무시</text>
+  <text class="t-title" x="706" y="325">운영 단계 사후 보정으로 해결</text>
+
+  <path class="edge-soft" d="M 664 288 L 684 288" marker-end="url(#f1)"/>
+
+  <text class="t-note" x="24" y="376">김해 연료 15.49% → 9.85% (-5.63%p) · 전력 7.56% → 5.84% (-1.72%p) · 용수는 효과 없음 — 그대로 기록</text>
+  <text class="t-note" x="24" y="398">상관계수는 가설을 만들고, 잔차와 ablation은 거르고, 도메인 지식은 새 가설을 만들고, 사후 보정은 마지막 방어선</text>
+</svg>
