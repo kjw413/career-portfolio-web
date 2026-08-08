@@ -20,6 +20,18 @@ visibility: "PUBLIC"               # PUBLIC 또는 PRIVATE
 status: "ongoing"                  # 진행 중이면 ongoing, 완료면 completed
 featured: 4                        # (선택) 대표 프로젝트(SELECTED WORK) 노출 순서. 빼면 미노출
 order: 9                           # 아카이브 목록 정렬 순서 (작을수록 위)
+
+# ── 이미지 (선택) — public/projects/ 에 파일을 올린 뒤 아래처럼 연결 ──
+# 자세한 방법과 회사 데이터 주의사항은 public/projects/README.md 참고
+# cover:                           # 카드 썸네일 + 상세 페이지 상단 대표 이미지
+#   src: "/projects/my-screenshot.png"
+#   caption: "무엇을 보여주는 화면인지 한 줄"
+# gallery:                         # 상세 페이지 하단 스크린샷·GIF 목록
+#   - src: "/projects/run.gif"
+#     caption: "실행 과정 (18초)"
+#   - src: "/projects/detail.png"
+#     caption: "세부 화면"
+#     tall: true                   # 세로로 긴 캡처는 원본 비율 유지
 ---
 
 ## 개요

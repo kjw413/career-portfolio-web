@@ -5,6 +5,13 @@ import { marked } from "marked";
 
 export type ProjectStatus = "ongoing" | "completed";
 
+export type Media = {
+  src: string;
+  caption: string | null;
+  /** 세로로 긴 이미지(전체 화면 캡처 등)를 원본 비율로 보여줄지 */
+  tall: boolean;
+};
+
 export type Project = {
   slug: string;
   /** 한글 표시 제목 (featured 카드·상세 페이지) */
@@ -28,14 +35,60 @@ export type Project = {
   featured: number | null;
   /** 아카이브 목록 정렬 순서 */
   order: number;
+  /** 대표 이미지 — 카드 썸네일과 상세 페이지 상단에 사용 */
+  cover: Media | null;
+  /** 상세 페이지 하단 스크린샷·GIF 갤러리 */
+  gallery: Media[];
   /** 마크다운 본문을 렌더링한 HTML */
   bodyHtml: string;
 };
 
 const CONTENT_DIR = path.join(process.cwd(), "content", "projects");
 
+// GitHub Pages는 /career-portfolio-web 하위에서 서빙되므로, 마크다운 본문과
+// frontmatter에 적힌 루트 경로(/projects/...)에 basePath를 붙여야 한다.
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
+export function withBasePath(src: string): string {
+  if (!src.startsWith("/") || src.startsWith("//")) return src;
+  return `${BASE_PATH}${src}`;
+}
+
 function toStringOrNull(value: unknown): string | null {
   return typeof value === "string" && value.trim() !== "" ? value.trim() : null;
+}
+
+/** `"/projects/a.png"` 또는 `{ src, caption, tall }` 두 형태를 모두 받는다. */
+function toMedia(value: unknown): Media | null {
+  if (typeof value === "string") {
+    const src = toStringOrNull(value);
+    return src ? { src: withBasePath(src), caption: null, tall: false } : null;
+  }
+  if (value && typeof value === "object") {
+    const record = value as Record<string, unknown>;
+    const src = toStringOrNull(record.src);
+    if (!src) return null;
+    return {
+      src: withBasePath(src),
+      caption: toStringOrNull(record.caption),
+      tall: record.tall === true,
+    };
+  }
+  return null;
+}
+
+function toGallery(value: unknown): Media[] {
+  if (!Array.isArray(value)) return [];
+  return value.map(toMedia).filter((item): item is Media => item !== null);
+}
+
+/** 마크다운 본문 안의 루트 경로 이미지에도 basePath를 적용한다. */
+function renderMarkdown(content: string): string {
+  const renderer = new marked.Renderer();
+  const baseImage = renderer.image.bind(renderer);
+  renderer.image = (token) =>
+    baseImage({ ...token, href: withBasePath(token.href) });
+  return marked.parse(content, { renderer }) as string;
 }
 
 function parseProject(fileName: string): Project {
@@ -74,7 +127,9 @@ function parseProject(fileName: string): Project {
     status: data.status === "ongoing" ? "ongoing" : "completed",
     featured: typeof data.featured === "number" ? data.featured : null,
     order: typeof data.order === "number" ? data.order : 999,
-    bodyHtml: marked.parse(content) as string,
+    cover: toMedia(data.cover),
+    gallery: toGallery(data.gallery),
+    bodyHtml: renderMarkdown(content),
   };
 }
 

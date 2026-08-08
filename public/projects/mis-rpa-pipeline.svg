@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 400" width="1000" height="400" role="img" aria-label="MIS RPA 파이프라인: 3종 데이터를 MIS 화면에서 모두 수집한 뒤 가공 단계를 시작하며, 그리드 지문 검사와 dry-run으로 오적재를 방지합니다.">
+  <defs>
+    <style>
+      .bg { fill: #f8fbff; }
+      .box { fill: #ffffff; stroke: #cfdded; stroke-width: 1; }
+      .box-accent { fill: #eaf3ff; stroke: #1769e0; stroke-width: 1; }
+      .box-guard { fill: #ffffff; stroke: #1769e0; stroke-width: 1; stroke-dasharray: 4 3; }
+      .box-dark { fill: #0c1f3d; }
+      .stage { fill: none; stroke: #cfdded; stroke-width: 1; }
+      .t-stage { fill: #1769e0; font: 700 10px ui-monospace, monospace; letter-spacing: .14em; }
+      .t-title { fill: #0a1830; font: 700 13px Arial, "Noto Sans KR", sans-serif; }
+      .t-sub { fill: #5e6e84; font: 10.5px Arial, "Noto Sans KR", sans-serif; }
+      .t-tag { fill: #1769e0; font: 700 9px ui-monospace, monospace; letter-spacing: .1em; }
+      .t-white { fill: #ffffff; font: 700 12px Arial, "Noto Sans KR", sans-serif; }
+      .t-white-sub { fill: #a9bad1; font: 10px Arial, "Noto Sans KR", sans-serif; }
+      .t-edge { fill: #5e6e84; font: 9px ui-monospace, monospace; letter-spacing: .06em; }
+      .t-guard { fill: #0b3d91; font: 10px Arial, "Noto Sans KR", sans-serif; }
+      .edge { fill: none; stroke: #1769e0; stroke-width: 1.5; }
+      .edge-guard { fill: none; stroke: #1769e0; stroke-width: 1.2; stroke-dasharray: 3 3; }
+    </style>
+    <marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#1769e0"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" width="1000" height="400"/>
+
+  <!-- stage separators -->
+  <line class="stage" x1="360" y1="52" x2="360" y2="330"/>
+  <line class="stage" x1="700" y1="52" x2="700" y2="330"/>
+  <text class="t-stage" x="24" y="38">STAGE 1 / 수집 — MIS 화면 조작</text>
+  <text class="t-stage" x="384" y="38">STAGE 2 / 가공 — MIS 의존 없음</text>
+  <text class="t-stage" x="724" y="38">STAGE 3 / 적재</text>
+
+  <!-- three collectors -->
+  <rect class="box-accent" x="24" y="62" width="310" height="58"/>
+  <text class="t-tag" x="42" y="84">생산실적 RPA</text>
+  <text class="t-sub" x="42" y="105">먼저 실행 — 유틸리티의 분모가 됨</text>
+
+  <rect class="box-accent" x="24" y="134" width="310" height="58"/>
+  <text class="t-tag" x="42" y="156">유틸리티 RPA</text>
+  <text class="t-sub" x="42" y="177">원단위 실적입력 화면 · 단가 · 비용 · COD</text>
+
+  <rect class="box-accent" x="24" y="206" width="310" height="58"/>
+  <text class="t-tag" x="42" y="228">재공품 RPA</text>
+  <text class="t-sub" x="42" y="249">공정 중 반제품 누적량</text>
+
+  <!-- guard -->
+  <rect class="box-guard" x="24" y="284" width="310" height="62"/>
+  <text class="t-tag" x="42" y="306">오적재 방어</text>
+  <text class="t-guard" x="42" y="325">그리드 SHA-1 지문 비교 · 빈 분모 중단</text>
+  <text class="t-guard" x="42" y="340">--dry-run 미리보기 · 실행 전 자동 백업</text>
+
+  <!-- raw files -->
+  <rect class="box" x="384" y="62" width="290" height="72"/>
+  <text class="t-tag" x="402" y="85">원본 수집</text>
+  <text class="t-title" x="402" y="107">RawDB_생산실적 · 에너지 · 재공품</text>
+  <text class="t-sub" x="402" y="126">행 = 일자, 열 = 항목, 시트 = 공장명</text>
+
+  <!-- rebuild -->
+  <rect class="box" x="384" y="150" width="290" height="86"/>
+  <text class="t-tag" x="402" y="173">재가공</text>
+  <text class="t-title" x="402" y="195">production_builder · wip_refactoring</text>
+  <text class="t-sub" x="402" y="215">믹스생산량 역동기화 (생산 → 에너지)</text>
+  <text class="t-sub" x="402" y="231">원단위는 엑셀 수식 + Excel COM 재계산</text>
+
+  <!-- outputs -->
+  <rect class="box" x="384" y="252" width="290" height="60"/>
+  <text class="t-title" x="402" y="278">DB_생산실적.xlsx · DB_재공품.xlsx</text>
+  <text class="t-sub" x="402" y="298">웹앱이 그대로 읽는 표준 형태</text>
+
+  <!-- web app -->
+  <rect class="box-dark" x="724" y="62" width="252" height="86" rx="2"/>
+  <text class="t-white" x="744" y="90">BEMS 웹앱</text>
+  <text class="t-white-sub" x="744" y="112">서버 기동 시 mtime 변경 감지</text>
+  <text class="t-white-sub" x="744" y="130">→ MySQL UPSERT</text>
+
+  <rect class="box" x="724" y="166" width="252" height="70"/>
+  <text class="t-tag" x="744" y="189">경계 설계</text>
+  <text class="t-sub" x="744" y="209">RPA는 DB에 직접 쓰지 않음</text>
+  <text class="t-sub" x="744" y="226">수집 실패가 웹앱을 멈추지 않음</text>
+
+  <rect class="box" x="724" y="252" width="252" height="60"/>
+  <text class="t-tag" x="744" y="275">과거 데이터</text>
+  <text class="t-sub" x="744" y="295">같은 스크립트 · 기간만 지정 · --resume</text>
+
+  <!-- edges -->
+  <path class="edge" d="M 334 91 L 380 91" marker-end="url(#a2)"/>
+  <path class="edge" d="M 334 163 L 358 163 L 358 98 L 380 98" marker-end="url(#a2)"/>
+  <path class="edge" d="M 334 235 L 358 235 L 358 105 L 380 105" marker-end="url(#a2)"/>
+  <path class="edge-guard" d="M 179 284 L 179 268"/>
+
+  <path class="edge" d="M 529 134 L 529 146" marker-end="url(#a2)"/>
+  <path class="edge" d="M 529 236 L 529 248" marker-end="url(#a2)"/>
+  <path class="edge" d="M 674 282 L 698 282 L 698 105 L 720 105" marker-end="url(#a2)"/>
+
+  <text class="t-edge" x="24" y="378">3종을 모두 수집한 뒤 가공을 시작 — MIS 창을 오래 점유하지 않고, 가공 실패가 다른 수집을 막지 않음</text>
+</svg>

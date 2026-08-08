@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 380" width="1000" height="380" role="img" aria-label="Universal RPA Studio 흐름: 사용자가 업무를 한 번 시연해 기록하고, 단계를 다듬은 뒤 재실행하며 결과를 보고서로 확인합니다. 계층 분리 구조로 Windows 의존 없이 검증합니다.">
+  <defs>
+    <style>
+      .bg { fill: #f8fbff; }
+      .box { fill: #ffffff; stroke: #cfdded; stroke-width: 1; }
+      .box-accent { fill: #eaf3ff; stroke: #1769e0; stroke-width: 1; }
+      .box-dark { fill: #0c1f3d; }
+      .t-step { fill: #1769e0; font: 700 10px ui-monospace, monospace; letter-spacing: .14em; }
+      .t-title { fill: #0a1830; font: 700 13px Arial, "Noto Sans KR", sans-serif; }
+      .t-sub { fill: #5e6e84; font: 10.5px Arial, "Noto Sans KR", sans-serif; }
+      .t-tag { fill: #1769e0; font: 700 9px ui-monospace, monospace; letter-spacing: .1em; }
+      .t-white { fill: #ffffff; font: 700 12px Arial, "Noto Sans KR", sans-serif; }
+      .t-white-sub { fill: #a9bad1; font: 10px Arial, "Noto Sans KR", sans-serif; }
+      .t-note { fill: #5e6e84; font: 9px ui-monospace, monospace; letter-spacing: .06em; }
+      .t-layer { fill: #dceafb; font: 10px ui-monospace, monospace; }
+      .edge { fill: none; stroke: #1769e0; stroke-width: 1.5; }
+      .sep { fill: none; stroke: #cfdded; stroke-width: 1; stroke-dasharray: 4 4; }
+    </style>
+    <marker id="a3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#1769e0"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" width="1000" height="380"/>
+
+  <text class="t-step" x="24" y="36">사용자가 하는 일 — 코드 없음</text>
+
+  <!-- 4 steps -->
+  <rect class="box-accent" x="24" y="52" width="220" height="92"/>
+  <text class="t-tag" x="42" y="75">01 기록</text>
+  <text class="t-title" x="42" y="99">업무를 한 번 시연</text>
+  <text class="t-sub" x="42" y="119">클릭 · 입력 · 창 전환을</text>
+  <text class="t-sub" x="42" y="135">단계로 자동 기록</text>
+
+  <rect class="box" x="268" y="52" width="220" height="92"/>
+  <text class="t-tag" x="286" y="75">02 다듬기</text>
+  <text class="t-title" x="286" y="99">단계 편집</text>
+  <text class="t-sub" x="286" y="119">불필요한 단계 제거</text>
+  <text class="t-sub" x="286" y="135">실행 변수 · 반복 지정</text>
+
+  <rect class="box" x="512" y="52" width="220" height="92"/>
+  <text class="t-tag" x="530" y="75">03 실행</text>
+  <text class="t-title" x="530" y="99">그대로 재실행</text>
+  <text class="t-sub" x="530" y="119">결정론적 동작 —</text>
+  <text class="t-sub" x="530" y="135">런타임 LLM 의존 없음</text>
+
+  <rect class="box" x="756" y="52" width="220" height="92"/>
+  <text class="t-tag" x="774" y="75">04 확인</text>
+  <text class="t-title" x="774" y="99">실행 보고서</text>
+  <text class="t-sub" x="774" y="119">무엇이 실행됐고</text>
+  <text class="t-sub" x="774" y="135">어디서 멈췄는지</text>
+
+  <path class="edge" d="M 244 98 L 264 98" marker-end="url(#a3)"/>
+  <path class="edge" d="M 488 98 L 508 98" marker-end="url(#a3)"/>
+  <path class="edge" d="M 732 98 L 752 98" marker-end="url(#a3)"/>
+
+  <line class="sep" x1="24" y1="172" x2="976" y2="172"/>
+
+  <!-- architecture -->
+  <text class="t-step" x="24" y="200">내부 구조 — 계층 분리</text>
+
+  <rect class="box-dark" x="24" y="216" width="586" height="96" rx="2"/>
+  <text class="t-white" x="44" y="243">domain / application / ports / adapters / infrastructure</text>
+  <text class="t-layer" x="44" y="268">Windows에 의존하지 않는 로직을 독립적으로 검증 가능</text>
+  <text class="t-white-sub" x="44" y="291">새 대상 프로그램 지원 = 어댑터 추가로 해결</text>
+
+  <rect class="box" x="634" y="216" width="166" height="96"/>
+  <text class="t-tag" x="652" y="239">테스트 비중</text>
+  <text class="t-title" x="652" y="268">116 / 217</text>
+  <text class="t-sub" x="652" y="289">Python 파일 중 테스트</text>
+
+  <rect class="box" x="824" y="216" width="152" height="96"/>
+  <text class="t-tag" x="842" y="239">보안 경계</text>
+  <text class="t-sub" x="842" y="262">UAC · MFA · CAPTCHA</text>
+  <text class="t-sub" x="842" y="279">우회하지 않음</text>
+  <text class="t-sub" x="842" y="296">로컬 전용 · 외부 전송 없음</text>
+
+  <text class="t-note" x="24" y="352">잘못 동작하면 실제 업무 데이터를 망가뜨리는 도구 — 테스트와 안전 경계를 설계의 중심에 둠</text>
+</svg>

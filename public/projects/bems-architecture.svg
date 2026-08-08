@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 460" width="1000" height="460" role="img" aria-label="BEMS 시스템 구조: MIS RPA가 수집한 엑셀을 웹앱이 MySQL에 적재하고, FastAPI 브리지를 통해 예측 모델과 AI 보고서를 브라우저 UI로 전달합니다.">
+  <defs>
+    <style>
+      .bg { fill: #f8fbff; }
+      .box { fill: #ffffff; stroke: #cfdded; stroke-width: 1; }
+      .box-accent { fill: #eaf3ff; stroke: #1769e0; stroke-width: 1; }
+      .box-dark { fill: #0c1f3d; stroke: #0c1f3d; }
+      .lane { fill: none; stroke: #cfdded; stroke-width: 1; stroke-dasharray: 4 4; }
+      .t-lane { fill: #1769e0; font: 700 10px ui-monospace, monospace; letter-spacing: .14em; }
+      .t-title { fill: #0a1830; font: 700 14px Arial, "Noto Sans KR", sans-serif; }
+      .t-sub { fill: #5e6e84; font: 11px Arial, "Noto Sans KR", sans-serif; }
+      .t-tag { fill: #1769e0; font: 700 9px ui-monospace, monospace; letter-spacing: .1em; }
+      .t-white { fill: #ffffff; font: 700 13px Arial, "Noto Sans KR", sans-serif; }
+      .t-white-sub { fill: #a9bad1; font: 10px Arial, "Noto Sans KR", sans-serif; }
+      .t-edge { fill: #5e6e84; font: 9px ui-monospace, monospace; letter-spacing: .06em; }
+      .edge { fill: none; stroke: #1769e0; stroke-width: 1.5; }
+      .edge-soft { fill: none; stroke: #9db8d8; stroke-width: 1.2; stroke-dasharray: 3 3; }
+    </style>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#1769e0"/>
+    </marker>
+    <marker id="arrow-soft" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#9db8d8"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" width="1000" height="460"/>
+
+  <!-- lanes -->
+  <line class="lane" x1="248" y1="46" x2="248" y2="424"/>
+  <line class="lane" x1="590" y1="46" x2="590" y2="424"/>
+  <text class="t-lane" x="24" y="34">01 / 수집 · RPA</text>
+  <text class="t-lane" x="272" y="34">02 / 저장 · 계산</text>
+  <text class="t-lane" x="614" y="34">03 / 사용</text>
+
+  <!-- MIS -->
+  <rect class="box" x="24" y="60" width="200" height="62"/>
+  <text class="t-title" x="40" y="88">사내 MIS 화면</text>
+  <text class="t-sub" x="40" y="107">API 없음 · 5개 공장</text>
+
+  <!-- RPA -->
+  <rect class="box-accent" x="24" y="152" width="200" height="96"/>
+  <text class="t-tag" x="40" y="176">MIS RPA</text>
+  <text class="t-title" x="40" y="200">좌표 클릭 → 클립보드</text>
+  <text class="t-sub" x="40" y="220">그리드 SHA-1 지문 검사로</text>
+  <text class="t-sub" x="40" y="236">공장 데이터 혼입 차단</text>
+
+  <!-- Excel -->
+  <rect class="box" x="24" y="278" width="200" height="80"/>
+  <text class="t-tag" x="40" y="301">접점은 엑셀 파일뿐</text>
+  <text class="t-title" x="40" y="324">RawDB_*.xlsx</text>
+  <text class="t-sub" x="40" y="344">DB_생산실적 · DB_재공품</text>
+
+  <text class="t-edge" x="116" y="141" text-anchor="end">수집</text>
+  <text class="t-edge" x="116" y="269" text-anchor="end">재가공</text>
+
+  <!-- MySQL -->
+  <rect class="box-dark" x="272" y="60" width="290" height="72" rx="2"/>
+  <text class="t-white" x="292" y="90">MySQL — 통합 데이터</text>
+  <text class="t-white-sub" x="292" y="112">전력 · 연료 · 용수 · 폐수 · 생산실적 · 재공품</text>
+
+  <!-- prediction model -->
+  <rect class="box" x="272" y="158" width="290" height="106"/>
+  <text class="t-tag" x="292" y="181">예측 모델 v5.3</text>
+  <text class="t-title" x="292" y="205">LightGBM · XGBoost · CatBoost</text>
+  <text class="t-sub" x="292" y="226">SLSQP 가중치 최적화 앙상블</text>
+  <text class="t-sub" x="292" y="245">Pinball Loss → 구간 예측(P05–P95)</text>
+
+  <!-- LLM -->
+  <rect class="box" x="272" y="290" width="290" height="68"/>
+  <text class="t-tag" x="292" y="313">LangChain · LLM</text>
+  <text class="t-title" x="292" y="336">월간 보고서 · 이상 원인 가설</text>
+
+  <!-- FastAPI bridge -->
+  <rect class="box-accent" x="272" y="384" width="290" height="46"/>
+  <text class="t-tag" x="292" y="404">FASTAPI 브리지 :8000</text>
+  <text class="t-sub" x="292" y="421">조회 전용 계정 · 관리자 IP 검사</text>
+
+  <!-- UI -->
+  <rect class="box" x="614" y="60" width="290" height="88"/>
+  <text class="t-tag" x="634" y="83">NEXT.JS UI :3000</text>
+  <text class="t-title" x="634" y="107">대시보드</text>
+  <text class="t-sub" x="634" y="126">AI 이상감지 배너 · 7일 추이</text>
+  <text class="t-sub" x="634" y="142">전년 동월 대비</text>
+
+  <rect class="box" x="614" y="164" width="290" height="72"/>
+  <text class="t-title" x="634" y="192">에너지 모니터링 · 원단위</text>
+  <text class="t-sub" x="634" y="212">전력을 냉동 · 공압기 · 기타로 분해</text>
+  <text class="t-sub" x="634" y="228">가중 평균 누계 (Σ사용량 ÷ Σ생산량)</text>
+
+  <rect class="box" x="614" y="252" width="290" height="62"/>
+  <text class="t-title" x="634" y="280">AI 예측 · 보고서</text>
+  <text class="t-sub" x="634" y="300">이상 판정은 PICP 기준</text>
+
+  <rect class="box" x="614" y="330" width="290" height="62"/>
+  <text class="t-title" x="634" y="358">관리자</text>
+  <text class="t-sub" x="634" y="378">엑셀 업로드 · 절감 목표 · 감사 로그</text>
+
+  <!-- edges: left column -->
+  <path class="edge" d="M 124 122 L 124 148" marker-end="url(#arrow)"/>
+  <path class="edge" d="M 124 248 L 124 274" marker-end="url(#arrow)"/>
+  <path class="edge" d="M 224 318 L 258 318 L 258 100 L 268 100" marker-end="url(#arrow)"/>
+  <text class="t-edge" x="196" y="310">UPSERT</text>
+
+  <!-- edges: middle column -->
+  <path class="edge-soft" d="M 417 132 L 417 154" marker-end="url(#arrow-soft)"/>
+  <path class="edge-soft" d="M 417 264 L 417 286" marker-end="url(#arrow-soft)"/>
+  <path class="edge-soft" d="M 417 358 L 417 380" marker-end="url(#arrow-soft)"/>
+
+  <!-- bridge to UI -->
+  <path class="edge" d="M 562 407 L 586 407 L 586 104 L 610 104" marker-end="url(#arrow)"/>
+  <path class="edge-soft" d="M 586 200 L 610 200" marker-end="url(#arrow-soft)"/>
+  <path class="edge-soft" d="M 586 283 L 610 283" marker-end="url(#arrow-soft)"/>
+  <path class="edge-soft" d="M 586 361 L 610 361" marker-end="url(#arrow-soft)"/>
+  <text class="t-edge" x="500" y="446">브라우저 렌더링과 Python 계산을 분리 — 화면 조작이 DB · 모델을 재실행하지 않음</text>
+</svg>

@@ -185,6 +185,12 @@ export default function Home() {
                   )}
                 </span>
               </div>
+              {project.cover && (
+                <div className="card-cover">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={project.cover.src} alt="" loading="lazy" />
+                </div>
+              )}
               <h3>{project.title}</h3>
               <p>{project.intro}</p>
               <div className="tag-row">

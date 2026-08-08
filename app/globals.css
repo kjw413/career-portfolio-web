@@ -137,6 +137,7 @@ h1 span { color: var(--blue); }
 .project-card:hover { background: white; transform: translateY(-5px); box-shadow: 0 24px 60px rgba(25, 69, 121, .1); }
 .card-top { display: flex; justify-content: space-between; color: var(--blue); font: 700 9px/1 monospace; letter-spacing: .12em; }
 .project-card h3 { margin: 60px 0 18px; font-size: 25px; letter-spacing: -.04em; }
+.project-card .card-top span:last-child { display: inline-flex; align-items: center; }
 .project-card > p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.75; word-break: keep-all; }
 .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 24px; }
 .tag-row span { padding: 7px 9px; background: var(--sky); color: var(--blue-dark); font: 700 9px/1 monospace; }
@@ -241,6 +242,27 @@ footer h2 { margin: 0; font-size: clamp(40px, 5vw, 72px); line-height: 1.1; lett
 .detail-meta a { color: var(--blue-dark); }
 .detail-meta a:hover { color: var(--blue); }
 .detail-tags { margin-top: 18px; }
+
+/* 대표 이미지 · 갤러리 */
+.card-cover {
+  margin-top: 22px; overflow: hidden; border: 1px solid var(--line);
+  background: white; aspect-ratio: 16 / 7;
+}
+.card-cover img { width: 100%; height: 100%; object-fit: cover; object-position: left top; display: block; }
+.project-card:hover .card-cover { border-color: var(--blue); }
+.project-card h3 { margin: 26px 0 14px; }
+
+.detail-cover { margin: 46px 0 0; }
+.detail-cover img,
+.detail-gallery img { display: block; width: 100%; height: auto; border: 1px solid var(--line); background: white; }
+.detail-cover figcaption,
+.detail-gallery figcaption { margin-top: 12px; color: var(--muted); font-size: 12px; line-height: 1.6; }
+
+.detail-gallery { margin-top: 56px; border-top: 1px solid var(--ink); padding-top: 10px; }
+.detail-gallery h2 { margin: 46px 0 22px; font-size: 22px; letter-spacing: -.03em; display: flex; align-items: center; gap: 12px; }
+.detail-gallery h2::before { content: ""; width: 18px; height: 3px; background: var(--blue); }
+.detail-gallery figure { margin: 0 0 34px; }
+.detail-gallery figure.tall img { max-height: 620px; width: auto; max-width: 100%; }
 
 .markdown-body { margin-top: 56px; border-top: 1px solid var(--ink); padding-top: 10px; }
 .markdown-body h2 { margin: 46px 0 18px; font-size: 22px; letter-spacing: -.03em; display: flex; align-items: center; gap: 12px; }

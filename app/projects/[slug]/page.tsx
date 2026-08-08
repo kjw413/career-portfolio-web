@@ -100,10 +100,31 @@ export default async function ProjectPage({
           ))}
         </div>
 
+        {project.cover && (
+          <figure className="detail-cover">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={project.cover.src} alt={project.cover.caption ?? ""} />
+            {project.cover.caption && <figcaption>{project.cover.caption}</figcaption>}
+          </figure>
+        )}
+
         <div
           className="markdown-body"
           dangerouslySetInnerHTML={{ __html: project.bodyHtml }}
         />
+
+        {project.gallery.length > 0 && (
+          <section className="detail-gallery">
+            <h2>화면 · 실행 기록</h2>
+            {project.gallery.map((item) => (
+              <figure key={item.src} className={item.tall ? "tall" : undefined}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={item.src} alt={item.caption ?? ""} loading="lazy" />
+                {item.caption && <figcaption>{item.caption}</figcaption>}
+              </figure>
+            ))}
+          </section>
+        )}
 
         <div className="detail-footer">
           <Link className="button secondary" href="/#archive">

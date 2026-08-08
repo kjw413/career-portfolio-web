@@ -50,6 +50,12 @@
 `---` 아래 본문은 자유로운 마크다운입니다 (`## 개요`, `## 수행 과정`, `## 성과` 등).
 현장 개선 과제 4건은 `content/field-projects.json`에서 같은 방식으로 수정합니다.
 
+### 스크린샷·GIF 추가
+
+`public/projects/` 폴더에 이미지를 올리고 `cover` / `gallery` 필드로 연결하면
+카드 썸네일과 상세 페이지에 표시됩니다. 작성법과 권장 사양, **회사 데이터 노출
+주의사항**은 [`public/projects/README.md`](public/projects/README.md)에 정리했습니다.
+
 ## 로컬 개발
 
 ```bash
