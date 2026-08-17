@@ -104,8 +104,9 @@ npx serve out   # 로컬에서 빌드 결과 미리보기
 샌드박스의 네트워크 인터페이스 조회 제한(`uv_interface_addresses`) 때문에 로컬
 서버를 열지 못했습니다. 따라서 base path를 적용한 production export의 HTML과
 PostCSS로 파싱한 반응형 규칙을 함께 검사하고, 고정 폭 요소의 너비 예산을 각
-viewport에서 계산했습니다. 실제 브라우저의 픽셀 렌더링과 GitHub Pages 배포 확인은
-push 이후에 별도로 확인해야 합니다.
+viewport에서 계산했습니다. 실제 브라우저의 픽셀 렌더링은 로컬 브라우저 엔진이 있는
+환경에서 추가 확인이 필요하지만, GitHub Pages 배포와 공개 경로 응답은 아래와 같이
+push 이후 확인했습니다.
 
 | 너비 | 정적 layout 검증 결과 |
 | --- | --- |
@@ -122,7 +123,7 @@ push 이후에 별도로 확인해야 합니다.
 
 ```text
 HOME=/tmp NPM_CONFIG_CACHE=/tmp/npm-cache npm test
-PASS — 6 files, 18 tests
+PASS — 7 files, 26 tests
 
 HOME=/tmp NPM_CONFIG_CACHE=/tmp/npm-cache npm run lint
 PASS — ESLint errors 0
@@ -133,8 +134,12 @@ PASS — Next.js static export, 12 pages generated
 
 export 산출물에서 `/career-portfolio-web/` 홈, 내부 상세 경로
 `/career-portfolio-web/projects/ai-elite-bems/`, GitHub-only 아카이브 링크
-`https://github.com/kjw413/career-portfolio-web`를 검사했습니다. 내부 project 링크
-14개와 root-relative asset URL 전부가 `/career-portfolio-web/` prefix를 유지했습니다.
+`https://github.com/kjw413/career-portfolio-web`를 검사했습니다. root-relative asset과
+내부 링크 전부가 `/career-portfolio-web/` prefix를 유지했습니다.
+
+GitHub Actions의 `Deploy to GitHub Pages` 실행 #10이 성공한 뒤 공개 서버에서도 홈,
+MIS 상세 페이지, 월 단위 성과 SVG를 확인했습니다. 메인 HTML이 참조하는 내부 페이지,
+이미지, CSS, JavaScript 22개 URL은 모두 HTTP 200으로 응답했습니다.
 
 ## 배포 (GitHub Pages)
 
