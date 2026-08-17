@@ -8,20 +8,19 @@ export default function ImpactGrid({ impacts }: { impacts: Impact[] }) {
         <article className="impact-card" key={impact.id}>
           <div className="impact-card-top">
             <span>{String(index + 1).padStart(2, "0")}</span>
-            <span>SELECTED IMPACT</span>
           </div>
           <div className="impact-result">
-            <span>RESULT</span>
+            <span>결과</span>
             <strong>{impact.result}</strong>
           </div>
           <h3>{impact.title}</h3>
           <dl className="impact-details">
             <div>
-              <dt>PROBLEM</dt>
+              <dt>문제</dt>
               <dd>{impact.problem}</dd>
             </div>
             <div>
-              <dt>ACTION</dt>
+              <dt>수행</dt>
               <dd>{impact.action}</dd>
             </div>
           </dl>

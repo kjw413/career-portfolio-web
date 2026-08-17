@@ -6,7 +6,7 @@ import Home from "./page";
 afterEach(cleanup);
 
 function getFeaturedSection(): HTMLElement {
-  const heading = screen.getByRole("heading", { name: "기술을 결과로 바꾼 프로젝트" });
+  const heading = screen.getByRole("heading", { name: "대표 프로젝트" });
   const section = heading.closest("section");
   if (!section) throw new Error("Featured Projects section is missing");
   return section;

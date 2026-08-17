@@ -7,10 +7,18 @@ export type Impact = {
   id: string; title: string; problem: string; action: string;
   result: string; projectSlug: string | null;
 };
+export type Education = {
+  school: string; degree: string; period: string; detail: string;
+};
+export type Career = {
+  company: string; position: string; detail: string;
+  startDate: string; endDate: string | null;
+};
 export type Profile = {
-  name: string; role: string; major: string; summary: string;
+  name: string; nameEn: string; role: string; major: string; summary: string;
   photoSrc: string | null; resumeHref: string | null;
   githubUrl: string; emailHref: string | null;
+  education: Education; career: Career; certifications: string[];
   metrics: Metric[]; impacts: Impact[];
 };
 export type Experience = {
@@ -63,9 +71,37 @@ function requireNumber(value: unknown, label: string): number {
 function freezeProfile(profile: Profile): Profile {
   return Object.freeze({
     ...profile,
+    education: Object.freeze({ ...profile.education }),
+    career: Object.freeze({ ...profile.career }),
+    certifications: Object.freeze([...profile.certifications]) as string[],
     metrics: Object.freeze(profile.metrics.map((metric) => Object.freeze({ ...metric }))) as Metric[],
     impacts: Object.freeze(profile.impacts.map((impact) => Object.freeze({ ...impact }))) as Impact[],
   });
+}
+
+function parseEducation(value: unknown): Education {
+  const education = requireRecord(value, "profile.education");
+  return {
+    school: requireString(education.school, "profile.education.school"),
+    degree: requireString(education.degree, "profile.education.degree"),
+    period: requireString(education.period, "profile.education.period"),
+    detail: requireString(education.detail, "profile.education.detail"),
+  };
+}
+
+function parseCareer(value: unknown): Career {
+  const career = requireRecord(value, "profile.career");
+  const startDate = requireString(career.startDate, "profile.career.startDate");
+  if (!/^\d{4}-\d{2}(-\d{2})?$/.test(startDate)) {
+    throw new Error(`profile.career.startDate must be YYYY-MM or YYYY-MM-DD: ${startDate}`);
+  }
+  return {
+    company: requireString(career.company, "profile.career.company"),
+    position: requireString(career.position, "profile.career.position"),
+    detail: requireString(career.detail, "profile.career.detail"),
+    startDate,
+    endDate: requireNullableString(career.endDate, "profile.career.endDate"),
+  };
 }
 
 function parseProfile(value: unknown): Profile {
@@ -94,6 +130,7 @@ function parseProfile(value: unknown): Profile {
 
   return {
     name: requireString(profile.name, "profile.name"),
+    nameEn: requireString(profile.nameEn, "profile.nameEn"),
     role: requireString(profile.role, "profile.role"),
     major: requireString(profile.major, "profile.major"),
     summary: requireString(profile.summary, "profile.summary"),
@@ -101,6 +138,9 @@ function parseProfile(value: unknown): Profile {
     resumeHref: requireNullableString(profile.resumeHref, "profile.resumeHref"),
     githubUrl: requireString(profile.githubUrl, "profile.githubUrl"),
     emailHref: requireNullableString(profile.emailHref, "profile.emailHref"),
+    education: parseEducation(profile.education),
+    career: parseCareer(profile.career),
+    certifications: requireStringArray(profile.certifications, "profile.certifications"),
     metrics,
     impacts,
   };

@@ -1,30 +1,49 @@
 {
   "name": "김종우",
-  "role": "시스템 문제 해결형 엔지니어",
+  "nameEn": "Jong Woo Kim",
+  "role": "전자전기공학 학사 · 제조 현장 2년차",
   "major": "전자전기공학",
-  "summary": "전자전기공학의 원리 이해, 제조 현장의 도메인 경험, 소프트웨어 구현력을 연결해 실제로 사용되는 해결책을 만듭니다.",
+  "summary": "빙그레 생산기술팀에서 5개 공장의 에너지·생산 데이터를 통합하고, 매일 반복되던 수집과 검토 업무를 자동화했습니다. 전자전기공학 전공과 1,000시간 임베디드 교육을 거쳐 설비와 제어까지 함께 다룹니다.",
   "photoSrc": null,
   "resumeHref": null,
   "githubUrl": "https://github.com/kjw413",
-  "emailHref": null,
+  "emailHref": "mailto:kjw2110@naver.com",
+  "education": {
+    "school": "홍익대학교 (서울)",
+    "degree": "전자전기공학부 학사",
+    "period": "2018.03 입학 · 2024.02 졸업",
+    "detail": "학점 3.50 / 4.50 · 이수 136학점"
+  },
+  "career": {
+    "company": "빙그레",
+    "position": "생산담당 생산기술팀 사원",
+    "detail": "유틸리티·에너지 관리, 생산부문 시스템 개선",
+    "startDate": "2024-12-23",
+    "endDate": null
+  },
+  "certifications": [
+    "ADsP 데이터분석 준전문가",
+    "컴퓨터활용능력 1급",
+    "OPIc IH (영어)"
+  ],
   "metrics": [
     {
       "id": "cycle-time",
       "value": "40분 → 3분",
-      "label": "MIS 수집 1회 작업시간",
+      "label": "MIS 데이터 수집 1회 소요시간",
       "evidence": "수작업 40분과 자동 실행 3분 비교"
     },
     {
       "id": "saved-time",
-      "value": "월 약 12.8시간",
-      "label": "반복 업무 절감시간",
-      "evidence": "154 ÷ 12 = 월 약 12.8시간 (연 154시간 기준)"
+      "value": "월 15시간",
+      "label": "수집 자동화로 줄인 수작업 시간",
+      "evidence": "사내 업무 측정 기준 월 15시간"
     },
     {
       "id": "forecast",
-      "value": "MAPE 7%",
-      "label": "전사 에너지 예측 오차",
-      "evidence": "포트폴리오 프로젝트 검증 결과"
+      "value": "예측 오차 7%",
+      "label": "공장 에너지 사용량 예측 정확도",
+      "evidence": "전사 기준 MAPE 약 7% (전력·연료·용수)"
     },
     {
       "id": "coverage",
@@ -36,26 +55,26 @@
   "impacts": [
     {
       "id": "mis-rpa",
-      "title": "반복 수집 업무 자동화",
-      "problem": "5개 공장의 MIS 데이터를 매일 수작업으로 수집",
-      "action": "화면 수집, 검증, 표준 데이터셋 생성을 하나의 파이프라인으로 구현",
-      "result": "1회 40분을 3분으로 단축, 월 약 12.8시간 절감",
+      "title": "반복 데이터 수집 자동화",
+      "problem": "5개 공장의 MIS 데이터를 매일 사람이 화면에서 조회해 옮겨 적었습니다.",
+      "action": "화면 수집, 검증, 표준 데이터셋 생성을 하나의 파이프라인으로 만들었습니다.",
+      "result": "1회 40분 → 3분, 월 15시간 절감",
       "projectSlug": "ai-elite-mis-rpa"
     },
     {
       "id": "bems",
       "title": "공장 에너지 데이터 통합",
-      "problem": "공장별로 분산된 에너지·생산 데이터와 수작업 보고",
-      "action": "수집·저장·예측·진단·보고 흐름을 하나의 웹 서비스로 연결",
-      "result": "5개 공장 통합, 예측 오차 MAPE 7%",
+      "problem": "공장별로 흩어진 에너지·생산 데이터를 수작업으로 취합해 보고했습니다.",
+      "action": "수집·저장·예측·진단·보고를 하나의 사내 웹 서비스로 연결했습니다.",
+      "result": "5개 공장 통합, 예측 오차 7%",
       "projectSlug": "ai-elite-bems"
     },
     {
       "id": "embedded",
-      "title": "인지·통신·제어 통합",
-      "problem": "카메라 인지 결과를 실제 임베디드 제어로 전달해야 하는 팀 과제",
-      "action": "YOLOv5 적색 신호 인지와 Linux·FreeRTOS 간 SPI/CAN 통신 검증",
-      "result": "인지 결과가 제어까지 이어지는 시스템 경로 구현",
+      "title": "카메라 인지 결과를 제어까지 연결",
+      "problem": "카메라가 인식한 결과를 실제 임베디드 제어로 전달해야 했습니다.",
+      "action": "YOLOv5 적색 신호 인지와 Linux·FreeRTOS 사이의 SPI/CAN 통신을 구현하고 검증했습니다.",
+      "result": "인지 → 통신 → 제어 경로 동작 확인",
       "projectSlug": "telechips-embedded-school-pmsa-project"
     }
   ]

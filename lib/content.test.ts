@@ -6,9 +6,8 @@ import { getExperiences, getProfile } from "./content";
 describe("portfolio content", () => {
   it("uses monthly units for saved-time metrics", () => {
     const savedTime = getProfile().metrics.find((item) => item.id === "saved-time");
-    expect(savedTime?.value).toBe("월 약 12.8시간");
-    expect(savedTime?.evidence).toBe("154 ÷ 12 = 월 약 12.8시간 (연 154시간 기준)");
-    expect(savedTime?.evidence).toContain("154 ÷ 12");
+    expect(savedTime?.value).toBe("월 15시간");
+    expect(savedTime?.evidence).toBe("사내 업무 측정 기준 월 15시간");
     expect(savedTime?.value).not.toContain("연");
   });
 
@@ -22,16 +21,37 @@ describe("portfolio content", () => {
       (element) => element.textContent,
     );
     const accessibleDescription = svg.documentElement.getAttribute("aria-label");
-    const calculationEvidence = [...svg.querySelectorAll(".t-stat-label")].map(
-      (element) => element.textContent,
+
+    expect(headlineStats).toContain("월 15시간");
+    expect(headlineStats).not.toContain("연 약 154시간");
+    expect(accessibleDescription).toContain("월 15시간");
+  });
+
+  it("keeps the same saved-time figure in the metric, the case study and the diagram", () => {
+    const savedTime = getProfile().metrics.find((item) => item.id === "saved-time");
+    const caseStudy = readFileSync(
+      join(process.cwd(), "content/projects/ai-elite-mis-rpa.md"),
+      "utf8",
+    );
+    const diagram = readFileSync(
+      join(process.cwd(), "public/projects/mis-rpa-time-saving.svg"),
+      "utf8",
     );
 
-    expect(headlineStats).toContain("월 약 12.8시간");
-    expect(headlineStats).not.toContain("연 약 154시간");
-    expect(accessibleDescription).toContain("월 약 12.8시간");
-    expect(calculationEvidence).toContain(
-      "37분 × 250영업일 ≈ 154시간, 154 ÷ 12",
-    );
+    for (const source of [caseStudy, diagram]) {
+      expect(source).toContain(savedTime?.value);
+      expect(source).not.toContain("12.8시간");
+    }
+  });
+
+  it("puts the education and career facts a recruiter reads first on the profile", () => {
+    const profile = getProfile();
+
+    expect(profile.education.school).toContain("홍익대학교");
+    expect(profile.education.degree).toContain("전자전기공학부");
+    expect(profile.career.company).toBe("빙그레");
+    expect(profile.career.startDate).toBe("2024-12-23");
+    expect(profile.certifications.length).toBeGreaterThan(0);
   });
 
   it("keeps every experience expandable with a concise summary", () => {

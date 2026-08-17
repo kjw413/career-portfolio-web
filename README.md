@@ -48,7 +48,7 @@
 | `repoName` | GitHub·override·마크다운을 연결하는 저장소명 키 |
 | `category` | override 분류가 없을 때 사용하는 상세 사례의 기본 분류 |
 | `summary` | 아카이브 목록의 한 줄 설명 (필수) |
-| `status` | `ongoing`(진행 중 — IN PROGRESS 배지 표시) 또는 `completed` |
+| `status` | `ongoing`(진행 중 배지 표시) 또는 `completed` |
 | `featured` | override에 순위가 없을 때 사용하는 대표 프로젝트 노출 순서 |
 | `order` | override에 순서가 없을 때 사용하는 아카이브 정렬 순서 |
 
@@ -64,9 +64,17 @@ frontmatter의 같은 필드는 override가 없을 때의 fallback입니다.
 ## 포트폴리오 내용 수정
 
 - 사진: `public/profile.webp` 추가 후 `content/profile.json`의 `photoSrc`를 `/profile.webp`로 설정
+  (첫 화면에는 116px 원형으로 들어가므로 정사각형에 가까운 이미지가 좋습니다)
 - 이력서: `public/resume.pdf` 추가 후 `resumeHref`를 `/resume.pdf`로 설정
-- 경력·교육: `content/experience.json` 수정
+- 첫 화면 이력 카드: `content/profile.json`의 `education`, `career`, `certifications` 수정
+- 경력·교육 연혁: `content/experience.json` 수정
 - 대표 성과: `content/profile.json`의 `metrics`, `impacts` 수정
+- 학력·자격·병역 요약표: `app/page.tsx`의 `qualifications` 배열 수정
+
+첫 화면에 보이는 재직기간(`1년 7개월`)은 하드코딩하지 않고 `career.startDate`로부터
+빌드 시점 기준으로 계산합니다(`lib/tenure.ts`). 따라서 재배포할 때마다 자동으로 갱신되며,
+퇴사하면 `career.endDate`에 `YYYY-MM`을 넣으면 그 시점까지로 고정됩니다.
+`role`의 `2년차` 표기는 문자열이므로 필요할 때 직접 고칩니다.
 - 프로젝트 공개 제목·분류·대표 노출·아카이브 순서: `content/project-overrides.json` 수정
 - 상세 사례: `content/projects/*.md` 수정
 - GitHub 기본 정보: 저장소 설명·Topics 수정 후 Actions의 예약 실행 또는 수동 실행

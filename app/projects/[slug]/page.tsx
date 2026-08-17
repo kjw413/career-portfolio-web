@@ -36,14 +36,14 @@ export default async function ProjectPage({
     <main className="project-page">
       <header className="site-header">
         <Link className="wordmark" href="/" aria-label="홈으로">
-          <span>K</span>JONGWOO
+          <span>KJ</span>김종우
         </Link>
         <nav aria-label="주요 메뉴">
-          <Link href="/#projects">PROJECTS</Link>
-          <Link href="/#experience">EXPERIENCE</Link>
-          <Link href="/#profile">PROFILE</Link>
+          <Link href="/#projects">프로젝트</Link>
+          <Link href="/#experience">경력</Link>
+          <Link href="/#profile">보유 기술</Link>
           <a href="https://github.com/kjw413" target="_blank" rel="noreferrer">
-            GITHUB ↗
+            GitHub ↗
           </a>
         </nav>
       </header>
@@ -56,7 +56,7 @@ export default async function ProjectPage({
         <p className="detail-eyebrow">
           {project.kind}
           {project.status === "ongoing" && (
-            <span className="status-chip">IN PROGRESS</span>
+            <span className="status-chip">진행 중</span>
           )}
         </p>
         <h1>{project.title}</h1>
@@ -68,27 +68,27 @@ export default async function ProjectPage({
         <div className="detail-meta">
           {project.period && (
             <div>
-              <span>PERIOD</span>
+              <span>기간</span>
               <strong>{project.period}</strong>
             </div>
           )}
           <div>
-            <span>STACK</span>
+            <span>기술 스택</span>
             <strong>{project.stack ?? project.tags.join(" · ")}</strong>
           </div>
           <div>
-            <span>STATUS</span>
+            <span>상태</span>
             <strong>{project.status === "ongoing" ? "진행 중" : "완료"}</strong>
           </div>
           <div>
-            <span>REPOSITORY</span>
+            <span>저장소</span>
             <strong>
               {project.github ? (
                 <a href={project.github} target="_blank" rel="noreferrer">
-                  {project.visibility} ↗
+                  {project.visibility === "PUBLIC" ? "공개" : "비공개"} ↗
                 </a>
               ) : (
-                project.visibility
+                project.visibility === "PUBLIC" ? "공개" : "비공개"
               )}
             </strong>
           </div>
@@ -145,8 +145,8 @@ export default async function ProjectPage({
 
       <footer>
         <div className="footer-bottom">
-          <span>© 2026 KIM JONGWOO</span>
-          <Link href="/">HOME ↑</Link>
+          <span>© 2026 김종우</span>
+          <Link href="/">홈으로 ↑</Link>
         </div>
       </footer>
     </main>

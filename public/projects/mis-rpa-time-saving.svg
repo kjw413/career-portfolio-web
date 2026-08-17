@@ -1,18 +1,19 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 300" width="1000" height="300" role="img" aria-label="MIS 데이터 수집 업무 시간 비교: 수작업 하루 40분에서 자동 실행 3분으로 92퍼센트 단축되어, 월 약 12.8시간을 절감합니다.">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 300" width="1000" height="300" role="img" aria-label="MIS 데이터 수집 업무 시간 비교: 수작업 하루 40분에서 자동 실행 3분으로 92퍼센트 단축되어, 월 15시간을 절감합니다.">
   <defs>
     <style>
       .bg { fill: #f8fbff; }
       .box { fill: #ffffff; stroke: #cfdded; stroke-width: 1; }
       .bar-before { fill: #cfdded; }
       .bar-after { fill: #1769e0; }
-      .t-label { fill: #5e6e84; font: 700 10px ui-monospace, monospace; letter-spacing: .13em; }
-      .t-big { fill: #0a1830; font: 700 34px Arial, sans-serif; letter-spacing: -.04em; }
-      .t-big-accent { fill: #1769e0; font: 700 34px Arial, sans-serif; letter-spacing: -.04em; }
-      .t-sub { fill: #5e6e84; font: 11px Arial, "Noto Sans KR", sans-serif; }
-      .t-delta { fill: #1769e0; font: 700 13px Arial, "Noto Sans KR", sans-serif; }
-      .t-stat { fill: #0b3d91; font: 700 22px Arial, sans-serif; letter-spacing: -.03em; }
-      .t-stat-label { fill: #5e6e84; font: 10px Arial, "Noto Sans KR", sans-serif; }
-      .t-note { fill: #5e6e84; font: 9px ui-monospace, monospace; letter-spacing: .05em; }
+      text { font-family: "Pretendard", "Noto Sans KR", "Malgun Gothic", system-ui, sans-serif; }
+      .t-label { fill: #4c5c72; font-size: 14px; font-weight: 700; letter-spacing: .04em; }
+      .t-big { fill: #0a1830; font-size: 34px; font-weight: 700; letter-spacing: -.02em; }
+      .t-big-accent { fill: #1769e0; font-size: 34px; font-weight: 700; letter-spacing: -.02em; }
+      .t-sub { fill: #4c5c72; font-size: 15px; }
+      .t-delta { fill: #1769e0; font-size: 16px; font-weight: 700; }
+      .t-stat { fill: #0b3d91; font-size: 24px; font-weight: 700; letter-spacing: -.02em; }
+      .t-stat-label { fill: #4c5c72; font-size: 13.5px; }
+      .t-note { fill: #4c5c72; font-size: 13px; }
       .edge { fill: none; stroke: #1769e0; stroke-width: 1.5; }
     </style>
     <marker id="s1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
@@ -45,8 +46,8 @@
   <text class="t-stat-label" x="776" y="133">사람이 쓰지 않게 된 시간</text>
 
   <rect class="box" x="756" y="166" width="220" height="76"/>
-  <text class="t-stat" x="776" y="202">월 약 12.8시간</text>
-  <text class="t-stat-label" x="776" y="223">37분 × 250영업일 ≈ 154시간, 154 ÷ 12</text>
+  <text class="t-stat" x="776" y="202">월 15시간</text>
+  <text class="t-stat-label" x="776" y="223">사내 업무 측정 기준 절감시간</text>
 
   <text class="t-note" x="24" y="272">줄인 것은 시간만이 아니라 실수 가능성 — 그리드 지문 검사와 빈 분모 중단으로 잘못된 데이터가 적재되는 경로를 함께 막음</text>
 </svg>

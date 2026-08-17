@@ -23,13 +23,15 @@ function ArchiveRow({ project, index }: { project: ArchiveItem; index: number })
       <div className="archive-title">
         <small>
           {project.category}
-          {project.ongoing && <span className="status-chip">IN PROGRESS</span>}
+          {project.ongoing && <span className="status-chip">진행 중</span>}
         </small>
         <h3>{project.title}</h3>
       </div>
       <p>{project.summary}</p>
       <div className="archive-stack">{project.stack}</div>
-      <span className="visibility">{project.visibility}</span>
+      <span className="visibility">
+        {project.visibility === "PUBLIC" ? "공개" : "비공개"}
+      </span>
       <span className="archive-arrow" aria-hidden="true">
         {project.detailHref ? "→" : project.githubUrl ? "↗" : ""}
       </span>
@@ -77,7 +79,7 @@ export default function Archive({
     <section className="archive-section" id="archive">
       <div className="archive-header">
         <div>
-          <p className="section-index">05 / PROJECT ARCHIVE</p>
+          <p className="section-index">05</p>
           <h2>전체 프로젝트 저장소</h2>
         </div>
         <div className="filter-row" role="group" aria-label="프로젝트 분야 필터">

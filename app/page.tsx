@@ -10,27 +10,50 @@ import ImpactGrid from "./components/ImpactGrid";
 const capabilities = [
   {
     index: "A",
-    title: "Data & AI",
-    text: "현장 데이터를 정제하고 예측 모델과 LLM을 연결해 의사결정 가능한 결과로 변환합니다.",
-    skills: ["Python", "SQL", "Forecasting", "Anomaly Detection", "LangChain", "LLM API"],
+    title: "데이터 · AI",
+    text: "설비와 생산 데이터를 정리하고, 예측 모델과 LLM을 붙여 보고서까지 자동으로 만듭니다.",
+    skills: ["Python", "SQL", "시계열 예측", "이상 감지", "LangChain", "LLM API"],
   },
   {
     index: "B",
-    title: "Software & Automation",
-    text: "반복 업무의 입력부터 검증·보고까지 흐름을 설계하고 사용자가 직접 쓰는 도구로 구현합니다.",
-    skills: ["Streamlit", "RPA", "MySQL", "Tkinter", "Git", "Excel Automation"],
+    title: "소프트웨어 · 자동화",
+    text: "반복 업무의 입력부터 검증, 보고까지를 프로그램으로 만들어 현업이 직접 쓰게 합니다.",
+    skills: ["Streamlit", "RPA", "MySQL", "Tkinter", "Git", "엑셀 자동화"],
   },
   {
     index: "C",
-    title: "Embedded & Control",
-    text: "신호와 통신, 제어 로직을 이해하고 임베디드 Linux와 MCU 환경에서 기능을 검증합니다.",
+    title: "임베디드 · 제어",
+    text: "Linux와 MCU 환경에서 통신과 제어 로직을 구현하고 동작을 검증합니다.",
     skills: ["C/C++", "Linux", "FreeRTOS", "CAN", "SPI", "OpenCV", "PLC"],
   },
   {
     index: "D",
-    title: "Manufacturing Domain",
-    text: "생산·유틸리티·설비의 물리 현상을 데이터 구조와 개선 과제로 번역합니다.",
-    skills: ["Energy", "Utility", "Refrigeration", "Production", "ROI", "Process Improvement"],
+    title: "제조 도메인",
+    text: "생산·유틸리티·설비에서 일어나는 현상을 데이터로 옮기고 개선 과제로 정리합니다.",
+    skills: ["에너지", "유틸리티", "냉동", "생산관리", "투자 타당성", "공정 개선"],
+  },
+];
+
+const qualifications = [
+  {
+    label: "학력",
+    title: "홍익대학교 전자전기공학부 학사",
+    detail: "2018.03 입학 · 2024.02 졸업 · 학점 3.50 / 4.50 (이수 136학점)",
+  },
+  {
+    label: "자격증",
+    title: "ADsP · 컴퓨터활용능력 1급",
+    detail: "데이터분석 준전문가 2026.03 취득 · 컴퓨터활용능력 1급 2021.09 취득",
+  },
+  {
+    label: "어학",
+    title: "OPIc 영어 IH",
+    detail: "2025.08 응시 · Intermediate High",
+  },
+  {
+    label: "병역",
+    title: "육군 병장 만기제대",
+    detail: "2019.01 입대 · 2020.08 전역",
   },
 ];
 
@@ -45,13 +68,13 @@ export default function Home() {
     <main>
       <header className="site-header">
         <a className="wordmark" href="#top" aria-label="처음으로">
-          <span>K</span>JONGWOO
+          <span>KJ</span>김종우
         </a>
         <nav aria-label="주요 메뉴">
-          <a href="#impact">IMPACT</a>
-          <a href="#projects">PROJECTS</a>
-          <a href="#experience">EXPERIENCE</a>
-          <a href="#contact">CONTACT</a>
+          <a href="#impact">주요 성과</a>
+          <a href="#projects">프로젝트</a>
+          <a href="#experience">경력</a>
+          <a href="#contact">연락처</a>
         </nav>
       </header>
 
@@ -60,10 +83,10 @@ export default function Home() {
       <section className="impact-section" id="impact">
         <div className="section-heading">
           <div>
-            <p className="section-index">01 / SELECTED IMPACT</p>
-            <h2>문제를 성과로 바꾼 과정</h2>
+            <p className="section-index">01</p>
+            <h2>주요 성과</h2>
           </div>
-          <p>현장의 문제를 구조화하고, 기술로 연결해 검증 가능한 결과를 만들었습니다.</p>
+          <p>실제 업무에 적용해 수치로 확인한 결과입니다.</p>
         </div>
         <ImpactGrid impacts={profile.impacts} />
       </section>
@@ -71,12 +94,12 @@ export default function Home() {
       <section className="projects-section" id="projects">
         <div className="section-heading">
           <div>
-            <p className="section-index">02 / FEATURED PROJECTS</p>
-            <h2>기술을 결과로 바꾼 프로젝트</h2>
+            <p className="section-index">02</p>
+            <h2>대표 프로젝트</h2>
           </div>
           <p>
-            분석에서 멈추지 않고 데이터 수집, 모델링, 서비스 구현,
-            <br />현장 적용까지 이어진 경험을 선별했습니다.
+            데이터 수집부터 모델링, 서비스 구현,
+            <br />현장 적용까지 직접 진행한 프로젝트입니다.
           </p>
         </div>
         <div className="project-grid">
@@ -91,7 +114,7 @@ export default function Home() {
                 <span>
                   {project.kind}
                   {project.status === "ongoing" && (
-                    <span className="status-chip">IN PROGRESS</span>
+                    <span className="status-chip">진행 중</span>
                   )}
                 </span>
               </div>
@@ -106,7 +129,7 @@ export default function Home() {
               <div className="tag-row">
                 {project.tags.map((tag) => <span key={tag}>{tag}</span>)}
               </div>
-              <div className="card-link">CASE STUDY <b>→</b></div>
+              <div className="card-link">자세히 보기 <b>→</b></div>
             </Link>
           ))}
         </div>
@@ -115,10 +138,10 @@ export default function Home() {
       <section className="experience-section" id="experience">
         <div className="section-heading">
           <div>
-            <p className="section-index">03 / EXPERIENCE</p>
-            <h2>현장과 기술을 오간 경험</h2>
+            <p className="section-index">03</p>
+            <h2>경력 · 교육</h2>
           </div>
-          <p>물리 현상을 이해하고, 데이터를 검증하며, 해결책을 끝까지 구현해 왔습니다.</p>
+          <p>재직 중인 회사와 이수한 교육 과정입니다.</p>
         </div>
         <ExperienceAccordion items={experiences} />
       </section>
@@ -126,10 +149,10 @@ export default function Home() {
       <section className="capability-section" id="profile">
         <div className="section-heading light-heading">
           <div>
-            <p className="section-index">04 / CAPABILITY MAP</p>
-            <h2>경계를 연결하는 역량</h2>
+            <p className="section-index">04</p>
+            <h2>보유 기술</h2>
           </div>
-          <p>전자전기공학의 기반 위에 제조 도메인과 소프트웨어 구현력을 쌓았습니다.</p>
+          <p>실제 프로젝트와 업무에서 사용한 기술입니다.</p>
         </div>
         <div className="capability-grid">
           {capabilities.map((capability) => (
@@ -149,29 +172,37 @@ export default function Home() {
 
       <section className="qualification-section" id="foundation">
         <div className="qualification-intro">
-          <p className="section-index">06 / FOUNDATION</p>
-          <h2>공학적 기반과<br />지속적인 학습</h2>
-          <p>직무명이 달라져도 문제를 구조화하고 기술을 빠르게 습득하는 방식은 같습니다.</p>
+          <p className="section-index">06</p>
+          <h2>학력 · 자격 · 병역</h2>
+          <p>지원서에 기재하는 기본 이력입니다.</p>
         </div>
         <div className="qualification-list">
-          <div><span>EDUCATION</span><strong>전자전기공학 전공</strong><p>회로·전자·제어·신호의 기초 위에서 시스템을 이해합니다.</p></div>
-          <div><span>CERTIFICATE</span><strong>ADsP · 컴퓨터활용능력 1급</strong><p>데이터 분석의 기초와 실무형 데이터 처리 역량을 갖췄습니다.</p></div>
-          <div><span>LANGUAGE</span><strong>OPIc IH</strong><p>영어 회화 활동을 통해 기술 정보를 이해하고 소통하는 기반을 다졌습니다.</p></div>
-          <div><span>WORK STYLE</span><strong>현장 검증 · 빠른 구현 · 문서화</strong><p>가설을 데이터로 확인하고 재사용 가능한 결과물로 남깁니다.</p></div>
+          {qualifications.map((item) => (
+            <div key={item.label}>
+              <span>{item.label}</span>
+              <strong>{item.title}</strong>
+              <p>{item.detail}</p>
+            </div>
+          ))}
         </div>
       </section>
 
       <footer id="contact">
         <div>
-          <p>OPEN TO THE NEXT PROBLEM</p>
-          <h2>기술과 현장 사이의<br />새로운 문제를 기다립니다.</h2>
+          <p>연락처</p>
+          <h2>채용 문의는<br />이메일로 부탁드립니다.</h2>
         </div>
         <div className="footer-links">
-          {profile.emailHref && <a href={profile.emailHref}>EMAIL</a>}
-          <a href={profile.githubUrl} target="_blank" rel="noreferrer">GITHUB ↗</a>
+          {profile.emailHref && (
+            <a href={profile.emailHref}>{profile.emailHref.replace(/^mailto:/, "")}</a>
+          )}
+          <a href={profile.githubUrl} target="_blank" rel="noreferrer">GitHub ↗</a>
           {profile.resumeHref && <a href={withBasePath(profile.resumeHref)}>이력서</a>}
         </div>
-        <div className="footer-bottom"><span>© 2026 KIM JONGWOO</span><a href="#top">BACK TO TOP ↑</a></div>
+        <div className="footer-bottom">
+          <span>© 2026 김종우</span>
+          <a href="#top">맨 위로 ↑</a>
+        </div>
       </footer>
     </main>
   );
