@@ -1,16 +1,11 @@
 import Link from "next/link";
+import { getCatalogCategories, getProjectCatalog } from "../lib/catalog";
+import { getExperiences, getProfile } from "../lib/content";
+import { getFeaturedProjects, withBasePath } from "../lib/projects";
 import Archive from "./archive";
-import fieldProjects from "../content/field-projects.json";
-import { getCategories, getFeaturedProjects, getProjects } from "../lib/projects";
-
-const metrics = [
-  { value: "6:1", label: "사내 AI 전문가 과정 선발" },
-  { value: "5개 공장", label: "에너지 데이터 통합 범위" },
-  { value: "MAPE 7%", label: "전사 에너지 예측 오차" },
-  { value: "40분 → 3분", label: "일일 MIS 수집 업무 시간" },
-  { value: "연 154h", label: "자동화로 절감한 시간" },
-  { value: "1,000h", label: "임베디드 집중 교육" },
-];
+import ExperienceAccordion from "./components/ExperienceAccordion";
+import Hero from "./components/Hero";
+import ImpactGrid from "./components/ImpactGrid";
 
 const capabilities = [
   {
@@ -39,51 +34,12 @@ const capabilities = [
   },
 ];
 
-const experience = [
-  {
-    period: "2025 — PRESENT",
-    role: "생산기술팀 · 제조 데이터 및 설비 개선",
-    company: "BINGGRAE",
-    points: [
-      "5개 공장 에너지·생산 데이터 통합 및 AI 예측·진단·보고 서비스 구현",
-      "MIS 데이터 수집, 투자 실적 검증 등 반복 업무 자동화",
-      "냉동·공압·전력 유틸리티 분석과 원단위 개선 과제 수행",
-      "혼합기획팩 자동화, 예지보전 TFT, PLC 2축 직교로봇 시범 경험",
-    ],
-  },
-  {
-    period: "2026",
-    role: "사내 AI 전문가 육성과정",
-    company: "AI ELITE",
-    points: [
-      "6:1 경쟁률 선발 후 제조 데이터 기반 서비스 프로젝트 완성",
-      "예측 모델·LLM·웹 인터페이스를 하나의 실무 워크플로로 연결",
-    ],
-  },
-  {
-    period: "2024",
-    role: "임베디드 시스템 개발 집중과정 · 1,000시간",
-    company: "TELECHIPS EMBEDDED SCHOOL",
-    points: [
-      "TOPST D3 환경 Linux·FreeRTOS 기반 SPI/CAN 통신 구현 및 검증",
-      "YOLOv5 적색 신호 인지와 임베디드 IPC 연계 프로젝트 수행",
-    ],
-  },
-  {
-    period: "EARLY CAREER",
-    role: "CS 인턴 · 현장 기술지원",
-    company: "INBODY",
-    points: [
-      "측정 이력과 QC 리포트를 교차 검증해 간헐 이상 현상의 원인 후보 도출",
-      "고객 현장 정보와 기술 데이터를 함께 해석하며 문제 해결 관점 습득",
-    ],
-  },
-];
-
 export default function Home() {
-  const projects = getProjects();
-  const featured = getFeaturedProjects();
-  const filters = getCategories();
+  const profile = getProfile();
+  const experiences = getExperiences();
+  const catalog = getProjectCatalog();
+  const featured = getFeaturedProjects(catalog);
+  const filters = ["ALL", ...getCatalogCategories()];
 
   return (
     <main>
@@ -92,85 +48,30 @@ export default function Home() {
           <span>K</span>JONGWOO
         </a>
         <nav aria-label="주요 메뉴">
+          <a href="#impact">IMPACT</a>
           <a href="#projects">PROJECTS</a>
           <a href="#experience">EXPERIENCE</a>
-          <a href="#profile">PROFILE</a>
-          <a href="https://github.com/kjw413" target="_blank" rel="noreferrer">
-            GITHUB ↗
-          </a>
+          <a href="#contact">CONTACT</a>
         </nav>
       </header>
 
-      <section className="hero" id="top">
-        <div className="hero-copy">
-          <p className="eyebrow">
-            ELECTRICAL ENGINEERING <i /> MANUFACTURING <i /> AI
-          </p>
-          <h1>
-            현장의 문제를
-            <br />
-            <span>데이터와 시스템</span>으로
-            <br />
-            해결합니다.
-          </h1>
-          <p className="hero-description">
-            전자전기공학의 원리 이해, 제조 현장의 도메인 경험, 소프트웨어 구현력을
-            연결해 <strong>실제로 사용되는 해결책</strong>을 만드는 엔지니어 김종우입니다.
-          </p>
-          <div className="hero-actions">
-            <a className="button primary" href="#projects">
-              프로젝트 살펴보기 <span>↓</span>
-            </a>
-            <a
-              className="button secondary"
-              href="https://github.com/kjw413"
-              target="_blank"
-              rel="noreferrer"
-            >
-              GitHub 전체 보기 ↗
-            </a>
-          </div>
-        </div>
+      <Hero profile={profile} />
 
-        <div className="system-visual" aria-label="데이터, 제어, AI를 연결하는 역량 구조">
-          <div className="visual-grid" />
-          <p className="visual-label">ENGINEERING SYSTEM / 2026</p>
-          <div className="orbit orbit-one" />
-          <div className="orbit orbit-two" />
-          <div className="core">
-            <span>PROBLEM</span>
-            <strong>SOLVE</strong>
+      <section className="impact-section" id="impact">
+        <div className="section-heading">
+          <div>
+            <p className="section-index">01 / SELECTED IMPACT</p>
+            <h2>문제를 성과로 바꾼 과정</h2>
           </div>
-          <div className="node node-data"><b>01</b> DATA</div>
-          <div className="node node-control"><b>02</b> CONTROL</div>
-          <div className="node node-ai"><b>03</b> AI</div>
-          <div className="signal s1" />
-          <div className="signal s2" />
-          <div className="signal s3" />
-          <p className="visual-note">FROM PHYSICAL SIGNAL<br />TO BUSINESS ACTION</p>
+          <p>현장의 문제를 구조화하고, 기술로 연결해 검증 가능한 결과를 만들었습니다.</p>
         </div>
-      </section>
-
-      <section className="metrics" aria-label="주요 수치">
-        <div className="metrics-track">
-          {/* 두 번째 묶음은 끊김 없는 순환을 위한 시각적 복제본 */}
-          {[0, 1].map((copy) => (
-            <ul className="metrics-group" key={copy} aria-hidden={copy === 1 || undefined}>
-              {metrics.map((metric) => (
-                <li key={metric.value}>
-                  <strong>{metric.value}</strong>
-                  <span>{metric.label}</span>
-                </li>
-              ))}
-            </ul>
-          ))}
-        </div>
+        <ImpactGrid impacts={profile.impacts} />
       </section>
 
       <section className="projects-section" id="projects">
         <div className="section-heading">
           <div>
-            <p className="section-index">01 / SELECTED WORK</p>
+            <p className="section-index">02 / FEATURED PROJECTS</p>
             <h2>기술을 결과로 바꾼 프로젝트</h2>
           </div>
           <p>
@@ -211,10 +112,21 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="experience-section" id="experience">
+        <div className="section-heading">
+          <div>
+            <p className="section-index">03 / EXPERIENCE</p>
+            <h2>현장과 기술을 오간 경험</h2>
+          </div>
+          <p>물리 현상을 이해하고, 데이터를 검증하며, 해결책을 끝까지 구현해 왔습니다.</p>
+        </div>
+        <ExperienceAccordion items={experiences} />
+      </section>
+
       <section className="capability-section" id="profile">
         <div className="section-heading light-heading">
           <div>
-            <p className="section-index">02 / CAPABILITY MAP</p>
+            <p className="section-index">04 / CAPABILITY MAP</p>
             <h2>경계를 연결하는 역량</h2>
           </div>
           <p>전자전기공학의 기반 위에 제조 도메인과 소프트웨어 구현력을 쌓았습니다.</p>
@@ -233,61 +145,9 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="experience-section" id="experience">
-        <div className="section-heading">
-          <div>
-            <p className="section-index">03 / EXPERIENCE</p>
-            <h2>현장과 기술을 오간 경험</h2>
-          </div>
-          <p>물리 현상을 이해하고, 데이터를 검증하며, 해결책을 끝까지 구현해 왔습니다.</p>
-        </div>
-        <div className="timeline">
-          {experience.map((item, index) => (
-            <article className="timeline-item" key={item.company}>
-              <div className="timeline-marker"><span>{String(index + 1).padStart(2, "0")}</span></div>
-              <div className="timeline-period">{item.period}</div>
-              <div className="timeline-main">
-                <p>{item.company}</p>
-                <h3>{item.role}</h3>
-              </div>
-              <ul>{item.points.map((point) => <li key={point}>{point}</li>)}</ul>
-            </article>
-          ))}
-        </div>
-      </section>
+      <Archive filters={filters} projects={catalog} />
 
-      <section className="field-section">
-        <div className="section-heading compact-heading">
-          <div>
-            <p className="section-index">04 / FIELD ENGINEERING</p>
-            <h2>제조 현장의 개선 과제</h2>
-          </div>
-        </div>
-        <div className="field-grid">
-          {fieldProjects.map((project) => (
-            <article key={project.num}>
-              <div className="field-meta"><span>{project.num}</span><span>{project.label}</span></div>
-              <h3>{project.title}</h3>
-              <p>{project.text}</p>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <Archive
-        filters={filters}
-        projects={projects.map((project) => ({
-          slug: project.slug,
-          category: project.category,
-          repoName: project.repoName,
-          summary: project.summary,
-          stack: project.stack,
-          visibility: project.visibility,
-          ongoing: project.status === "ongoing",
-        }))}
-      />
-
-      <section className="qualification-section">
+      <section className="qualification-section" id="foundation">
         <div className="qualification-intro">
           <p className="section-index">06 / FOUNDATION</p>
           <h2>공학적 기반과<br />지속적인 학습</h2>
@@ -301,14 +161,15 @@ export default function Home() {
         </div>
       </section>
 
-      <footer>
+      <footer id="contact">
         <div>
           <p>OPEN TO THE NEXT PROBLEM</p>
           <h2>기술과 현장 사이의<br />새로운 문제를 기다립니다.</h2>
         </div>
         <div className="footer-links">
-          <a href="https://github.com/kjw413" target="_blank" rel="noreferrer">GITHUB ↗</a>
-          <span>PHOTO & CONTACT — TO BE ADDED</span>
+          {profile.emailHref && <a href={profile.emailHref}>EMAIL</a>}
+          <a href={profile.githubUrl} target="_blank" rel="noreferrer">GITHUB ↗</a>
+          {profile.resumeHref && <a href={withBasePath(profile.resumeHref)}>이력서</a>}
         </div>
         <div className="footer-bottom"><span>© 2026 KIM JONGWOO</span><a href="#top">BACK TO TOP ↑</a></div>
       </footer>

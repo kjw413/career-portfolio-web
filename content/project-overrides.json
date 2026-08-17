@@ -1,0 +1,6 @@
+[
+  { "repoName": "ai-elite-bems-next", "title": "공장 에너지 AI 플랫폼", "category": "데이터·AI", "featured": 1, "order": 1, "included": true },
+  { "repoName": "universal-rpa", "title": "Universal RPA Studio", "category": "제조·자동화", "featured": 2, "order": 2, "included": true },
+  { "repoName": "AI-Elite_MIS_RPA", "title": "MIS 데이터 수집 자동화", "category": "제조·자동화", "featured": 3, "order": 3, "included": true },
+  { "repoName": "telechips-embedded-school-pmsa-project", "title": "페달 오조작 감지 보조 시스템", "category": "임베디드", "featured": 4, "order": 4, "included": true }
+]

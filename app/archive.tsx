@@ -4,14 +4,61 @@ import Link from "next/link";
 import { useState } from "react";
 
 export type ArchiveItem = {
-  slug: string;
-  category: string;
   repoName: string;
+  title: string;
   summary: string;
-  stack: string | null;
-  visibility: string;
+  category: string;
+  stack: string;
+  visibility: "PUBLIC" | "PRIVATE";
   ongoing: boolean;
+  detailHref: string | null;
+  githubUrl: string | null;
+  updatedAt: string | null;
 };
+
+function ArchiveRow({ project, index }: { project: ArchiveItem; index: number }) {
+  const content = (
+    <>
+      <span className="archive-num">{String(index + 1).padStart(2, "0")}</span>
+      <div className="archive-title">
+        <small>
+          {project.category}
+          {project.ongoing && <span className="status-chip">IN PROGRESS</span>}
+        </small>
+        <h3>{project.title}</h3>
+      </div>
+      <p>{project.summary}</p>
+      <div className="archive-stack">{project.stack}</div>
+      <span className="visibility">{project.visibility}</span>
+      <span className="archive-arrow" aria-hidden="true">
+        {project.detailHref ? "→" : project.githubUrl ? "↗" : ""}
+      </span>
+    </>
+  );
+
+  if (project.detailHref) {
+    return (
+      <Link href={project.detailHref} className="archive-row archive-row-link">
+        {content}
+      </Link>
+    );
+  }
+
+  if (project.githubUrl) {
+    return (
+      <a
+        href={project.githubUrl}
+        className="archive-row archive-row-link"
+        target="_blank"
+        rel="noreferrer"
+      >
+        {content}
+      </a>
+    );
+  }
+
+  return <article className="archive-row">{content}</article>;
+}
 
 export default function Archive({
   projects,
@@ -48,26 +95,13 @@ export default function Archive({
         </div>
       </div>
       <div className="archive-list" aria-live="polite">
-        {filteredProjects.map((project, index) => (
-          <Link
-            href={`/projects/${project.slug}/`}
-            className="archive-row"
-            key={project.slug}
-          >
-            <span className="archive-num">{String(index + 1).padStart(2, "0")}</span>
-            <div className="archive-title">
-              <small>
-                {project.category}
-                {project.ongoing && <span className="status-chip">IN PROGRESS</span>}
-              </small>
-              <h3>{project.repoName}</h3>
-            </div>
-            <p>{project.summary}</p>
-            <div className="archive-stack">{project.stack}</div>
-            <span className="visibility">{project.visibility}</span>
-            <span className="archive-arrow">→</span>
-          </Link>
-        ))}
+        {filteredProjects.length === 0 ? (
+          <p className="archive-empty">해당 분야의 공개 프로젝트가 없습니다.</p>
+        ) : (
+          filteredProjects.map((project, index) => (
+            <ArchiveRow project={project} index={index} key={project.repoName} />
+          ))
+        )}
       </div>
     </section>
   );

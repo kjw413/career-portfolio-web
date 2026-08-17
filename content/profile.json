@@ -1,0 +1,62 @@
+{
+  "name": "김종우",
+  "role": "시스템 문제 해결형 엔지니어",
+  "major": "전자전기공학",
+  "summary": "전자전기공학의 원리 이해, 제조 현장의 도메인 경험, 소프트웨어 구현력을 연결해 실제로 사용되는 해결책을 만듭니다.",
+  "photoSrc": null,
+  "resumeHref": null,
+  "githubUrl": "https://github.com/kjw413",
+  "emailHref": null,
+  "metrics": [
+    {
+      "id": "cycle-time",
+      "value": "40분 → 3분",
+      "label": "MIS 수집 1회 작업시간",
+      "evidence": "수작업 40분과 자동 실행 3분 비교"
+    },
+    {
+      "id": "saved-time",
+      "value": "월 약 12.8시간",
+      "label": "반복 업무 절감시간",
+      "evidence": "154 ÷ 12 = 월 약 12.8시간 (연 154시간 기준)"
+    },
+    {
+      "id": "forecast",
+      "value": "MAPE 7%",
+      "label": "전사 에너지 예측 오차",
+      "evidence": "포트폴리오 프로젝트 검증 결과"
+    },
+    {
+      "id": "coverage",
+      "value": "5개 공장",
+      "label": "에너지·생산 데이터 통합 범위",
+      "evidence": "남양주1·남양주2·김해·광주·논산"
+    }
+  ],
+  "impacts": [
+    {
+      "id": "mis-rpa",
+      "title": "반복 수집 업무 자동화",
+      "problem": "5개 공장의 MIS 데이터를 매일 수작업으로 수집",
+      "action": "화면 수집, 검증, 표준 데이터셋 생성을 하나의 파이프라인으로 구현",
+      "result": "1회 40분을 3분으로 단축, 월 약 12.8시간 절감",
+      "projectSlug": "ai-elite-mis-rpa"
+    },
+    {
+      "id": "bems",
+      "title": "공장 에너지 데이터 통합",
+      "problem": "공장별로 분산된 에너지·생산 데이터와 수작업 보고",
+      "action": "수집·저장·예측·진단·보고 흐름을 하나의 웹 서비스로 연결",
+      "result": "5개 공장 통합, 예측 오차 MAPE 7%",
+      "projectSlug": "ai-elite-bems"
+    },
+    {
+      "id": "embedded",
+      "title": "인지·통신·제어 통합",
+      "problem": "카메라 인지 결과를 실제 임베디드 제어로 전달해야 하는 팀 과제",
+      "action": "YOLOv5 적색 신호 인지와 Linux·FreeRTOS 간 SPI/CAN 통신 검증",
+      "result": "인지 결과가 제어까지 이어지는 시스템 경로 구현",
+      "projectSlug": "telechips-embedded-school-pmsa-project"
+    }
+  ]
+}

@@ -1,0 +1,105 @@
+{
+  "generatedAt": "2026-08-17T09:32:23.728Z",
+  "owner": "kjw413",
+  "repos": [
+    {
+      "name": "trading-bot",
+      "htmlUrl": "https://github.com/kjw413/trading-bot",
+      "description": "퀀트 알고리즘과 데이터를 기반으로 사용자의 투자 결정을 지원하여 최대의 수익률을 낸다",
+      "language": "Python",
+      "topics": [],
+      "updatedAt": "2026-08-17T07:20:08Z",
+      "stars": 0,
+      "archived": false,
+      "fork": false
+    },
+    {
+      "name": "AI-Elite_MIS_RPA",
+      "htmlUrl": "https://github.com/kjw413/AI-Elite_MIS_RPA",
+      "description": null,
+      "language": "Python",
+      "topics": [],
+      "updatedAt": "2026-08-12T05:05:45Z",
+      "stars": 0,
+      "archived": false,
+      "fork": false
+    },
+    {
+      "name": "ai-elite-bems-next",
+      "htmlUrl": "https://github.com/kjw413/ai-elite-bems-next",
+      "description": null,
+      "language": "Python",
+      "topics": [],
+      "updatedAt": "2026-08-12T02:11:06Z",
+      "stars": 0,
+      "archived": false,
+      "fork": false
+    },
+    {
+      "name": "career-portfolio-web",
+      "htmlUrl": "https://github.com/kjw413/career-portfolio-web",
+      "description": null,
+      "language": "TypeScript",
+      "topics": [],
+      "updatedAt": "2026-08-08T13:24:34Z",
+      "stars": 0,
+      "archived": false,
+      "fork": false
+    },
+    {
+      "name": "universal-rpa",
+      "htmlUrl": "https://github.com/kjw413/universal-rpa",
+      "description": null,
+      "language": "Python",
+      "topics": [],
+      "updatedAt": "2026-08-08T08:00:00Z",
+      "stars": 0,
+      "archived": false,
+      "fork": false
+    },
+    {
+      "name": "AI-Elite-BEMS",
+      "htmlUrl": "https://github.com/kjw413/AI-Elite-BEMS",
+      "description": null,
+      "language": "Python",
+      "topics": [],
+      "updatedAt": "2026-08-05T13:42:01Z",
+      "stars": 0,
+      "archived": false,
+      "fork": false
+    },
+    {
+      "name": "to-do-list-app",
+      "htmlUrl": "https://github.com/kjw413/to-do-list-app",
+      "description": null,
+      "language": "Python",
+      "topics": [],
+      "updatedAt": "2026-07-22T07:09:23Z",
+      "stars": 0,
+      "archived": false,
+      "fork": false
+    },
+    {
+      "name": "telechips-embedded-school-pmsa-project",
+      "htmlUrl": "https://github.com/kjw413/telechips-embedded-school-pmsa-project",
+      "description": null,
+      "language": "C",
+      "topics": [],
+      "updatedAt": "2026-07-17T07:33:11Z",
+      "stars": 0,
+      "archived": false,
+      "fork": false
+    },
+    {
+      "name": "Masking",
+      "htmlUrl": "https://github.com/kjw413/Masking",
+      "description": null,
+      "language": "Python",
+      "topics": [],
+      "updatedAt": "2026-07-07T01:33:25Z",
+      "stars": 0,
+      "archived": false,
+      "fork": false
+    }
+  ]
+}

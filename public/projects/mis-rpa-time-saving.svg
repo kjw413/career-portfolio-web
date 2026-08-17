@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 300" width="1000" height="300" role="img" aria-label="MIS 데이터 수집 업무 시간 비교: 수작업 하루 40분에서 자동 실행 3분으로 92퍼센트 단축되어, 연 250 영업일 기준 약 154시간을 절감했습니다.">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 300" width="1000" height="300" role="img" aria-label="MIS 데이터 수집 업무 시간 비교: 수작업 하루 40분에서 자동 실행 3분으로 92퍼센트 단축되어, 월 약 12.8시간을 절감합니다.">
   <defs>
     <style>
       .bg { fill: #f8fbff; }
@@ -45,8 +45,8 @@
   <text class="t-stat-label" x="776" y="133">사람이 쓰지 않게 된 시간</text>
 
   <rect class="box" x="756" y="166" width="220" height="76"/>
-  <text class="t-stat" x="776" y="202">연 약 154시간</text>
-  <text class="t-stat-label" x="776" y="223">250 영업일 기준 환산</text>
+  <text class="t-stat" x="776" y="202">월 약 12.8시간</text>
+  <text class="t-stat-label" x="776" y="223">37분 × 250영업일 ≈ 154시간, 154 ÷ 12</text>
 
   <text class="t-note" x="24" y="272">줄인 것은 시간만이 아니라 실수 가능성 — 그리드 지문 검사와 빈 분모 중단으로 잘못된 데이터가 적재되는 경로를 함께 막음</text>
 </svg>

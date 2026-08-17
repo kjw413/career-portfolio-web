@@ -8,7 +8,10 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "sync:github": "node scripts/sync-github.mjs"
   },
   "dependencies": {
     "gray-matter": "^4.0.3",
@@ -19,13 +22,17 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "4.2.1",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
     "@types/node": "22.19.19",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
     "eslint": "9.39.4",
     "eslint-config-next": "16.2.6",
+    "jsdom": "^26.1.0",
     "tailwindcss": "4.2.1",
-    "typescript": "5.9.3"
+    "typescript": "5.9.3",
+    "vitest": "^3.2.4"
   },
   "type": "module"
 }

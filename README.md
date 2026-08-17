@@ -15,17 +15,21 @@
 
 ## 프로젝트 추가·수정 방법 (코드 수정 불필요)
 
-프로젝트 목록과 상세 내용(수행 과정·성과)은 `content/projects/` 폴더의 **마크다운
-파일**에서 관리됩니다. 파일 하나 = 프로젝트 하나이며, 파일을 수정하고 `main`에
-커밋하면 2~3분 내 사이트에 자동 반영됩니다. 로컬 환경 없이 **GitHub 웹사이트에서
-바로** 편집할 수 있습니다.
+프로젝트의 공개 제목·분류·대표 노출 순서·아카이브 순서는
+`content/project-overrides.json`에서 우선 관리합니다. 수행 과정과 성과 같은 상세
+사례는 `content/projects/` 폴더의 **마크다운 파일**에서 관리합니다. 파일 하나 =
+상세 프로젝트 하나이며, 파일을 수정하고 `main`에 커밋하면 2~3분 내 사이트에 자동
+반영됩니다. 로컬 환경 없이 **GitHub 웹사이트에서 바로** 편집할 수 있습니다.
 
 ### 기존 프로젝트 내용 수정 (진행 상황 업데이트)
 
 1. GitHub에서 `content/projects/` 폴더의 해당 `.md` 파일 열기
 2. 연필 아이콘(Edit this file) 클릭
-3. 본문(수행 과정·성과)이나 상단 필드 수정 후 **Commit changes** (main 브랜치에 커밋)
+3. 본문(수행 과정·성과)이나 상세 사례용 상단 필드 수정 후 **Commit changes** (main 브랜치에 커밋)
 4. Actions 탭에서 배포가 끝나면(2~3분) 사이트에 반영됨
+
+공개 제목·분류·대표 노출 순서·아카이브 순서를 바꾸려면 같은 `repoName`을 가진
+`content/project-overrides.json` 항목을 수정합니다.
 
 ### 새 프로젝트 추가
 
@@ -33,22 +37,43 @@
 2. `content/projects/` 폴더에서 **Add file → Create new file**
 3. 파일명은 `영문-소문자-하이픈.md` 형식 (예: `smart-factory-dashboard.md`) —
    파일명이 상세 페이지 주소가 됩니다
-4. 템플릿의 필드와 본문을 채우고 커밋
+4. 템플릿의 필드와 본문을 채우고, 필요하면 같은 `repoName`의 항목을
+   `content/project-overrides.json`에 추가한 뒤 커밋
 
 ### 주요 필드
 
 | 필드 | 설명 |
 | --- | --- |
-| `title` | 한글 표시 제목 (대표 카드·상세 페이지) |
-| `repoName` | 아카이브 목록에 표시되는 저장소명 |
-| `category` | 필터 분류 (`AI · DATA`, `AUTOMATION` 등 — 새 분류도 자동 인식) |
+| `title` | 상세 페이지 제목. override 제목이 없을 때 카탈로그 표시 제목으로도 사용 |
+| `repoName` | GitHub·override·마크다운을 연결하는 저장소명 키 |
+| `category` | override 분류가 없을 때 사용하는 상세 사례의 기본 분류 |
 | `summary` | 아카이브 목록의 한 줄 설명 (필수) |
 | `status` | `ongoing`(진행 중 — IN PROGRESS 배지 표시) 또는 `completed` |
-| `featured` | 대표 프로젝트(SELECTED WORK) 노출 순서. 빼면 미노출 |
-| `order` | 아카이브 목록 정렬 순서 |
+| `featured` | override에 순위가 없을 때 사용하는 대표 프로젝트 노출 순서 |
+| `order` | override에 순서가 없을 때 사용하는 아카이브 정렬 순서 |
+
+`project-overrides.json`의 `title`, `category`, `featured`, `order`가 Markdown
+frontmatter와 GitHub 메타데이터보다 우선합니다. 대표 프로젝트는 이 병합 카탈로그의
+`featured` 순서로 고른 뒤, 같은 `repoName`의 Markdown 상세 사례와 연결합니다. 따라서
+대표 카드에는 Markdown 본문과 소개가 있는 프로젝트만 노출됩니다. Markdown
+frontmatter의 같은 필드는 override가 없을 때의 fallback입니다.
 
 `---` 아래 본문은 자유로운 마크다운입니다 (`## 개요`, `## 수행 과정`, `## 성과` 등).
-현장 개선 과제 4건은 `content/field-projects.json`에서 같은 방식으로 수정합니다.
+현장 개선 과제와 경력 상세는 `content/experience.json`의 해당 경험 항목에서 수정합니다.
+
+## 포트폴리오 내용 수정
+
+- 사진: `public/profile.webp` 추가 후 `content/profile.json`의 `photoSrc`를 `/profile.webp`로 설정
+- 이력서: `public/resume.pdf` 추가 후 `resumeHref`를 `/resume.pdf`로 설정
+- 경력·교육: `content/experience.json` 수정
+- 대표 성과: `content/profile.json`의 `metrics`, `impacts` 수정
+- 프로젝트 공개 제목·분류·대표 노출·아카이브 순서: `content/project-overrides.json` 수정
+- 상세 사례: `content/projects/*.md` 수정
+- GitHub 기본 정보: 저장소 설명·Topics 수정 후 Actions의 예약 실행 또는 수동 실행
+
+GitHub Pages는 정적 호스팅이므로 GitHub 기본 정보는 빌드 시 생성된 정적 파일에
+반영됩니다. GitHub 토큰은 Actions 실행 중에만 사용되며, GitHub API 호출에 실패하면
+마지막으로 유효한 캐시를 사용합니다.
 
 ### 스크린샷·GIF 추가
 
@@ -72,6 +97,44 @@ npm run dev     # 개발 서버 실행 → http://localhost:3000
 npm run build   # out/ 디렉터리에 정적 사이트 생성
 npx serve out   # 로컬에서 빌드 결과 미리보기
 ```
+
+## 최종 검증 기록 (2026-08-17)
+
+브라우저 엔진이 설치되지 않은 격리 실행 환경에서 검증했습니다. `npm run dev`는
+샌드박스의 네트워크 인터페이스 조회 제한(`uv_interface_addresses`) 때문에 로컬
+서버를 열지 못했습니다. 따라서 base path를 적용한 production export의 HTML과
+PostCSS로 파싱한 반응형 규칙을 함께 검사하고, 고정 폭 요소의 너비 예산을 각
+viewport에서 계산했습니다. 실제 브라우저의 픽셀 렌더링과 GitHub Pages 배포 확인은
+push 이후에 별도로 확인해야 합니다.
+
+| 너비 | 정적 layout 검증 결과 |
+| --- | --- |
+| 360px | 수평 넘침 방지 규칙 통과, 프로필 4:5, CTA grid와 `min-width: 0`, 성과 지표 2열, 경험 토글 독립 열, 아카이브 stacked card 확인 |
+| 768px | CTA 최대 3개 너비 `588px ≤ 660px`, 성과 지표 2열, 경험 토글 `auto` 열, 아카이브 row와 고정 폭 예산 `128px < 691px` 확인 |
+| 1440px | CTA 최대 3개 너비 `588px ≤ 720px`, 성과 지표 4열, 경험 토글 `auto` 열, 아카이브 고정 폭 예산 `280px < 1296px` 확인 |
+
+모바일 header의 IMPACT, PROJECTS, EXPERIENCE, CONTACT 링크 4개가 모두 생성되고
+문서상 마지막 링크만 남기던 CSS가 제거된 것도 확인했습니다. `Field Evidence`
+하위 섹션은 Task 5에서 제거되어 이전 heading-depth 지적은 현재 구조에 적용되지
+않습니다.
+
+실행 결과:
+
+```text
+HOME=/tmp NPM_CONFIG_CACHE=/tmp/npm-cache npm test
+PASS — 6 files, 18 tests
+
+HOME=/tmp NPM_CONFIG_CACHE=/tmp/npm-cache npm run lint
+PASS — ESLint errors 0
+
+HOME=/tmp NPM_CONFIG_CACHE=/tmp/npm-cache NEXT_PUBLIC_BASE_PATH=/career-portfolio-web npm run build
+PASS — Next.js static export, 12 pages generated
+```
+
+export 산출물에서 `/career-portfolio-web/` 홈, 내부 상세 경로
+`/career-portfolio-web/projects/ai-elite-bems/`, GitHub-only 아카이브 링크
+`https://github.com/kjw413/career-portfolio-web`를 검사했습니다. 내부 project 링크
+14개와 root-relative asset URL 전부가 `/career-portfolio-web/` prefix를 유지했습니다.
 
 ## 배포 (GitHub Pages)
 

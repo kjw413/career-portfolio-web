@@ -1,0 +1,53 @@
+[
+  {
+    "id": "binggrae",
+    "period": "2025 — PRESENT",
+    "organization": "BINGGRAE",
+    "role": "생산기술팀 · 제조 데이터 및 설비 개선",
+    "summary": "제조 데이터와 설비 개선 과제를 연결해 현장 업무의 실행력을 높입니다.",
+    "details": [
+      "5개 공장 에너지·생산 데이터 통합 및 AI 예측·진단·보고 서비스 구현",
+      "MIS 데이터 수집, 투자 실적 검증 등 반복 업무 자동화",
+      "PLC 2축 직교로봇: XG-5000과 서보 모듈로 홈–픽업–배치 시퀀스, 센서 인터록, 비상정지 로직 구현; 예지보전 통신 검증: 공압기 모터·변압기 통신 방식을 비교하고 UART 연결과 지연시간 단축 검증 지원",
+      "혼합기획팩 자동화 기획: 생산량·인원·사이클타임·다운타임·노무비를 구조화해 자동화 타당성 분석",
+      "유틸리티 원단위 관리: 전력·냉동·공압 사용량과 생산량의 관계를 해석해 일일·주간 Alert와 개선 우선순위 설계"
+    ],
+    "tags": ["Manufacturing", "Data", "Automation", "Utility"]
+  },
+  {
+    "id": "ai-elite",
+    "period": "2026",
+    "organization": "AI ELITE",
+    "role": "사내 AI 전문가 육성과정",
+    "summary": "제조 데이터 기반 서비스를 실무 워크플로로 구현한 사내 AI 전문가 과정입니다.",
+    "details": [
+      "6:1 경쟁률 선발 후 제조 데이터 기반 서비스 프로젝트 완성",
+      "예측 모델·LLM·웹 인터페이스를 하나의 실무 워크플로로 연결"
+    ],
+    "tags": ["AI", "Forecasting", "LLM", "Web"]
+  },
+  {
+    "id": "telechips-school",
+    "period": "2024",
+    "organization": "TELECHIPS EMBEDDED SCHOOL",
+    "role": "임베디드 시스템 개발 집중과정 · 1,000시간",
+    "summary": "Linux와 FreeRTOS 환경에서 인지·통신·제어 경로를 구현하고 검증했습니다.",
+    "details": [
+      "TOPST D3 환경 Linux·FreeRTOS 기반 SPI/CAN 통신 구현 및 검증",
+      "YOLOv5 적색 신호 인지와 임베디드 IPC 연계 프로젝트 수행"
+    ],
+    "tags": ["Embedded Linux", "FreeRTOS", "SPI", "CAN", "YOLOv5"]
+  },
+  {
+    "id": "inbody",
+    "period": "EARLY CAREER",
+    "organization": "INBODY",
+    "role": "CS 인턴 · 현장 기술지원",
+    "summary": "현장 정보와 기술 데이터를 함께 해석하며 문제 해결의 기초를 다졌습니다.",
+    "details": [
+      "측정 이력과 QC 리포트를 교차 검증해 간헐 이상 현상의 원인 후보 도출",
+      "고객 현장 정보와 기술 데이터를 함께 해석하며 문제 해결 관점 습득"
+    ],
+    "tags": ["Customer Support", "Quality Control", "Troubleshooting"]
+  }
+]

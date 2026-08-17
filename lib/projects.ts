@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
 import { marked } from "marked";
+import type { CatalogProject } from "./catalog";
 
 export type ProjectStatus = "ongoing" | "completed";
 
@@ -14,9 +15,9 @@ export type Media = {
 
 export type Project = {
   slug: string;
-  /** 한글 표시 제목 (featured 카드·상세 페이지) */
+  /** 상세 사례 제목. 카탈로그 override가 없을 때 표시 제목으로도 사용 */
   title: string;
-  /** GitHub 저장소명 그대로 (아카이브 목록 표시) */
+  /** GitHub·override·Markdown 상세 사례를 연결하는 저장소명 키 */
   repoName: string;
   category: string;
   /** featured 카드 상단 라벨 (예: "AI · DATA · WEB") */
@@ -31,9 +32,9 @@ export type Project = {
   github: string | null;
   visibility: string;
   status: ProjectStatus;
-  /** SELECTED WORK 노출 순서 (없으면 미노출) */
+  /** 카탈로그 override가 없을 때 사용하는 대표 노출 순서 */
   featured: number | null;
-  /** 아카이브 목록 정렬 순서 */
+  /** 카탈로그 override가 없을 때 사용하는 아카이브 정렬 순서 */
   order: number;
   /** 대표 이미지 — 카드 썸네일과 상세 페이지 상단에 사용 */
   cover: Media | null;
@@ -42,6 +43,11 @@ export type Project = {
   /** 마크다운 본문을 렌더링한 HTML */
   bodyHtml: string;
 };
+
+export type ProjectSummary = Omit<
+  Project,
+  "bodyHtml" | "cover" | "gallery" | "tags" | "intro" | "kind" | "period"
+>;
 
 const CONTENT_DIR = path.join(process.cwd(), "content", "projects");
 
@@ -165,14 +171,47 @@ export function getProjects(): Project[] {
     .sort((a, b) => a.order - b.order);
 }
 
+export function getProjectSummaries(): ProjectSummary[] {
+  return getProjects().map((project) => ({
+    slug: project.slug,
+    title: project.title,
+    repoName: project.repoName,
+    category: project.category,
+    summary: project.summary,
+    stack: project.stack,
+    github: project.github,
+    visibility: project.visibility,
+    status: project.status,
+    featured: project.featured,
+    order: project.order,
+  }));
+}
+
 export function getProject(slug: string): Project | null {
   return getProjects().find((project) => project.slug === slug) ?? null;
 }
 
-export function getFeaturedProjects(): Project[] {
-  return getProjects()
-    .filter((project) => project.featured !== null)
-    .sort((a, b) => (a.featured ?? 0) - (b.featured ?? 0));
+export function getFeaturedProjects(catalog: CatalogProject[]): Project[] {
+  const detailsByRepo = new Map(
+    getProjects().map((project) => [project.repoName, project]),
+  );
+
+  return catalog
+    .filter((project) => project.featured !== null && project.detailHref !== null)
+    .map((catalogProject): Project | null => {
+      const details = detailsByRepo.get(catalogProject.repoName);
+      if (!details) return null;
+
+      return {
+        ...details,
+        title: catalogProject.title,
+        category: catalogProject.category,
+        summary: catalogProject.summary,
+        featured: catalogProject.featured,
+        order: catalogProject.order,
+      };
+    })
+    .filter((project): project is Project => project !== null);
 }
 
 /** 아카이브 필터 목록: ALL + 데이터에 존재하는 카테고리 (order 순) */
