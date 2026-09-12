@@ -698,7 +698,8 @@ footer h2 { margin: 0; font-size: clamp(28px, 3.4vw, 46px); line-height: 1.25; l
 .hero-scene-frame {
   position: relative; aspect-ratio: 16 / 10; max-width: 100%;
   overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius);
-  background: var(--surface);
+  /* 바다. 살짝 푸르게 두어 흰 지도판이 떠 보이게 합니다. */
+  background: linear-gradient(180deg, color-mix(in srgb, var(--blue) 6%, var(--surface)), var(--surface));
 }
 .hero-scene-frame img {
   position: absolute; inset: 0; width: 100%; height: 100%;
@@ -712,6 +713,21 @@ footer h2 { margin: 0; font-size: clamp(28px, 3.4vw, 46px); line-height: 1.25; l
   margin-top: 14px; color: var(--muted); font-size: 13.5px;
   line-height: 1.7; word-break: keep-all;
 }
+.hero-scene figcaption p { margin: 0; }
+/* 범례. 지도 위의 표식이 무엇인지 글로 한 번 더 알려 줍니다. */
+.scene-legend {
+  list-style: none; margin: 0 0 8px; padding: 0;
+  display: flex; flex-wrap: wrap; gap: 4px 18px; color: var(--body);
+}
+.scene-legend li { display: inline-flex; align-items: center; gap: 7px; }
+.scene-legend .swatch { flex: none; width: 14px; height: 10px; border-radius: 2px; }
+.scene-legend .swatch-site { background: var(--blue); }
+.scene-legend .swatch-flow { width: 10px; border-radius: 50%; background: var(--cyan); }
+.scene-legend .swatch-band {
+  background: color-mix(in srgb, var(--blue) 32%, transparent);
+  box-shadow: inset 0 -2px 0 var(--blue);
+}
+.scene-links { display: flex; flex-wrap: wrap; gap: 8px 24px; }
 
 @media (max-width: 950px) {
   .scene-section { grid-template-columns: 1fr; padding-top: 72px; padding-bottom: 80px; }

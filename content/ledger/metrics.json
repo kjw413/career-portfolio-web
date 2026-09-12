@@ -172,8 +172,8 @@
     "value": 5,
     "unit": "개 공장",
     "label": "에너지 · 생산 데이터 통합 범위",
-    "condition": "남양주1 · 남양주2 · 김해 · 광주 · 논산",
-    "basis": "사용자 확정",
+    "condition": "남양주(1·2) · 김해 · 논산 · 광주(경기) · 경산",
+    "basis": "사용자 확정 2026-09-12 (대화)",
     "status": "확정",
     "cardIds": [
       "EXP-BG-ENERGY-WEB",
@@ -183,7 +183,12 @@
     "aliases": [
       "공장 수",
       "사업장 수"
-    ]
+    ],
+    "confirmedAt": "2026-09-12",
+    "deprecated": [
+      "남양주1 · 남양주2 · 김해 · 광주 · 논산"
+    ],
+    "notes": "다섯 사업장이다. 남양주는 1·2공장 두 단위로 데이터가 나뉘고, 광주는 경기도 광주다(광주광역시가 아니다). 2026-09-12 이전 표기(남양주1·남양주2·김해·광주·논산)에는 경산이 빠져 있었다."
   },
   "mis-rpa-daily-saving": {
     "display": "일 40분",
@@ -430,42 +435,51 @@
     "notes": "증빙 확인 전에는 정량 문구로 사용하지 않는다."
   },
   "scene-triangles": {
-    "display": "삼각형 2,107개",
-    "value": 2107,
+    "display": "삼각형 7,149개",
+    "value": 7149,
     "unit": "개",
     "label": "3D 장면 한 프레임의 삼각형 수",
-    "condition": "포스터와 같은 구도 · 예산 20,000개",
-    "basis": "빌드 산출물 계측 2026-09-12",
+    "condition": "지도판·공장·화면·펄스 포함, 포스터와 같은 구도 · 예산 20,000개",
+    "basis": "빌드 산출물 계측 2026-09-12 (지도 배치)",
     "status": "확정",
     "confirmedAt": "2026-09-12",
     "cardIds": [
       "EXP-PORTFOLIO-3D"
+    ],
+    "deprecated": [
+      "삼각형 2,107개"
     ]
   },
   "scene-drawcalls": {
-    "display": "draw call 27회",
-    "value": 27,
+    "display": "draw call 38회",
+    "value": 38,
     "unit": "회",
     "label": "3D 장면 한 프레임의 draw call 수",
-    "condition": "데이터 펄스 20개는 InstancedMesh 하나로 처리",
-    "basis": "빌드 산출물 계측 2026-09-12",
+    "condition": "데이터 펄스 30개는 InstancedMesh 하나, 공장 한 채는 지오메트리 하나로 처리",
+    "basis": "빌드 산출물 계측 2026-09-12 (지도 배치)",
     "status": "확정",
     "confirmedAt": "2026-09-12",
     "cardIds": [
       "EXP-PORTFOLIO-3D"
+    ],
+    "deprecated": [
+      "draw call 27회"
     ]
   },
   "scene-chunk-size": {
-    "display": "231 KB",
-    "value": 231,
+    "display": "235 KB",
+    "value": 235,
     "unit": "KB",
     "label": "3D 청크 크기 (gzip)",
-    "condition": "초기 로드에 포함되지 않는 지연 청크 · 예산 250KB",
-    "basis": "빌드 산출물 계측 2026-09-12",
+    "condition": "해안선 좌표 포함 · 초기 로드에 포함되지 않는 지연 청크 · 예산 250KB",
+    "basis": "빌드 산출물 계측 2026-09-12 (지도 배치)",
     "status": "확정",
     "confirmedAt": "2026-09-12",
     "cardIds": [
       "EXP-PORTFOLIO-3D"
+    ],
+    "deprecated": [
+      "231 KB"
     ]
   }
 }

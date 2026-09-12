@@ -29,16 +29,21 @@ function canRunScene(): boolean {
   }
 }
 
+export type LegendItem = { swatch: "site" | "flow" | "band"; text: string };
+
 export default function HeroSceneGate({
   plants,
   poster,
   posterDark,
   caption,
+  legend = [],
 }: {
   plants: string[];
   poster: string | null;
   posterDark: string | null;
   caption: string;
+  /** 그림 아래 범례. 지도 위의 표식이 무엇인지 글로 한 번 더 알려 줍니다. */
+  legend?: LegendItem[];
 }) {
   const [Scene, setScene] = useState<ComponentType<SceneProps> | null>(null);
   /** 한 번이라도 화면에 들어왔는가. 들어온 뒤에는 계속 붙여 둡니다. */
@@ -111,7 +116,19 @@ export default function HeroSceneGate({
           </div>
         )}
       </div>
-      <figcaption>{caption}</figcaption>
+      <figcaption>
+        {legend.length > 0 && (
+          <ul className="scene-legend" aria-label="장면 범례">
+            {legend.map((item) => (
+              <li key={item.text}>
+                <i className={`swatch swatch-${item.swatch}`} aria-hidden="true" />
+                {item.text}
+              </li>
+            ))}
+          </ul>
+        )}
+        <p>{caption}</p>
+      </figcaption>
     </figure>
   );
 }
