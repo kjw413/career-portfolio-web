@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 
@@ -18,7 +18,10 @@ const COPY_SOURCES = [
   "app/components/Hero.tsx",
   "app/components/ImpactGrid.tsx",
   "content/profile.json",
-  "content/experience.json",
+  // 경력·교육 문구는 이제 원장의 경험 카드에서 생성됩니다.
+  ...readdirSync(join(process.cwd(), "content/ledger/experiences"))
+    .filter((file) => file.endsWith(".md"))
+    .map((file) => `content/ledger/experiences/${file}`),
 ];
 
 /** 한 번 걷어낸 수사적 표현. 다시 들어오면 실패합니다. */
@@ -66,14 +69,21 @@ describe("글자 크기", () => {
   });
 
   it("작은 라벨을 Courier로 떨어지는 monospace로 렌더링하지 않는다", () => {
-    // 코드·저장소명 표기에만 monospace를 남깁니다.
-    const monospaceRules = [...css.matchAll(/^([^{@\n][^{]*)\{[^}]*monospace[^}]*\}/gm)]
-      .map((match) => match[1].trim());
+    // 코드·저장소명과 크게 보여 주는 수치에만 monospace를 남깁니다.
+    // `:root`는 토큰 정의라 화면에 적용되는 규칙이 아닙니다.
+    // 주석은 규칙이 아니므로 먼저 걷어냅니다. 토큰(`var(--mono)`)으로 쓰는 경우도 같이 잡습니다.
+    const rules = css.replace(/\/\*[\s\S]*?\*\//g, "");
+    const monospaceRules = [
+      ...rules.matchAll(/^([^{@\n][^{]*)\{[^}]*(?:monospace|var\(--mono\))[^}]*\}/gm),
+    ]
+      .map((match) => match[1].trim())
+      .filter((selector) => !selector.endsWith(":root"));
 
     expect(monospaceRules).toEqual([
       ".detail-repo",
       ".markdown-body code",
       ".markdown-body pre",
+      ".hero-metrics dt, .metric-evidence-list dt",
     ]);
   });
 });

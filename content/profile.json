@@ -1,7 +1,7 @@
 {
   "name": "김종우",
   "nameEn": "Jong Woo Kim",
-  "role": "전자전기공학 학사 · 제조 현장 2년차",
+  "role": "전자전기공학 학사 · 제조 현장 {{careerYear}}년차",
   "major": "전자전기공학",
   "summary": "빙그레 생산기술팀에서 5개 공장의 에너지·생산 데이터를 통합하고, 매일 반복되던 수집과 검토 업무를 자동화했습니다. 전자전기공학 전공과 1,000시간 임베디드 교육을 거쳐 설비와 제어까지 함께 다룹니다.",
   "photoSrc": null,
@@ -26,31 +26,11 @@
     "컴퓨터활용능력 1급",
     "OPIc IH (영어)"
   ],
-  "metrics": [
-    {
-      "id": "cycle-time",
-      "value": "40분 → 3분",
-      "label": "MIS 데이터 수집 1회 소요시간",
-      "evidence": "수작업 40분과 자동 실행 3분 비교"
-    },
-    {
-      "id": "saved-time",
-      "value": "월 15시간",
-      "label": "수집 자동화로 줄인 수작업 시간",
-      "evidence": "사내 업무 측정 기준 월 15시간"
-    },
-    {
-      "id": "forecast",
-      "value": "예측 오차 7%",
-      "label": "공장 에너지 사용량 예측 정확도",
-      "evidence": "전사 기준 MAPE 약 7% (전력·연료·용수)"
-    },
-    {
-      "id": "coverage",
-      "value": "5개 공장",
-      "label": "에너지·생산 데이터 통합 범위",
-      "evidence": "남양주1·남양주2·김해·광주·논산"
-    }
+  "headlineMetricIds": [
+    "mis-rpa-cycle",
+    "mis-rpa-daily-saving",
+    "forecast-mape-all",
+    "bems-plants"
   ],
   "impacts": [
     {
@@ -58,24 +38,27 @@
       "title": "반복 데이터 수집 자동화",
       "problem": "5개 공장의 MIS 데이터를 매일 사람이 화면에서 조회해 옮겨 적었습니다.",
       "action": "화면 수집, 검증, 표준 데이터셋 생성을 하나의 파이프라인으로 만들었습니다.",
-      "result": "1회 40분 → 3분, 월 15시간 절감",
-      "projectSlug": "ai-elite-mis-rpa"
+      "result": "1회 {{metric:mis-rpa-cycle}}, 본인 수집 시간 {{metric:mis-rpa-daily-saving}} 절감",
+      "projectSlug": "ai-elite-mis-rpa",
+      "cardId": "EXP-BG-DATA-RPA"
     },
     {
       "id": "bems",
       "title": "공장 에너지 데이터 통합",
       "problem": "공장별로 흩어진 에너지·생산 데이터를 수작업으로 취합해 보고했습니다.",
       "action": "수집·저장·예측·진단·보고를 하나의 사내 웹 서비스로 연결했습니다.",
-      "result": "5개 공장 통합, 예측 오차 7%",
-      "projectSlug": "ai-elite-bems"
+      "result": "{{metric:bems-plants}} 통합, 예측 오차 {{metric:forecast-mape-all}}",
+      "projectSlug": "ai-elite-bems",
+      "cardId": "EXP-BG-ENERGY-WEB"
     },
     {
       "id": "embedded",
       "title": "카메라 인지 결과를 제어까지 연결",
       "problem": "카메라가 인식한 결과를 실제 임베디드 제어로 전달해야 했습니다.",
-      "action": "YOLOv5 적색 신호 인지와 Linux·FreeRTOS 사이의 SPI/CAN 통신을 구현하고 검증했습니다.",
+      "action": "YOLOv5 적색 신호 인지를 구현하고, Linux·FreeRTOS 사이의 SPI와 CAN을 검증하다 보드 외부 통신 오류를 넘지 못해 제출 10일 전 UART로 전환했습니다.",
       "result": "인지 → 통신 → 제어 경로 동작 확인",
-      "projectSlug": "telechips-embedded-school-pmsa-project"
+      "projectSlug": "telechips-embedded-school-pmsa-project",
+      "cardId": "EXP-TELECHIPS-EMBEDDED"
     }
   ]
 }

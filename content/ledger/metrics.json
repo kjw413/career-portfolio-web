@@ -1,0 +1,471 @@
+{
+  "forecast-mape-all": {
+    "display": "MAPE 7.3%",
+    "value": 7.3,
+    "unit": "%",
+    "label": "에너지 사용량 예측 오차 (전 공장 · 전 에너지원 평균)",
+    "condition": "최근 6개월 · 중앙 추정(P50)과 실측의 오차",
+    "basis": "사용자 확정 2026-09-12",
+    "status": "확정",
+    "confirmedAt": "2026-09-12",
+    "cardIds": [
+      "EXP-BG-ENERGY-FORECAST",
+      "EXP-BG-ENERGY-WEB"
+    ],
+    "aliases": [
+      "예측 오차",
+      "예측 정확도",
+      "MAPE",
+      "평균 오차"
+    ],
+    "doNotConfuseWith": [
+      "forecast-mape-power"
+    ],
+    "deprecated": [
+      "전사 기준 MAPE 약 7%",
+      "평균 표준오차 약 5%",
+      "10% 이하",
+      "10%까지 개선"
+    ],
+    "notes": "7%는 전력 단독값이다. 전 에너지원 평균을 7%로 쓰지 않는다."
+  },
+  "forecast-mape-power": {
+    "display": "약 7%",
+    "value": 7,
+    "unit": "%",
+    "label": "전력 예측 오차",
+    "condition": "5개 공장 평균 · 최근 6개월",
+    "basis": "사용자 확정 2026-09-12",
+    "status": "확정",
+    "confirmedAt": "2026-09-12",
+    "cardIds": [
+      "EXP-BG-ENERGY-FORECAST"
+    ],
+    "aliases": [
+      "전력 오차"
+    ],
+    "doNotConfuseWith": [
+      "forecast-mape-all"
+    ],
+    "notes": "이 값만 떼어 전체 성과로 쓰지 않는다."
+  },
+  "forecast-mape-fuel": {
+    "display": "약 10%",
+    "value": 10,
+    "unit": "%",
+    "label": "연료 예측 오차",
+    "condition": "5개 공장 평균 · 최근 6개월",
+    "basis": "사용자 확정 2026-09-12",
+    "status": "확정",
+    "confirmedAt": "2026-09-12",
+    "cardIds": [
+      "EXP-BG-ENERGY-FORECAST"
+    ],
+    "aliases": [
+      "연료 오차"
+    ],
+    "notes": "10%는 연료·용수의 값이자 상한이다."
+  },
+  "forecast-mape-water": {
+    "display": "약 10%",
+    "value": 10,
+    "unit": "%",
+    "label": "용수 예측 오차",
+    "condition": "5개 공장 평균 · 최근 6개월",
+    "basis": "사용자 확정 2026-09-12",
+    "status": "확정",
+    "confirmedAt": "2026-09-12",
+    "cardIds": [
+      "EXP-BG-ENERGY-FORECAST"
+    ],
+    "aliases": [
+      "용수 오차"
+    ]
+  },
+  "forecast-mape-best": {
+    "display": "4.2%",
+    "value": 4.2,
+    "unit": "%",
+    "label": "예측 오차가 가장 낮은 사업장",
+    "condition": "특정 사업장 · 최근 6개월",
+    "basis": "사용자 확정 2026-09-12",
+    "status": "확정",
+    "confirmedAt": "2026-09-12",
+    "cardIds": [
+      "EXP-BG-ENERGY-FORECAST"
+    ]
+  },
+  "forecast-mape-baseline": {
+    "display": "약 30%",
+    "value": 30,
+    "unit": "%",
+    "label": "개선 전 초기 단일 모델 오차",
+    "condition": "단일 머신러닝 모델 기준",
+    "basis": "사용자 확정 2026-09-12",
+    "status": "확정",
+    "confirmedAt": "2026-09-12",
+    "cardIds": [
+      "EXP-BG-ENERGY-FORECAST"
+    ],
+    "notes": "개선 폭을 말할 때의 출발점. 30% → 7.3%."
+  },
+  "forecast-newline-fuel": {
+    "display": "15.49% → 9.85%",
+    "value": -5.63,
+    "unit": "%p",
+    "label": "신설 라인 사후 보정 후 연료 오차",
+    "condition": "김해 신설 라인 가동 구간 (2026-03-25~)",
+    "basis": "프로젝트 사례 기록 (포트폴리오 2026-08)",
+    "status": "확정",
+    "cardIds": [
+      "EXP-BG-ENERGY-FORECAST"
+    ]
+  },
+  "forecast-newline-power": {
+    "display": "7.56% → 5.84%",
+    "value": -1.72,
+    "unit": "%p",
+    "label": "신설 라인 사후 보정 후 전력 오차",
+    "condition": "김해 신설 라인 가동 구간",
+    "basis": "프로젝트 사례 기록 (포트폴리오 2026-08)",
+    "status": "확정",
+    "cardIds": [
+      "EXP-BG-ENERGY-FORECAST"
+    ]
+  },
+  "forecast-feature-funnel": {
+    "display": "후보 80개 → 최종 13개",
+    "label": "재공품 피처 선별 결과",
+    "condition": "잔차 상관 · ablation · 도메인 지식 3단계",
+    "basis": "프로젝트 사례 기록 (포트폴리오 2026-08)",
+    "status": "확정",
+    "cardIds": [
+      "EXP-BG-ENERGY-FORECAST"
+    ]
+  },
+  "bems-monthly-saving": {
+    "display": "월 4시간",
+    "value": 4,
+    "unit": "시간/월",
+    "label": "월간 에너지 실적 보고용 취합 업무 절감",
+    "condition": "담당자들의 취합 업무를 BEMS가 대체",
+    "basis": "사용자 확정 2026-09-11",
+    "status": "확정",
+    "confirmedAt": "2026-09-11",
+    "cardIds": [
+      "EXP-BG-ENERGY-WEB"
+    ],
+    "aliases": [
+      "에너지 취합",
+      "보고 취합"
+    ],
+    "doNotConfuseWith": [
+      "mis-rpa-daily-saving"
+    ],
+    "deprecated": [
+      "에너지 모니터링 업무 월 4시간"
+    ],
+    "notes": "MIS RPA의 일 40분과 합산하거나 교환하지 않는다. 에너지 비용 절감으로 바꾸지 않는다."
+  },
+  "bems-plants": {
+    "display": "5개 공장",
+    "value": 5,
+    "unit": "개 공장",
+    "label": "에너지 · 생산 데이터 통합 범위",
+    "condition": "남양주1 · 남양주2 · 김해 · 광주 · 논산",
+    "basis": "사용자 확정",
+    "status": "확정",
+    "cardIds": [
+      "EXP-BG-ENERGY-WEB",
+      "EXP-BG-ENERGY-FORECAST",
+      "EXP-BG-DATA-RPA"
+    ],
+    "aliases": [
+      "공장 수",
+      "사업장 수"
+    ]
+  },
+  "mis-rpa-daily-saving": {
+    "display": "일 40분",
+    "value": 40,
+    "unit": "분/일",
+    "label": "본인 데이터 수집 업무 시간 절감",
+    "condition": "생산 · 에너지 · 재공품 3종 수집 · 월 22일 기준 약 14.7시간",
+    "basis": "사용자 확정 2026-09-11",
+    "status": "확정",
+    "confirmedAt": "2026-09-11",
+    "cardIds": [
+      "EXP-BG-DATA-RPA"
+    ],
+    "aliases": [
+      "수집 자동화 절감",
+      "RPA 절감"
+    ],
+    "doNotConfuseWith": [
+      "bems-monthly-saving",
+      "invest-rpa-saving"
+    ],
+    "deprecated": [
+      "월 15시간",
+      "월 16시간",
+      "월 약 12.8시간",
+      "연 약 154시간"
+    ],
+    "notes": "절감 주체는 사용자 본인이다. 팀 전체 절감으로 확대하지 않는다."
+  },
+  "mis-rpa-cycle": {
+    "display": "40분 → 3분",
+    "label": "MIS 데이터 수집 1회 소요시간",
+    "condition": "3종 × 5개 공장 1회 수집",
+    "basis": "프로젝트 사례 기록",
+    "status": "확정",
+    "cardIds": [
+      "EXP-BG-DATA-RPA"
+    ],
+    "aliases": [
+      "1회 소요시간",
+      "처리 시간"
+    ]
+  },
+  "invest-rpa-saving": {
+    "display": "월 1시간",
+    "value": 1,
+    "unit": "시간/월",
+    "label": "투자품의 전산 등록 검토 업무 절감",
+    "basis": "사용자 확정",
+    "status": "확정",
+    "cardIds": [
+      "EXP-BG-INVEST-RPA"
+    ],
+    "doNotConfuseWith": [
+      "bems-monthly-saving",
+      "mis-rpa-daily-saving"
+    ]
+  },
+  "system-collab-count": {
+    "display": "2건",
+    "value": 2,
+    "unit": "건",
+    "label": "IT부서 협업으로 반영한 MIS · MES 개선",
+    "condition": "MIS 1건(광주공장 재공품 반영) + MES 1건(설비 스페어파트 관리 화면)",
+    "basis": "사용자 확정 2026-09-12",
+    "status": "확정",
+    "confirmedAt": "2026-09-12",
+    "cardIds": [
+      "EXP-BG-SYSTEM-COLLAB"
+    ],
+    "deprecated": [
+      "MIS 개선 테마 3건",
+      "개선 3건"
+    ],
+    "notes": "MIS와 MES를 뭉뚱그려 한쪽 이름으로 쓰지 않는다."
+  },
+  "mixedpack-line-ct": {
+    "display": "14.4초 → 12초",
+    "label": "혼합기획팩 라인 전체 Cycle Time",
+    "condition": "로봇 사양 기준 개선 후 산출값",
+    "basis": "사용자 확정 2026-09-12",
+    "status": "확정",
+    "confirmedAt": "2026-09-12",
+    "cardIds": [
+      "EXP-BG-MIXEDPACK"
+    ],
+    "aliases": [
+      "CT",
+      "사이클 타임"
+    ]
+  },
+  "mixedpack-stack-ct": {
+    "display": "14.4초 → 8.6초",
+    "label": "적재 공정 Cycle Time",
+    "condition": "개선 후 병목이 비닐포장 공정으로 이동",
+    "basis": "사용자 확정 2026-09-12",
+    "status": "확정",
+    "confirmedAt": "2026-09-12",
+    "cardIds": [
+      "EXP-BG-MIXEDPACK"
+    ]
+  },
+  "mixedpack-payback": {
+    "display": "약 1.7년",
+    "value": 1.7,
+    "unit": "년",
+    "label": "혼합기획팩 자동화 투자 회수기간",
+    "basis": "사용자 확정 2026-09-12",
+    "status": "확정",
+    "confirmedAt": "2026-09-12",
+    "cardIds": [
+      "EXP-BG-MIXEDPACK"
+    ],
+    "aliases": [
+      "회수기간",
+      "payback"
+    ]
+  },
+  "powerflow-iterations": {
+    "display": "4회 → 3회",
+    "label": "뉴턴-랩슨 반복 횟수",
+    "condition": "IEEE 9-bus 계통 50회 벤치마크",
+    "basis": "사용자 확정 2026-09-12",
+    "status": "확정",
+    "confirmedAt": "2026-09-12",
+    "cardIds": [
+      "EXP-UNIV-POWERFLOW"
+    ]
+  },
+  "powerflow-speedup": {
+    "display": "16% 단축",
+    "value": 16,
+    "unit": "%",
+    "label": "평균 수렴 시간 단축",
+    "condition": "IEEE 9-bus 계통 50회 벤치마크",
+    "basis": "사용자 확정 2026-09-12",
+    "status": "확정",
+    "confirmedAt": "2026-09-12",
+    "cardIds": [
+      "EXP-UNIV-POWERFLOW"
+    ]
+  },
+  "aielite-ratio": {
+    "display": "약 300명 중 50명 (약 6:1)",
+    "label": "사내 AI 전문가 육성과정 선발 규모",
+    "condition": "전사 지원자 기준",
+    "basis": "사용자 확정",
+    "status": "확정",
+    "cardIds": [
+      "EXP-BG-ENERGY-WEB"
+    ],
+    "aliases": [
+      "경쟁률",
+      "선발 규모"
+    ]
+  },
+  "telechips-hours": {
+    "display": "1,000시간",
+    "value": 1000,
+    "unit": "시간",
+    "label": "텔레칩스 임베디드 스쿨 1기 과정 시간",
+    "condition": "교육 4개월 + 팀 프로젝트 2개월",
+    "basis": "확정 (과정 공고)",
+    "status": "확정",
+    "cardIds": [
+      "EXP-TELECHIPS-EMBEDDED"
+    ]
+  },
+  "telechips-rank": {
+    "display": "5개 팀 중 3위",
+    "label": "임베디드 스쿨 최종 프로젝트 순위",
+    "condition": "수상에는 이르지 못함",
+    "basis": "사용자 확정 2026-09-12",
+    "status": "확정",
+    "confirmedAt": "2026-09-12",
+    "cardIds": [
+      "EXP-TELECHIPS-EMBEDDED"
+    ],
+    "notes": "순위만 쓰고 수상으로 바꾸지 않는다."
+  },
+  "telechips-latency": {
+    "display": "약 5초 지연 해결",
+    "label": "통합 테스트 동작 지연",
+    "condition": "레지스터 설정 조정으로 해소",
+    "basis": "사용자 확정 2026-09-12",
+    "status": "확정",
+    "confirmedAt": "2026-09-12",
+    "cardIds": [
+      "EXP-TELECHIPS-EMBEDDED"
+    ]
+  },
+  "telechips-vision": {
+    "display": "640×480 · 15fps",
+    "label": "적색 신호 인지 카메라 입력",
+    "basis": "프로젝트 사례 기록",
+    "status": "확정",
+    "cardIds": [
+      "EXP-TELECHIPS-EMBEDDED"
+    ]
+  },
+  "club-margin": {
+    "display": "계획 대비 약 30% 추가 마진",
+    "value": 30,
+    "unit": "%",
+    "label": "동아리 예산 개선 결과",
+    "condition": "계획한 행사 전부 진행",
+    "basis": "사용자 확정",
+    "status": "확정",
+    "cardIds": [
+      "EXP-CLUB-BUDGET"
+    ]
+  },
+  "universal-rpa-tests": {
+    "display": "217개 중 116개가 테스트 파일",
+    "label": "Universal RPA Studio 테스트 비중",
+    "condition": "전체 Python 소스 파일 기준",
+    "basis": "프로젝트 사례 기록",
+    "status": "확정",
+    "cardIds": []
+  },
+  "lag3-correlation": {
+    "display": "상관계수 95% 이상",
+    "value": 95,
+    "unit": "%",
+    "label": "판매실적과 날씨의 시차 상관",
+    "condition": "3일 시차(Lag 3) 적용",
+    "basis": "과거 지원서 기록",
+    "status": "부분확정",
+    "cardIds": [
+      "EXP-DATA-LAG3"
+    ],
+    "notes": "분석 대상 제품 · 데이터 기간 · 상관계수 종류가 미확정이다. 조건 없이 단독 인용하지 않는다."
+  },
+  "inbody-reversal-count": {
+    "display": "3회",
+    "value": 3,
+    "unit": "회",
+    "label": "측정값 역전 발생 횟수",
+    "basis": "기억에 의존한 기록",
+    "status": "미확정",
+    "cardIds": [
+      "EXP-INBODY-CLAIM"
+    ],
+    "notes": "증빙 확인 전에는 정량 문구로 사용하지 않는다."
+  },
+  "scene-triangles": {
+    "display": "삼각형 2,107개",
+    "value": 2107,
+    "unit": "개",
+    "label": "3D 장면 한 프레임의 삼각형 수",
+    "condition": "포스터와 같은 구도 · 예산 20,000개",
+    "basis": "빌드 산출물 계측 2026-09-12",
+    "status": "확정",
+    "confirmedAt": "2026-09-12",
+    "cardIds": [
+      "EXP-PORTFOLIO-3D"
+    ]
+  },
+  "scene-drawcalls": {
+    "display": "draw call 27회",
+    "value": 27,
+    "unit": "회",
+    "label": "3D 장면 한 프레임의 draw call 수",
+    "condition": "데이터 펄스 20개는 InstancedMesh 하나로 처리",
+    "basis": "빌드 산출물 계측 2026-09-12",
+    "status": "확정",
+    "confirmedAt": "2026-09-12",
+    "cardIds": [
+      "EXP-PORTFOLIO-3D"
+    ]
+  },
+  "scene-chunk-size": {
+    "display": "231 KB",
+    "value": 231,
+    "unit": "KB",
+    "label": "3D 청크 크기 (gzip)",
+    "condition": "초기 로드에 포함되지 않는 지연 청크 · 예산 250KB",
+    "basis": "빌드 산출물 계측 2026-09-12",
+    "status": "확정",
+    "confirmedAt": "2026-09-12",
+    "cardIds": [
+      "EXP-PORTFOLIO-3D"
+    ]
+  }
+}

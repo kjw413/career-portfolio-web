@@ -1,11 +1,11 @@
 import profileJson from "../content/profile.json";
-import experiencesJson from "../content/experience.json";
 import projectOverridesJson from "../content/project-overrides.json";
+import { fillMetrics } from "./ledger";
+import { careerYearOrdinal, completedMonths, formatMonths } from "./tenure";
 
-export type Metric = { id: string; value: string; label: string; evidence: string };
 export type Impact = {
   id: string; title: string; problem: string; action: string;
-  result: string; projectSlug: string | null;
+  result: string; projectSlug: string | null; cardId: string | null;
 };
 export type Education = {
   school: string; degree: string; period: string; detail: string;
@@ -19,11 +19,8 @@ export type Profile = {
   photoSrc: string | null; resumeHref: string | null;
   githubUrl: string; emailHref: string | null;
   education: Education; career: Career; certifications: string[];
-  metrics: Metric[]; impacts: Impact[];
-};
-export type Experience = {
-  id: string; period: string; organization: string; role: string;
-  summary: string; details: string[]; tags: string[];
+  /** 첫 화면에 띄울 수치. 값이 아니라 원장의 수치 ID를 적습니다. */
+  headlineMetricIds: string[]; impacts: Impact[];
 };
 export type ProjectOverride = {
   repoName: string; title?: string; summary?: string; category?: string;
@@ -74,7 +71,7 @@ function freezeProfile(profile: Profile): Profile {
     education: Object.freeze({ ...profile.education }),
     career: Object.freeze({ ...profile.career }),
     certifications: Object.freeze([...profile.certifications]) as string[],
-    metrics: Object.freeze(profile.metrics.map((metric) => Object.freeze({ ...metric }))) as Metric[],
+    headlineMetricIds: Object.freeze([...profile.headlineMetricIds]) as string[],
     impacts: Object.freeze(profile.impacts.map((impact) => Object.freeze({ ...impact }))) as Impact[],
   });
 }
@@ -106,16 +103,6 @@ function parseCareer(value: unknown): Career {
 
 function parseProfile(value: unknown): Profile {
   const profile = requireRecord(value, "profile");
-  const metrics = requireArray(profile.metrics, "profile.metrics").map((item, index) => {
-    const metric = requireRecord(item, `profile.metrics[${index}]`);
-    const evidence = requireString(metric.evidence, `profile.metrics[${index}].evidence`);
-    return {
-      id: requireString(metric.id, `profile.metrics[${index}].id`),
-      value: requireString(metric.value, `profile.metrics[${index}].value`),
-      label: requireString(metric.label, `profile.metrics[${index}].label`),
-      evidence,
-    };
-  });
   const impacts = requireArray(profile.impacts, "profile.impacts").map((item, index) => {
     const impact = requireRecord(item, `profile.impacts[${index}]`);
     return {
@@ -123,8 +110,10 @@ function parseProfile(value: unknown): Profile {
       title: requireString(impact.title, `profile.impacts[${index}].title`),
       problem: requireString(impact.problem, `profile.impacts[${index}].problem`),
       action: requireString(impact.action, `profile.impacts[${index}].action`),
-      result: requireString(impact.result, `profile.impacts[${index}].result`),
+      // 결과 문장의 수치는 원장에서 채웁니다. 여기에 숫자를 직접 적으면 다시 갈라집니다.
+      result: fillMetrics(requireString(impact.result, `profile.impacts[${index}].result`)),
       projectSlug: requireNullableString(impact.projectSlug, `profile.impacts[${index}].projectSlug`),
+      cardId: requireNullableString(impact.cardId ?? null, `profile.impacts[${index}].cardId`),
     };
   });
 
@@ -141,24 +130,9 @@ function parseProfile(value: unknown): Profile {
     education: parseEducation(profile.education),
     career: parseCareer(profile.career),
     certifications: requireStringArray(profile.certifications, "profile.certifications"),
-    metrics,
+    headlineMetricIds: requireStringArray(profile.headlineMetricIds, "profile.headlineMetricIds"),
     impacts,
   };
-}
-
-function parseExperiences(value: unknown): Experience[] {
-  return requireArray(value, "experiences").map((item, index) => {
-    const experience = requireRecord(item, `experiences[${index}]`);
-    return {
-      id: requireString(experience.id, `experiences[${index}].id`),
-      period: requireString(experience.period, `experiences[${index}].period`),
-      organization: requireString(experience.organization, `experiences[${index}].organization`),
-      role: requireString(experience.role, `experiences[${index}].role`),
-      summary: requireString(experience.summary, `experiences[${index}].summary`),
-      details: requireStringArray(experience.details, `experiences[${index}].details`),
-      tags: requireStringArray(experience.tags, `experiences[${index}].tags`),
-    };
-  });
 }
 
 function parseProjectOverrides(value: unknown): ProjectOverride[] {
@@ -190,19 +164,30 @@ function parseProjectOverrides(value: unknown): ProjectOverride[] {
 }
 
 const profile = parseProfile(profileJson);
-const experiences = parseExperiences(experiencesJson);
 const projectOverrides = parseProjectOverrides(projectOverridesJson);
 
-export function getProfile(): Profile {
-  return freezeProfile(profile);
+/**
+ * 소개 문구에 적어둔 `{{careerYear}}` 같은 토큰을 빌드 시점 기준 값으로 채웁니다.
+ * `2년차` 같은 숫자를 문장에 직접 적으면 해가 바뀔 때 조용히 틀린 값이 남습니다.
+ */
+function resolveProfileTokens(source: Profile, asOf: Date): Profile {
+  const tokens: Record<string, string> = {
+    careerYear: String(careerYearOrdinal(source.career.startDate, asOf)),
+    tenure: formatMonths(completedMonths(source.career.startDate, asOf)),
+  };
+  const fill = (text: string) =>
+    text.replace(/\{\{(\w+)\}\}/g, (token, key: string) => {
+      const value = tokens[key];
+      if (value === undefined) throw new Error(`unknown profile token: ${token}`);
+      return value;
+    });
+
+  return { ...source, role: fill(source.role), summary: fill(source.summary) };
 }
 
-export function getExperiences(): Experience[] {
-  return Object.freeze(experiences.map((experience) => Object.freeze({
-    ...experience,
-    details: Object.freeze([...experience.details]) as string[],
-    tags: Object.freeze([...experience.tags]) as string[],
-  }))) as Experience[];
+/** `asOf`는 테스트에서 시간을 고정하기 위한 것이고, 빌드에서는 오늘을 씁니다. */
+export function getProfile(asOf: Date = new Date()): Profile {
+  return freezeProfile(resolveProfileTokens(profile, asOf));
 }
 
 export function getProjectOverrides(): ProjectOverride[] {

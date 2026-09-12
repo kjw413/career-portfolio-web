@@ -1,68 +1,29 @@
 import Link from "next/link";
 import { getCatalogCategories, getProjectCatalog } from "../lib/catalog";
-import { getExperiences, getProfile } from "../lib/content";
-import { getFeaturedProjects, withBasePath } from "../lib/projects";
+import { getProfile } from "../lib/content";
+import skills from "../content/skills.json";
+import { getHeadlineMetrics, getMetric, getQualifications, getTimeline } from "../lib/ledger";
+import { getFeaturedProjects, publicAssetExists, withBasePath } from "../lib/projects";
 import Archive from "./archive";
-import ExperienceAccordion from "./components/ExperienceAccordion";
+import Timeline from "./components/Timeline";
 import Hero from "./components/Hero";
+import HeroSceneGate from "./components/hero-scene";
 import ImpactGrid from "./components/ImpactGrid";
-
-const capabilities = [
-  {
-    index: "A",
-    title: "데이터 · AI",
-    text: "설비와 생산 데이터를 정리하고, 예측 모델과 LLM을 붙여 보고서까지 자동으로 만듭니다.",
-    skills: ["Python", "SQL", "시계열 예측", "이상 감지", "LangChain", "LLM API"],
-  },
-  {
-    index: "B",
-    title: "소프트웨어 · 자동화",
-    text: "반복 업무의 입력부터 검증, 보고까지를 프로그램으로 만들어 현업이 직접 쓰게 합니다.",
-    skills: ["Streamlit", "RPA", "MySQL", "Tkinter", "Git", "엑셀 자동화"],
-  },
-  {
-    index: "C",
-    title: "임베디드 · 제어",
-    text: "Linux와 MCU 환경에서 통신과 제어 로직을 구현하고 동작을 검증합니다.",
-    skills: ["C/C++", "Linux", "FreeRTOS", "CAN", "SPI", "OpenCV", "PLC"],
-  },
-  {
-    index: "D",
-    title: "제조 도메인",
-    text: "생산·유틸리티·설비에서 일어나는 현상을 데이터로 옮기고 개선 과제로 정리합니다.",
-    skills: ["에너지", "유틸리티", "냉동", "생산관리", "투자 타당성", "공정 개선"],
-  },
-];
-
-const qualifications = [
-  {
-    label: "학력",
-    title: "홍익대학교 전자전기공학부 학사",
-    detail: "2018.03 입학 · 2024.02 졸업 · 학점 3.50 / 4.50 (이수 136학점)",
-  },
-  {
-    label: "자격증",
-    title: "ADsP · 컴퓨터활용능력 1급",
-    detail: "데이터분석 준전문가 2026.03 취득 · 컴퓨터활용능력 1급 2021.09 취득",
-  },
-  {
-    label: "어학",
-    title: "OPIc 영어 IH",
-    detail: "2025.08 응시 · Intermediate High",
-  },
-  {
-    label: "병역",
-    title: "육군 병장 만기제대",
-    detail: "2019.01 입대 · 2020.08 전역",
-  },
-];
 
 export default function Home() {
   const profile = getProfile();
-  const experiences = getExperiences();
+  const timeline = getTimeline();
   const catalog = getProjectCatalog();
   const featured = getFeaturedProjects(catalog);
   const filters = ["ALL", ...getCatalogCategories()];
+  const qualifications = getQualifications();
+  // 장면에 세우는 공장 이름도 원장에서 읽습니다. 화면과 사실이 갈라지지 않게.
+  const plants = (getMetric("bems-plants").condition ?? "")
+    .split("·")
+    .map((name) => name.trim())
+    .filter(Boolean);
+  const posterFor = (file: string) =>
+    publicAssetExists(file) ? withBasePath(file) : null;
 
   return (
     <main>
@@ -74,11 +35,36 @@ export default function Home() {
           <a href="#impact">주요 성과</a>
           <a href="#projects">프로젝트</a>
           <a href="#experience">경력</a>
+          <Link href="/experience/">경험 카드</Link>
           <a href="#contact">연락처</a>
         </nav>
       </header>
 
-      <Hero profile={profile} />
+      <Hero profile={profile} metrics={getHeadlineMetrics(profile.headlineMetricIds)} />
+
+      <section className="scene-section" aria-labelledby="scene-heading">
+        <div className="scene-intro">
+          <p className="section-index">시스템 한눈에 보기</p>
+          <h2 id="scene-heading">
+            5개 공장의 데이터가 한 곳으로 모이고,
+            <br />그 위에서 예측 구간이 실측과 함께 흐릅니다.
+          </h2>
+          <p>
+            사내 BEMS 대시보드가 실제로 보여 주는 것을 그대로 옮긴 장면입니다. 입사 후
+            포부로 적은 3D 원격 모니터링을 말로만 두지 않으려고, 같은 기술로 직접 만들어
+            두었습니다.
+          </p>
+          <Link className="section-link" href="/experience/EXP-PORTFOLIO-3D/">
+            이 장면을 어떻게 만들었는지 →
+          </Link>
+        </div>
+        <HeroSceneGate
+          plants={plants}
+          poster={posterFor("/hero-poster.webp")}
+          posterDark={posterFor("/hero-poster-dark.webp")}
+          caption={`${plants.join(" · ")} 다섯 공장에서 전력·연료·용수 데이터가 중앙 시스템으로 모이고, 그 위로 예측 구간과 실측선이 함께 흐르는 장면`}
+        />
+      </section>
 
       <section className="impact-section" id="impact">
         <div className="section-heading">
@@ -141,9 +127,15 @@ export default function Home() {
             <p className="section-index">03</p>
             <h2>경력 · 교육</h2>
           </div>
-          <p>재직 중인 회사와 이수한 교육 과정입니다.</p>
+          <p>
+            재직 중인 회사와 이수한 교육 과정입니다.
+            <br />
+            <Link className="section-link" href="/experience/">
+              경험별 수치와 근거 보기 →
+            </Link>
+          </p>
         </div>
-        <ExperienceAccordion items={experiences} />
+        <Timeline entries={timeline} />
       </section>
 
       <section className="capability-section" id="profile">
@@ -155,7 +147,7 @@ export default function Home() {
           <p>실제 프로젝트와 업무에서 사용한 기술입니다.</p>
         </div>
         <div className="capability-grid">
-          {capabilities.map((capability) => (
+          {skills.map((capability) => (
             <article className="capability-card" key={capability.index}>
               <div className="capability-index">{capability.index}</div>
               <h3>{capability.title}</h3>

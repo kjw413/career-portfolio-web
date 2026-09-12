@@ -1,8 +1,18 @@
+import Link from "next/link";
 import type { Profile } from "../../lib/content";
+import type { Metric } from "../../lib/ledger";
 import { withBasePath } from "../../lib/projects";
 import { formatCareerPeriod } from "../../lib/tenure";
 
-export default function Hero({ profile }: { profile: Profile }) {
+export type HeadlineMetric = Metric & { id: string; cardId: string | null };
+
+export default function Hero({
+  profile,
+  metrics,
+}: {
+  profile: Profile;
+  metrics: HeadlineMetric[];
+}) {
   const email = profile.emailHref?.replace(/^mailto:/, "") ?? null;
   const githubLabel = profile.githubUrl.replace(/^https?:\/\/(www\.)?/, "");
   const careerPeriod = formatCareerPeriod(profile.career, new Date());
@@ -92,12 +102,21 @@ export default function Hero({ profile }: { profile: Profile }) {
             GitHub
           </a>
         </div>
+        {/*
+          수치는 값만 두지 않고 산출 조건을 함께 보여 줍니다. `7%`처럼 조건을 뗀 숫자가
+          지원서로 옮겨 가면서 뜻이 달라지는 일을 막기 위한 것입니다.
+        */}
         <dl className="hero-metrics">
-          {profile.metrics.map((metric) => (
+          {metrics.map((metric) => (
             <div key={metric.id}>
-              <dt>{metric.value}</dt>
+              <dt>{metric.display}</dt>
               <dd>{metric.label}</dd>
-              <dd className="metric-evidence">{metric.evidence}</dd>
+              {metric.condition && <dd className="metric-evidence">{metric.condition}</dd>}
+              {metric.cardId && (
+                <dd className="metric-source">
+                  <Link href={`/experience/${metric.cardId}/`}>근거 보기 →</Link>
+                </dd>
+              )}
             </div>
           ))}
         </dl>

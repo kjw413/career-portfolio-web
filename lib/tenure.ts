@@ -26,6 +26,15 @@ export function formatMonths(months: number): string {
   return `${years}년 ${remainder}개월`;
 }
 
+/**
+ * 한국에서 쓰는 `N년차` 표기. 입사한 해가 1년차이고, 해가 바뀔 때마다 하나씩 늘어납니다.
+ * 문장에 숫자를 박아두면 해가 바뀔 때 사실과 어긋나므로 빌드 시점에 계산합니다.
+ */
+export function careerYearOrdinal(startDate: string, asOf: Date): number {
+  const { year } = parseDate(startDate, "startDate");
+  return Math.max(asOf.getFullYear() - year + 1, 1);
+}
+
 /** `2024-12-23` → `2024.12` */
 export function formatYearMonth(date: string): string {
   const { year, month } = parseDate(date, "date");
