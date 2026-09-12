@@ -9,7 +9,7 @@
 
 import { useEffect, useRef, useState, type ComponentType } from "react";
 
-type SceneProps = { plants: string[] };
+type SceneProps = { plants: string[]; active: boolean };
 
 function canRunScene(): boolean {
   // matchMedia가 없는 환경(오래된 브라우저, 테스트 DOM)에서는 켜지 않습니다.
@@ -41,6 +41,9 @@ export default function HeroSceneGate({
   caption: string;
 }) {
   const [Scene, setScene] = useState<ComponentType<SceneProps> | null>(null);
+  /** 한 번이라도 화면에 들어왔는가. 들어온 뒤에는 계속 붙여 둡니다. */
+  const [seen, setSeen] = useState(false);
+  /** 지금 화면에 있는가. 렌더 루프를 돌릴지 정합니다. */
   const [visible, setVisible] = useState(false);
   const frame = useRef<HTMLDivElement>(null);
 
@@ -72,13 +75,20 @@ export default function HeroSceneGate({
     };
   }, []);
 
-  // 화면 밖으로 나가면 렌더 루프를 멈춥니다.
+  /*
+   * 화면 밖에서는 렌더 루프만 멈추고 캔버스는 그대로 둡니다.
+   * 통째로 떼면 스크롤할 때마다 WebGL 컨텍스트를 다시 만들게 되는데,
+   * 그 비용이 루프를 재우는 것보다 훨씬 큽니다.
+   */
   useEffect(() => {
     const node = frame.current;
     if (!node || !Scene) return;
 
     const observer = new IntersectionObserver(
-      ([entry]) => setVisible(entry.isIntersecting),
+      ([entry]) => {
+        setVisible(entry.isIntersecting);
+        if (entry.isIntersecting) setSeen(true);
+      },
       { rootMargin: "120px" },
     );
     observer.observe(node);
@@ -95,9 +105,9 @@ export default function HeroSceneGate({
             <img src={poster} alt={caption} loading="lazy" decoding="async" />
           </picture>
         )}
-        {Scene && (
+        {Scene && seen && (
           <div className={`hero-scene-canvas${visible ? " is-live" : ""}`}>
-            {visible && <Scene plants={plants} />}
+            <Scene plants={plants} active={visible} />
           </div>
         )}
       </div>

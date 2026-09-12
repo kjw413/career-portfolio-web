@@ -19,7 +19,18 @@
  */
 
 const SOURCE_URL = "https://kjw413.github.io/career-portfolio-web/ai/ledger.md";
-const TARGET_FILE_ID = "PUT_YOUR_DRIVE_FILE_ID_HERE";
+
+/*
+ * 지금 값은 드라이브의 `지원서_마스터이력_김종우_v1.2.md` 입니다.
+ *
+ * 이 ID로 두면 첫 실행에서 그 문서의 내용이 저장소에서 생성된 원장으로 바뀝니다.
+ * v1.2의 내용은 이미 content/ledger/ 로 옮겨져 있으므로 사라지는 사실은 없고,
+ * 드라이브의 버전 기록(파일 우클릭 → 버전 기록)으로 언제든 되돌릴 수 있습니다.
+ *
+ * 원본을 그대로 두고 싶으면, 드라이브에 빈 문서를 하나 만들고 그 ID를 여기 넣으세요.
+ * 파일 ID는 문서를 열었을 때 주소창의 /d/ 와 /view 사이 문자열입니다.
+ */
+const TARGET_FILE_ID = "1G258F_3-ERP_1YHzIacxvrKLKplJl4jC";
 
 function syncLedger() {
   const response = UrlFetchApp.fetch(SOURCE_URL, { muteHttpExceptions: true });
