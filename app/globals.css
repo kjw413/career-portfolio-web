@@ -679,7 +679,7 @@ footer h2 { margin: 0; font-size: clamp(28px, 3.4vw, 46px); line-height: 1.25; l
  * 크게 보여 주는 수치에만 고정폭을 씁니다. 12.5px 라벨까지 monospace로 두면
  * 글꼴이 없는 환경에서 Courier로 떨어져 오히려 읽기 나빠집니다.
  */
-.hero-metrics dt, .metric-evidence-list dt {
+.hero-metrics dt, .metric-evidence-list dt, .scene-facts dt {
   font-family: var(--mono); font-variant-numeric: tabular-nums; letter-spacing: -.02em;
 }
 
@@ -710,8 +710,9 @@ footer h2 { margin: 0; font-size: clamp(28px, 3.4vw, 46px); line-height: 1.25; l
 }
 .hero-scene-frame img {
   position: absolute; inset: 0; width: 100%; height: 100%;
-  object-fit: cover; display: block;
+  object-fit: cover; display: block; transition: opacity .6s ease;
 }
+.hero-scene-frame.has-live img { opacity: 0; }
 .hero-scene-canvas {
   position: absolute; inset: 0; opacity: 0; transition: opacity .6s ease;
 }
@@ -720,21 +721,19 @@ footer h2 { margin: 0; font-size: clamp(28px, 3.4vw, 46px); line-height: 1.25; l
   margin-top: 14px; color: var(--muted); font-size: 13.5px;
   line-height: 1.7; word-break: keep-all;
 }
-.hero-scene figcaption p { margin: 0; }
-/* 범례. 지도 위의 표식이 무엇인지 글로 한 번 더 알려 줍니다. */
-.scene-legend {
-  list-style: none; margin: 0 0 8px; padding: 0;
-  display: flex; flex-wrap: wrap; gap: 4px 18px; color: var(--body);
+/* 장면 옆 수치. 값은 원장에서 오고, 조건을 떼지 않습니다. */
+.scene-facts {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px;
+  margin: 26px 0 0; padding: 1px; background: var(--line);
+  border-radius: var(--radius); overflow: hidden;
 }
-.scene-legend li { display: inline-flex; align-items: center; gap: 7px; }
-.scene-legend .swatch { flex: none; width: 14px; height: 10px; border-radius: 2px; }
-.scene-legend .swatch-site { background: var(--blue); }
-.scene-legend .swatch-flow { width: 10px; border-radius: 50%; background: var(--cyan); }
-.scene-legend .swatch-band {
-  background: color-mix(in srgb, var(--blue) 32%, transparent);
-  box-shadow: inset 0 -2px 0 var(--blue);
-}
+.scene-facts > div { min-width: 0; padding: 16px 18px; background: var(--surface); }
+.scene-facts dt { color: var(--blue-dark); font-size: clamp(19px, 1.6vw, 23px); font-weight: 800; }
+.scene-facts dd { margin: 6px 0 0; color: var(--ink); font-size: 13.5px; line-height: 1.5; word-break: keep-all; }
+.scene-facts dd small { display: block; margin-top: 4px; color: var(--muted); font-size: 12.5px; line-height: 1.5; }
+.scene-intro .scene-role { margin-top: 18px; font-size: 14px; color: var(--muted); }
 .scene-links { display: flex; flex-wrap: wrap; gap: 8px 24px; }
+@media (max-width: 950px) { .scene-facts { grid-template-columns: 1fr; } }
 
 @media (max-width: 950px) {
   .scene-section { grid-template-columns: 1fr; padding-top: 72px; padding-bottom: 80px; }
