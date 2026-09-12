@@ -9,7 +9,7 @@ import HeroSceneGate from "./index";
  */
 
 const props = {
-  plants: ["남양주1", "남양주2", "김해", "광주", "논산"],
+  plants: ["남양주(1·2)", "김해", "논산", "광주(경기)", "경산"],
   poster: "/hero-poster.webp",
   posterDark: "/hero-poster-dark.webp",
   caption: "다섯 공장에서 데이터가 중앙 시스템으로 모이는 장면",

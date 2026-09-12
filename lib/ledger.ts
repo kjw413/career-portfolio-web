@@ -162,6 +162,17 @@ export function getMetric(id: string): Metric {
   return metric;
 }
 
+/**
+ * `bems-plants`의 조건에 적힌 사업장 이름. 장면·이름표·캡션이 원장과 같은 이름을 쓰게 합니다.
+ * 구분자는 앞뒤에 공백이 있는 가운뎃점입니다. "남양주(1·2)"처럼 이름 안의 가운뎃점은 나누지 않습니다.
+ */
+export function getPlantNames(): string[] {
+  return (getMetric("bems-plants").condition ?? "")
+    .split(/\s·\s/u)
+    .map((name) => name.trim())
+    .filter(Boolean);
+}
+
 /** 사이트에 노출하기로 한 카드만 돌려줍니다. */
 export function getPublicCards(): ExperienceCard[] {
   return cards.filter((card) => card.publicOnSite);

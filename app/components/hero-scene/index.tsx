@@ -9,7 +9,8 @@
 
 import { useEffect, useRef, useState, type ComponentType } from "react";
 
-type SceneProps = { plants: string[]; active: boolean };
+type SceneMetric = { display: string; condition?: string };
+type SceneProps = { plants: string[]; active: boolean; metric?: SceneMetric };
 
 function canRunScene(): boolean {
   // matchMedia가 없는 환경(오래된 브라우저, 테스트 DOM)에서는 켜지 않습니다.
@@ -29,16 +30,24 @@ function canRunScene(): boolean {
   }
 }
 
+export type LegendItem = { swatch: "site" | "flow" | "band"; text: string };
+
 export default function HeroSceneGate({
   plants,
   poster,
   posterDark,
   caption,
+  legend = [],
+  metric,
 }: {
   plants: string[];
   poster: string | null;
   posterDark: string | null;
   caption: string;
+  /** 장면의 패널에 적을 예측 오차. 원장에서 옵니다. */
+  metric?: SceneMetric;
+  /** 그림 아래 범례. 지도 위의 표식이 무엇인지 글로 한 번 더 알려 줍니다. */
+  legend?: LegendItem[];
 }) {
   const [Scene, setScene] = useState<ComponentType<SceneProps> | null>(null);
   /** 한 번이라도 화면에 들어왔는가. 들어온 뒤에는 계속 붙여 둡니다. */
@@ -107,11 +116,23 @@ export default function HeroSceneGate({
         )}
         {Scene && seen && (
           <div className={`hero-scene-canvas${visible ? " is-live" : ""}`}>
-            <Scene plants={plants} active={visible} />
+            <Scene plants={plants} active={visible} metric={metric} />
           </div>
         )}
       </div>
-      <figcaption>{caption}</figcaption>
+      <figcaption>
+        {legend.length > 0 && (
+          <ul className="scene-legend" aria-label="장면 범례">
+            {legend.map((item) => (
+              <li key={item.text}>
+                <i className={`swatch swatch-${item.swatch}`} aria-hidden="true" />
+                {item.text}
+              </li>
+            ))}
+          </ul>
+        )}
+        <p>{caption}</p>
+      </figcaption>
     </figure>
   );
 }
