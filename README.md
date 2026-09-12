@@ -36,6 +36,10 @@ npm run lint:claims -- --file 초안.txt --job "제조 AI·데이터" --date 202
 지원일 기준 재직기간을 잡습니다. 드라이브 연동은
 [`scripts/drive/README.md`](scripts/drive/README.md)를 보세요.
 
+자기소개서를 쓸 때는 Claude에게 `/cover-letter-ledger` 스킬을 쓰게 하면 원장에서만
+인용하고 결과물에 근거표를 붙입니다
+([`.claude/skills/cover-letter-ledger/SKILL.md`](.claude/skills/cover-letter-ledger/SKILL.md)).
+
 ## 기술 스택
 
 - [Next.js 16](https://nextjs.org/) — App Router + 정적 내보내기(`output: "export"`)

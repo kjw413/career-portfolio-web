@@ -124,6 +124,14 @@ function checkNumbers(text, ledger, findings) {
       });
       continue;
     }
+    /*
+     * 합계와 내역을 함께 쓰는 수치가 있습니다. system-collab-count 는 "2건"이지만
+     * 조건에 "MIS 1건 + MES 1건"이 들어 있고, 그렇게 나눠 쓰는 것이 권장 표기입니다.
+     * 원장이 스스로 적어 둔 내역과 같은 값이면 어긋난 것이 아닙니다.
+     */
+    const breakdown = `${best.metric.display} ${best.metric.condition ?? ""}`;
+    if (breakdown.includes(quote.replace(/\s+/g, "")) || breakdown.includes(quote)) continue;
+
     if (registered !== null && Math.abs(registered - written) > 0.001) {
       findings.push({
         level: "error",

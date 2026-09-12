@@ -98,6 +98,16 @@ describe("자기소개서 검사기", () => {
     expect(used).not.toContain("EXP-BG-SAMPLING-RPA");
   });
 
+  it("원장이 스스로 적어 둔 내역 표기는 불일치로 보지 않는다", () => {
+    // system-collab-count 는 "2건"이지만 조건이 "MIS 1건 + MES 1건"이고, 그렇게 나눠 쓰는 것이 권장 표기다.
+    const result = lintCoverLetter(
+      "현업 요구를 IT부서에 전달해 MIS 1건과 MES 1건을 반영했습니다.",
+      options,
+    );
+
+    expect(result.findings.filter((finding) => finding.kind === "수치 불일치")).toEqual([]);
+  });
+
   it("모르는 직무군을 조용히 넘기지 않는다", () => {
     const result = lintCoverLetter(CLEAN_DRAFT, { job: "없는직무", submittedAt: "2026-09-12" });
 
