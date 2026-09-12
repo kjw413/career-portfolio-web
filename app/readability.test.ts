@@ -87,3 +87,29 @@ describe("글자 크기", () => {
     ]);
   });
 });
+
+describe("웹폰트", () => {
+  const layout = read("app/layout.tsx");
+  const stylesheet = read("app/globals.css");
+
+  it("글꼴 때문에 첫 화면이 비어 있지 않게 한다", () => {
+    // 렌더를 막는 stylesheet로 두면 CDN이 3초 늦을 때 첫 페인트도 3초 늦습니다.
+    const links = [...layout.matchAll(/<link\b[^>]*rel="stylesheet"[^>]*\/>/gs)].map((m) => m[0]);
+
+    expect(links.length).toBeGreaterThan(0);
+    for (const link of links) {
+      expect(link).toContain('media="print"');
+      expect(link).toContain("data-webfont");
+    }
+    // 다 받은 뒤 실제로 적용하는 코드가 함께 있어야 합니다.
+    expect(layout).toContain("link[data-webfont]");
+    expect(layout).toContain("media = 'all'");
+  });
+
+  it("글꼴을 못 받아도 한글이 시스템 글꼴로 남는다", () => {
+    const fontFamily = /body\s*\{[^}]*font-family:\s*([^;]+);/s.exec(stylesheet)?.[1] ?? "";
+
+    expect(fontFamily).toContain("Apple SD Gothic Neo");
+    expect(fontFamily).toContain("Malgun Gothic");
+  });
+});

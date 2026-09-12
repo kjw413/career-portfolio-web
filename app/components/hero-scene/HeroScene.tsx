@@ -15,9 +15,10 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 
-const PULSES_PER_PLANT = 4;
-/** 전력 · 연료 · 용수. 대시보드에서 쓰는 색 구분을 그대로 씁니다. */
-const STREAM_OFFSETS = [-0.2, -0.07, 0.07, 0.2];
+/** 전력 · 연료 · 용수. 공장마다 이 세 줄기가 허브로 흐릅니다. */
+const STREAM_OFFSETS = [-0.19, 0, 0.19];
+/** 한 줄기에 알갱이 두 개를 시차를 두고 띄워, 흐름이 끊겨 보이지 않게 합니다. */
+const PULSES_PER_STREAM = 2;
 
 type Palette = {
   line: string;
@@ -151,6 +152,7 @@ function DataPulses({
   const meshRef = useRef<THREE.InstancedMesh>(null);
   const dummy = useMemo(() => new THREE.Object3D(), []);
 
+  /** 공장 5곳 × 에너지 3종 = 곡선 15개. 각 곡선 위를 알갱이 두 개가 지나갑니다. */
   const curves = useMemo(
     () =>
       plants.flatMap((plant) =>
@@ -165,15 +167,20 @@ function DataPulses({
       ),
     [plants],
   );
+  const pulseCount = curves.length * PULSES_PER_STREAM;
 
   useFrame(({ clock }) => {
     const mesh = meshRef.current;
     if (!mesh) return;
 
-    for (let index = 0; index < curves.length; index += 1) {
-      const offset = (index % PULSES_PER_PLANT) * 0.33 + Math.floor(index / PULSES_PER_PLANT) * 0.11;
-      const t = (clock.elapsedTime * 0.22 + offset) % 1;
-      curves[index].getPointAt(t, dummy.position);
+    for (let index = 0; index < pulseCount; index += 1) {
+      /*
+       * 알갱이를 곡선에 번갈아 배치하고 위상을 전체에 고르게 나눕니다. 이렇게 하면
+       * 한 곡선 위의 두 알갱이가 정확히 반 주기 떨어져, 흐름이 끊기지도 몰리지도 않습니다.
+       */
+      const curve = curves[index % curves.length];
+      const t = (clock.elapsedTime * 0.22 + index / pulseCount) % 1;
+      curve.getPointAt(t, dummy.position);
       // 허브에 가까워질수록 작아져, 모여서 하나로 들어가는 것으로 읽히게 합니다.
       const scale = 0.115 * (1 - t * 0.4);
       dummy.scale.setScalar(scale);
@@ -184,7 +191,7 @@ function DataPulses({
   });
 
   return (
-    <instancedMesh ref={meshRef} args={[undefined, undefined, curves.length]}>
+    <instancedMesh ref={meshRef} args={[undefined, undefined, pulseCount]}>
       <sphereGeometry args={[1, 8, 6]} />
       <meshStandardMaterial
         color={palette.cyan}
@@ -295,8 +302,11 @@ function SceneStats() {
   const frames = useRef(0);
 
   useFrame(() => {
-    // 첫 프레임에는 draw call이 아직 0이라, 몇 프레임 돌린 뒤에 잽니다.
     frames.current += 1;
+    const store = window as Window & { __heroSceneStats?: { frames?: number } };
+    if (store.__heroSceneStats) store.__heroSceneStats.frames = frames.current;
+
+    // 첫 프레임에는 draw call이 아직 0이라, 몇 프레임 돌린 뒤에 잽니다.
     if (frames.current !== 5) return;
 
     let triangles = 0;
@@ -316,6 +326,7 @@ function SceneStats() {
       triangles: Math.round(triangles),
       meshes,
       drawCalls: gl.info.render.calls,
+      frames: frames.current,
     };
   });
 
@@ -336,7 +347,13 @@ function ParallaxRig({ children }: { children: React.ReactNode }) {
   return <group ref={group}>{children}</group>;
 }
 
-export default function HeroScene({ plants }: { plants: string[] }) {
+export default function HeroScene({
+  plants,
+  active,
+}: {
+  plants: string[];
+  active: boolean;
+}) {
   /*
    * 이 컴포넌트는 브라우저에서만 불러오므로 첫 렌더에서 바로 토큰을 읽습니다.
    * effect에서 setState로 채우면 렌더가 한 번 더 돌고, 그 사이에 색 없는 장면이 그려집니다.
@@ -360,6 +377,8 @@ export default function HeroScene({ plants }: { plants: string[] }) {
   return (
     <Canvas
       camera={{ position: [0, 3.9, 11.2], fov: 30 }}
+      /* 화면 밖에서는 루프를 재웁니다. 마지막 프레임은 캔버스에 그대로 남습니다. */
+      frameloop={active ? "always" : "never"}
       dpr={[1, 1.75]}
       gl={{ antialias: true, alpha: true }}
       style={{ width: "100%", height: "100%" }}
