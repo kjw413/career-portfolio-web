@@ -123,13 +123,14 @@ describe("portfolio content", () => {
     expect(aiElite?.summary).not.toContain("예측모델");
   });
 
-  it("computes the career-year wording instead of freezing it in the content", () => {
-    const source = JSON.parse(read("content/profile.json"));
-    expect(source.role).toContain("{{careerYear}}");
+  it("never freezes a career-year count in the content", () => {
+    // 연차는 고정값으로 적지 않습니다. 쓰려면 {{careerYear}} 토큰으로 써서 지원일 기준으로 계산합니다.
+    const raw = read("content/profile.json");
+    expect(raw).not.toMatch(/\d+년차/);
 
-    expect(getProfile(new Date("2026-09-12T00:00:00")).role).toContain("3년차");
-    expect(getProfile(new Date("2027-01-02T00:00:00")).role).toContain("4년차");
-    expect(getProfile().role).not.toContain("{{");
+    const profile = getProfile(new Date("2026-09-12T00:00:00"));
+    expect(profile.role).not.toContain("{{");
+    expect(profile.summary).not.toContain("{{");
   });
 
   it("puts the education and career facts a recruiter reads first on the profile", () => {

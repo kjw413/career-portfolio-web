@@ -9,21 +9,14 @@ export default function ImpactGrid({ impacts }: { impacts: Impact[] }) {
           <div className="impact-card-top">
             <span>{String(index + 1).padStart(2, "0")}</span>
           </div>
-          <div className="impact-result">
-            <span>결과</span>
+          {/* 결과를 먼저 크게, 그다음 무엇이 문제였고 무엇을 했는지를 한 문단으로 잇습니다. 라벨은 달지 않습니다. */}
+          <p className="impact-result">
             <strong>{impact.result}</strong>
-          </div>
+          </p>
           <h3>{impact.title}</h3>
-          <dl className="impact-details">
-            <div>
-              <dt>문제</dt>
-              <dd>{impact.problem}</dd>
-            </div>
-            <div>
-              <dt>수행</dt>
-              <dd>{impact.action}</dd>
-            </div>
-          </dl>
+          <p className="impact-story">
+            {impact.problem} {impact.action}
+          </p>
           {(impact.cardId || impact.projectSlug) && (
             <Link
               className="impact-link"
@@ -33,7 +26,7 @@ export default function ImpactGrid({ impacts }: { impacts: Impact[] }) {
                   : `/projects/${impact.projectSlug}/`
               }
             >
-              {impact.cardId ? "수치와 근거 보기" : "프로젝트 보기"}{" "}
+              자세히 보기{" "}
               <span aria-hidden="true">→</span>
             </Link>
           )}
