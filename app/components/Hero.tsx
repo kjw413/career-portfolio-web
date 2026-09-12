@@ -105,18 +105,22 @@ export default function Hero({
         {/*
           수치는 값만 두지 않고 산출 조건을 함께 보여 줍니다. `7%`처럼 조건을 뗀 숫자가
           지원서로 옮겨 가면서 뜻이 달라지는 일을 막기 위한 것입니다.
+          근거로 가는 길은 숫자 자체에 둡니다. "근거 보기" 같은 문구를 달면 감사 보고서처럼 읽힙니다.
         */}
         <dl className="hero-metrics">
           {metrics.map((metric) => (
             <div key={metric.id}>
-              <dt>{metric.display}</dt>
+              <dt>
+                {metric.cardId ? (
+                  <Link href={`/experience/${metric.cardId}/`} title="산출 근거와 경험 카드">
+                    {metric.display}
+                  </Link>
+                ) : (
+                  metric.display
+                )}
+              </dt>
               <dd>{metric.label}</dd>
               {metric.condition && <dd className="metric-evidence">{metric.condition}</dd>}
-              {metric.cardId && (
-                <dd className="metric-source">
-                  <Link href={`/experience/${metric.cardId}/`}>근거 보기 →</Link>
-                </dd>
-              )}
             </div>
           ))}
         </dl>

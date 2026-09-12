@@ -64,8 +64,8 @@ describe("Hero", () => {
 
   it("links each headline number to the experience that produced it", () => {
     render(<Hero profile={profile} metrics={metrics} />);
-    // 끝의 슬래시는 빌드 설정(trailingSlash)이 붙이므로 경로만 확인합니다.
-    expect(screen.getByRole("link", { name: /근거 보기/ }).getAttribute("href")).toMatch(
+    // 숫자 자체가 링크입니다. 끝의 슬래시는 빌드 설정(trailingSlash)이 붙이므로 경로만 확인합니다.
+    expect(screen.getByRole("link", { name: "일 40분" }).getAttribute("href")).toMatch(
       /^\/experience\/EXP-BG-DATA-RPA\/?$/,
     );
   });
