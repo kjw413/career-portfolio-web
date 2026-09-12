@@ -27,7 +27,14 @@ content/ledger/  ──(npm run build: 검증 → 생성)──┬─→ 사이�
 ```bash
 npm run lint:ledger   # 원장 무결성 + 공개 콘텐츠 검사
 npm test              # 검증기가 실제로 오류를 잡는지 확인
+
+# 자기소개서 초안을 원장과 대조 (제출 전)
+npm run lint:claims -- --file 초안.txt --job "제조 AI·데이터" --date 2026-09-12
 ```
+
+수치 불일치, 폐기된 표기, 금지 표현, 확정 전 수치, 그 직무에서 빼기로 한 경험,
+지원일 기준 재직기간을 잡습니다. 드라이브 연동은
+[`scripts/drive/README.md`](scripts/drive/README.md)를 보세요.
 
 ## 기술 스택
 

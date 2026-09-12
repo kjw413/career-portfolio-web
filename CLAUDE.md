@@ -69,7 +69,12 @@ npm run lint          # ESLint
 npm run build         # 위 검사 → AI 내보내기 생성 → 정적 빌드
 npm run ai:exports    # public/ai/*, llms.txt 재생성 (빌드가 자동 실행)
 npm run poster        # 3D 장면을 고쳤을 때 정적 포스터를 다시 생성 (playwright 필요)
+npm run lint:claims -- --file 초안.txt --job "제조 AI·데이터" --date 2026-09-12
+                      # 자기소개서 초안을 원장과 대조
 ```
+
+자기소개서를 쓰거나 고쳤으면 제출 전에 반드시 `lint:claims`를 돌립니다. 수치 불일치,
+폐기된 표기, 금지 표현, 확정 전 수치, 직무에서 제외한 경험, 재직기간을 잡습니다.
 
 `app/components/hero-scene/`를 고쳤으면 `npm run poster`로 포스터를 다시 만듭니다.
 포스터는 3D를 켜지 않는 환경에서 그대로 남는 그림이라, 장면과 갈라지면 안 됩니다.
@@ -94,6 +99,8 @@ lib/ledger-core.mjs      원장 읽기·검증 (앱과 스크립트가 공유)
 lib/ledger.ts            화면용 타입과 파생
 scripts/ledger-lint.mjs  검증 실행기
 scripts/build-ai-exports.mjs  llms.txt · ledger.json · ledger.md 생성
+scripts/claim-lint.mjs   자기소개서 본문 ↔ 원장 대조
+scripts/drive/           드라이브 연동 (원장 미러 Apps Script, hwpx 텍스트 추출)
 ```
 
 설계 배경은 `docs/superpowers/2026-09-12-portfolio-v2-design.md`에 있습니다.

@@ -15,7 +15,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "sync:github": "node scripts/sync-github.mjs",
-    "poster": "node scripts/render-hero-poster.mjs"
+    "poster": "node scripts/render-hero-poster.mjs",
+    "lint:claims": "node scripts/claim-lint.mjs"
   },
   "dependencies": {
     "@react-three/fiber": "^9.7.0",
