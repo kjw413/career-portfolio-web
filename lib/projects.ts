@@ -70,6 +70,10 @@ const PUBLIC_DIR = path.join(process.cwd(), "public");
  * 아직 올리지 않은 이미지는 깨진 채로 노출하지 않고 조용히 건너뛴다.
  * public/ 에 파일을 올리면 다음 빌드에서 자동으로 나타난다.
  */
+export function publicAssetExists(src: string): boolean {
+  return mediaExists(src);
+}
+
 function mediaExists(src: string): boolean {
   if (!src.startsWith("/") || src.startsWith("//")) return true; // 외부 URL은 검사하지 않음
   return fs.existsSync(path.join(PUBLIC_DIR, src.replace(/^\//, "")));

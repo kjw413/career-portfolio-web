@@ -68,7 +68,11 @@ npm test              # 단위 테스트 (원장 검증기의 실패 사례 포�
 npm run lint          # ESLint
 npm run build         # 위 검사 → AI 내보내기 생성 → 정적 빌드
 npm run ai:exports    # public/ai/*, llms.txt 재생성 (빌드가 자동 실행)
+npm run poster        # 3D 장면을 고쳤을 때 정적 포스터를 다시 생성 (playwright 필요)
 ```
+
+`app/components/hero-scene/`를 고쳤으면 `npm run poster`로 포스터를 다시 만듭니다.
+포스터는 3D를 켜지 않는 환경에서 그대로 남는 그림이라, 장면과 갈라지면 안 됩니다.
 
 `public/ai/`, `public/llms.txt`, `public/llms-full.txt`는 생성물이라 커밋하지 않습니다.
 

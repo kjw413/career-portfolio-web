@@ -143,5 +143,27 @@
     "status": "확정",
     "showInTimeline": true,
     "order": 6
+  },
+  {
+    "id": "personal",
+    "kind": "personal",
+    "organization": "개인 작업",
+    "role": "포트폴리오 사이트 설계·구현",
+    "start": "2026-08-16",
+    "end": null,
+    "endLabel": "진행 중",
+    "summary": "지원서와 포트폴리오가 서로 어긋나지 않도록, 사실을 한 곳에서 관리하는 사이트를 직접 만들고 있습니다.",
+    "tags": [
+      "Next.js",
+      "TypeScript",
+      "Three.js",
+      "정보 설계"
+    ],
+    "cardIds": [
+      "EXP-PORTFOLIO-3D"
+    ],
+    "status": "진행중",
+    "showInTimeline": false,
+    "order": 7
   }
 ]
