@@ -8,7 +8,7 @@ afterEach(cleanup);
 
 const profile: Profile = {
   name: "김종우", nameEn: "Jong Woo Kim",
-  role: "전자전기공학 학사 · 제조 현장 2년차", major: "전자전기공학",
+  role: "전자전기공학 학사 · 제조 현장 3년차", major: "전자전기공학",
   summary: "5개 공장의 에너지·생산 데이터를 통합했습니다.",
   photoSrc: null, resumeHref: null,
   githubUrl: "https://github.com/kjw413", emailHref: "mailto:kjw2110@naver.com",
@@ -21,7 +21,7 @@ const profile: Profile = {
     detail: "유틸리티·에너지 관리", startDate: "2024-12-23", endDate: null,
   },
   certifications: ["ADsP 데이터분석 준전문가", "OPIc IH (영어)"],
-  metrics: [{ id: "saved-time", value: "월 15시간", label: "수집 자동화로 줄인 수작업 시간", evidence: "사내 업무 측정 기준 월 15시간" }],
+  metrics: [{ id: "saved-time", value: "일 40분", label: "수집 자동화로 줄인 본인 수작업 시간", evidence: "1일 40분 · 월 22일 기준 약 14.7시간 환산" }],
   impacts: [],
 };
 
@@ -39,14 +39,14 @@ describe("Hero", () => {
   it("shows identity and initials without a photo", () => {
     render(<Hero profile={profile} />);
     expect(
-      screen.getByRole("heading", { name: "전자전기공학 학사 · 제조 현장 2년차" }),
+      screen.getByRole("heading", { name: "전자전기공학 학사 · 제조 현장 3년차" }),
     ).toBeInTheDocument();
     expect(screen.getByLabelText("프로필 사진 준비 중")).toHaveTextContent("KJ");
   });
 
   it("keeps the metric evidence visible instead of hiding it in a tooltip", () => {
     render(<Hero profile={profile} />);
-    expect(screen.getByText("사내 업무 측정 기준 월 15시간")).toBeVisible();
+    expect(screen.getByText("1일 40분 · 월 22일 기준 약 14.7시간 환산")).toBeVisible();
   });
 
   it("links the contact email and hides the resume action until a file exists", () => {

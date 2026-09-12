@@ -1,6 +1,7 @@
 import profileJson from "../content/profile.json";
 import experiencesJson from "../content/experience.json";
 import projectOverridesJson from "../content/project-overrides.json";
+import { careerYearOrdinal, completedMonths, formatMonths } from "./tenure";
 
 export type Metric = { id: string; value: string; label: string; evidence: string };
 export type Impact = {
@@ -193,8 +194,28 @@ const profile = parseProfile(profileJson);
 const experiences = parseExperiences(experiencesJson);
 const projectOverrides = parseProjectOverrides(projectOverridesJson);
 
-export function getProfile(): Profile {
-  return freezeProfile(profile);
+/**
+ * 소개 문구에 적어둔 `{{careerYear}}` 같은 토큰을 빌드 시점 기준 값으로 채웁니다.
+ * `2년차` 같은 숫자를 문장에 직접 적으면 해가 바뀔 때 조용히 틀린 값이 남습니다.
+ */
+function resolveProfileTokens(source: Profile, asOf: Date): Profile {
+  const tokens: Record<string, string> = {
+    careerYear: String(careerYearOrdinal(source.career.startDate, asOf)),
+    tenure: formatMonths(completedMonths(source.career.startDate, asOf)),
+  };
+  const fill = (text: string) =>
+    text.replace(/\{\{(\w+)\}\}/g, (token, key: string) => {
+      const value = tokens[key];
+      if (value === undefined) throw new Error(`unknown profile token: ${token}`);
+      return value;
+    });
+
+  return { ...source, role: fill(source.role), summary: fill(source.summary) };
+}
+
+/** `asOf`는 테스트에서 시간을 고정하기 위한 것이고, 빌드에서는 오늘을 씁니다. */
+export function getProfile(asOf: Date = new Date()): Profile {
+  return freezeProfile(resolveProfileTokens(profile, asOf));
 }
 
 export function getExperiences(): Experience[] {
