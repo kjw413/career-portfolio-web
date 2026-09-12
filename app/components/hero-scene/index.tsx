@@ -40,6 +40,7 @@ export default function HeroSceneGate({
   plants: string[];
   poster: string | null;
   posterDark: string | null;
+  /** 그림의 대체 텍스트. 화면에는 보이지 않습니다. 그림은 설명 없이 놓습니다. */
   caption: string;
   /** 장면의 패널에 적을 예측 오차. 원장에서 옵니다. */
   metric?: SceneMetric;
@@ -119,7 +120,6 @@ export default function HeroSceneGate({
           </div>
         )}
       </div>
-      <figcaption>{caption}</figcaption>
     </figure>
   );
 }
