@@ -31,6 +31,11 @@ export default function Home() {
   // 장면에 세우는 공장 이름과 예측 오차도 원장에서 읽습니다. 화면과 사실이 갈라지지 않게.
   const plants = getPlantNames();
   const forecastError = getMetric("forecast-mape-all");
+  // 장면 옆에 적는 수치도 원장에서 읽습니다. 값·조건을 따로 적어 두지 않습니다.
+  const sceneFacts = ["bems-plants", "forecast-mape-all", "bems-monthly-saving"].map((id) => ({
+    id,
+    ...getMetric(id),
+  }));
   // 포스터는 이름이 같은 채로 다시 만들어지므로, 내용 해시로 캐시를 깹니다.
   const posterFor = (file: string) =>
     publicAssetExists(file) ? `${withBasePath(file)}?v=${publicAssetVersion(file)}` : null;
@@ -54,23 +59,38 @@ export default function Home() {
 
       <section className="scene-section" aria-labelledby="scene-heading">
         <div className="scene-intro">
-          <p className="section-index">시스템 한눈에 보기</p>
+          <p className="section-index">공장 에너지 AI 플랫폼 · 사내 AI 전문가 과정 팀과제</p>
           <h2 id="scene-heading">
-            다섯 공장의 전력·연료·용수가 한 화면으로 모이고,
-            <br />그 화면에서 실측과 예측 구간을 함께 봅니다.
+            다섯 공장의 전력·연료·용수 데이터를 한 시스템에 모아,
+            <br />예측과 실측을 함께 봅니다.
           </h2>
           <p>
-            사내 BEMS가 다루는 것을 남한 지도 위에 도식화한 장면입니다. {plants.join(" · ")}의
-            데이터가 하나의 시스템으로 모이고, 화면에는 실측과 AI 예측의 P05~P95 구간이 함께
-            그려집니다. 위에 적은 {forecastError.display}는 이 예측의 오차입니다 (
-            {forecastError.condition}).
+            공장마다 다르던 생산·에너지 데이터 형식을 표준화해 MySQL에 담고, 조회·비교·원단위
+            분석·예측·AI 보고서를 하나의 사내 웹 시스템에서 처리합니다. 예측모델은 부스팅 3종과
+            피처셋 2종을 가중 결합해 초기 단일 모델의 오차를 낮췄고, 예측값은 실적과 함께 보는
+            보조지표로 씁니다.
+          </p>
+          <dl className="scene-facts">
+            {sceneFacts.map((fact) => (
+              <div key={fact.id}>
+                <dt>{fact.display}</dt>
+                <dd>
+                  {fact.label}
+                  {fact.condition && <small>{fact.condition}</small>}
+                </dd>
+              </div>
+            ))}
+          </dl>
+          <p className="scene-role">
+            사내 AI 전문가 과정 팀과제로 시작해 사내에서 운영 중입니다. 기획·개발과 예측모델
+            설계를 맡았습니다.
           </p>
           <div className="scene-links">
             <Link className="section-link" href="/projects/ai-elite-bems/">
-              BEMS 프로젝트 보기 →
+              프로젝트 자세히 →
             </Link>
-            <Link className="section-link" href="/experience/EXP-PORTFOLIO-3D/">
-              이 장면을 어떻게 만들었는지 →
+            <Link className="section-link" href="/experience/EXP-BG-ENERGY-WEB/">
+              경험 카드 →
             </Link>
           </div>
         </div>
@@ -79,12 +99,7 @@ export default function Home() {
           metric={{ display: forecastError.display, condition: forecastError.condition }}
           poster={posterFor("/hero-poster.webp")}
           posterDark={posterFor("/hero-poster-dark.webp")}
-          caption="남한 지도 위 다섯 사업장에서 전력·연료·용수 데이터가 한 화면으로 모이고, 화면에는 실측과 예측 구간(P05~P95)이 흐르는 장면. 위치는 시 단위입니다."
-          legend={[
-            { swatch: "site", text: `공장 — ${plants.join(" · ")}` },
-            { swatch: "flow", text: "데이터 흐름 — 사업장별 전력·연료·용수" },
-            { swatch: "band", text: "실측선과 예측 구간(P05~P95)" },
-          ]}
+          caption="다섯 공장의 에너지 데이터가 하나의 시스템으로 모이는 흐름"
         />
       </section>
 

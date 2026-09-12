@@ -30,14 +30,11 @@ function canRunScene(): boolean {
   }
 }
 
-export type LegendItem = { swatch: "site" | "flow" | "band"; text: string };
-
 export default function HeroSceneGate({
   plants,
   poster,
   posterDark,
   caption,
-  legend = [],
   metric,
 }: {
   plants: string[];
@@ -46,8 +43,6 @@ export default function HeroSceneGate({
   caption: string;
   /** 장면의 패널에 적을 예측 오차. 원장에서 옵니다. */
   metric?: SceneMetric;
-  /** 그림 아래 범례. 지도 위의 표식이 무엇인지 글로 한 번 더 알려 줍니다. */
-  legend?: LegendItem[];
 }) {
   const [Scene, setScene] = useState<ComponentType<SceneProps> | null>(null);
   /** 한 번이라도 화면에 들어왔는가. 들어온 뒤에는 계속 붙여 둡니다. */
@@ -106,7 +101,11 @@ export default function HeroSceneGate({
 
   return (
     <figure className="hero-scene" ref={frame}>
-      <div className="hero-scene-frame">
+      {/*
+        장면이 켜지면 포스터를 감춥니다. 캔버스는 투명해서 포스터가 비치는데,
+        마우스 시차로 장면이 움직이면 같은 그림이 두 겹으로 보였습니다.
+      */}
+      <div className={`hero-scene-frame${Scene && seen && visible ? " has-live" : ""}`}>
         {/* 포스터가 아직 없으면 빈 판으로 둡니다. 깨진 이미지를 보여 주지 않습니다. */}
         {poster && (
           <picture>
@@ -120,19 +119,7 @@ export default function HeroSceneGate({
           </div>
         )}
       </div>
-      <figcaption>
-        {legend.length > 0 && (
-          <ul className="scene-legend" aria-label="장면 범례">
-            {legend.map((item) => (
-              <li key={item.text}>
-                <i className={`swatch swatch-${item.swatch}`} aria-hidden="true" />
-                {item.text}
-              </li>
-            ))}
-          </ul>
-        )}
-        <p>{caption}</p>
-      </figcaption>
+      <figcaption>{caption}</figcaption>
     </figure>
   );
 }

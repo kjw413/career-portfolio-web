@@ -83,7 +83,7 @@ describe("글자 크기", () => {
       ".detail-repo",
       ".markdown-body code",
       ".markdown-body pre",
-      ".hero-metrics dt, .metric-evidence-list dt",
+      ".hero-metrics dt, .metric-evidence-list dt, .scene-facts dt",
     ]);
   });
 });
