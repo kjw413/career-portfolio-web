@@ -31,3 +31,8 @@ yarn-error.log*
 # typescript
 next-env.d.ts
 *.tsbuildinfo
+
+# 원장(content/ledger)에서 빌드마다 생성되는 기계용 표면
+/public/ai/
+/public/llms.txt
+/public/llms-full.txt

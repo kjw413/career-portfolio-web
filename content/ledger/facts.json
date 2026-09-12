@@ -1,0 +1,121 @@
+{
+  "person": {
+    "name": "김종우",
+    "nameEn": "Jong Woo Kim",
+    "email": "kjw2110@naver.com",
+    "githubUrl": "https://github.com/kjw413",
+    "private": {
+      "note": "생년월일 · 주소 · 휴대전화 · 한문명 · 비상연락처는 저장소에 두지 않는다.",
+      "ref": "drive:지원서_비공개정보_김종우.md"
+    }
+  },
+  "schools": [
+    {
+      "id": "hongik",
+      "school": "홍익대학교",
+      "campus": "서울 본교",
+      "degree": "학사",
+      "major": "전자전기공학부",
+      "majorType": "주전공",
+      "field": "공학계열(전기·전자)",
+      "start": "2018-03-01",
+      "end": "2024-02-22",
+      "graduation": "졸업",
+      "gpa": "3.50 / 4.50",
+      "credits": 136,
+      "status": "확정",
+      "evidence": "drive:증명서/성적증명서.pdf",
+      "relatedCourses": [
+        { "course": "IT종합시스템설계", "cardId": "EXP-UNIV-POWERFLOW" },
+        { "course": "MCU/IoT실험", "cardId": "EXP-UNIV-MCU" }
+      ]
+    },
+    {
+      "id": "donghwa",
+      "school": "동화고등학교",
+      "campus": "경기",
+      "degree": "고등학교",
+      "major": "인문",
+      "majorType": "계열",
+      "field": "인문",
+      "start": "2015-03",
+      "end": "2018-02",
+      "graduation": "졸업",
+      "gpa": null,
+      "credits": null,
+      "status": "확정",
+      "evidence": null,
+      "relatedCourses": []
+    }
+  ],
+  "military": {
+    "branch": "육군",
+    "start": "2019-01-21",
+    "end": "2020-08-27",
+    "rank": "병장",
+    "discharge": "만기제대",
+    "serviceType": "현역병",
+    "status": "확정",
+    "evidence": "drive:증명서/병적증명서.pdf"
+  },
+  "career": [
+    {
+      "id": "binggrae",
+      "company": "빙그레",
+      "dept": "생산담당 생산기술팀",
+      "title": "사원",
+      "employment": "정규직",
+      "start": "2024-12-23",
+      "end": null,
+      "duties": "유틸리티 및 에너지 관리, 신기술 도입, 생산부문 시스템 개선",
+      "extraRole": "사내 AI 전문가 — 전사 업무혁신 과제 발굴 (2026-05-07 수료 후 수행 중)",
+      "status": "진행중",
+      "evidence": "drive:증명서/김종우_재직증명서.pdf",
+      "conflicts": ["일부 과거 기록의 입사일 2025-01-20은 폐기. 사용자 최종 확정은 2024-12-23"]
+    },
+    {
+      "id": "inbody",
+      "company": "인바디",
+      "dept": "품질파트 CS팀",
+      "title": "인턴",
+      "employment": "인턴",
+      "start": "2024-01-29",
+      "end": "2024-02-27",
+      "duties": "국내 Customer Service Engineer 실습 · 필드 클레임 트러블슈팅",
+      "extraRole": null,
+      "status": "확정",
+      "evidence": null,
+      "conflicts": []
+    }
+  ],
+  "certifications": [
+    {
+      "name": "ADsP(데이터분석준전문가)",
+      "issuer": "한국데이터산업진흥원",
+      "date": "2026-03-06",
+      "status": "확정",
+      "evidence": "drive:증명서/ADsP.pdf",
+      "registrationNumber": { "private": true, "ref": "drive:지원서_비공개정보_김종우.md" }
+    },
+    {
+      "name": "컴퓨터활용능력1급",
+      "issuer": "대한상공회의소",
+      "date": "2021-09-17",
+      "status": "확정",
+      "evidence": "drive:증명서/컴퓨터활용능력1급.pdf",
+      "registrationNumber": { "private": true, "ref": "drive:지원서_비공개정보_김종우.md" }
+    }
+  ],
+  "languages": [
+    {
+      "test": "OPIc",
+      "language": "영어",
+      "grade": "Intermediate High (IH)",
+      "date": "2025-08-13",
+      "status": "확정",
+      "evidence": "drive:증명서/어학증명서_OPIc.pdf",
+      "registrationNumber": { "private": true, "ref": "drive:지원서_비공개정보_김종우.md" },
+      "openQuestions": ["등록번호를 성적표 원본과 대조", "작문·독해 자기평가 수준 미확정"]
+    }
+  ]
+}

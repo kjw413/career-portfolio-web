@@ -4,6 +4,31 @@
 
 **배포 주소:** <https://kjw413.github.io/career-portfolio-web/>
 
+## 사실 원장 (`content/ledger/`)
+
+이 저장소는 포트폴리오 사이트인 동시에 **지원서·자기소개서에 쓰이는 사실의 원장**입니다.
+같은 수치가 사이트와 지원서에 다르게 적히는 일을 막기 위해, 사실은 한 곳에서만 쓰고
+나머지는 전부 생성합니다.
+
+```
+content/ledger/  ──(npm run build: 검증 → 생성)──┬─→ 사이트 화면
+                                                 ├─→ public/ai/ledger.json · llms.txt (AI용)
+                                                 └─→ public/ai/ledger.md (드라이브 미러용)
+```
+
+수치는 본문에 직접 적지 않고 `{{metric:id}}`로 인용합니다. `metrics.json`의 한 줄을
+고치면 사이트와 문서가 함께 바뀝니다. 폐기된 표기나 사용하지 않기로 한 표현이 다시
+들어오면 빌드가 실패합니다.
+
+- 편집 규칙: [`content/ledger/README.md`](content/ledger/README.md)
+- AI를 위한 지침: [`CLAUDE.md`](CLAUDE.md)
+- 설계 배경: [`docs/superpowers/2026-09-12-portfolio-v2-design.md`](docs/superpowers/2026-09-12-portfolio-v2-design.md)
+
+```bash
+npm run lint:ledger   # 원장 무결성 + 공개 콘텐츠 검사
+npm test              # 검증기가 실제로 오류를 잡는지 확인
+```
+
 ## 기술 스택
 
 - [Next.js 16](https://nextjs.org/) — App Router + 정적 내보내기(`output: "export"`)
@@ -59,7 +84,7 @@ frontmatter와 GitHub 메타데이터보다 우선합니다. 대표 프로젝트
 frontmatter의 같은 필드는 override가 없을 때의 fallback입니다.
 
 `---` 아래 본문은 자유로운 마크다운입니다 (`## 개요`, `## 수행 과정`, `## 성과` 등).
-현장 개선 과제와 경력 상세는 `content/experience.json`의 해당 경험 항목에서 수정합니다.
+현장 개선 과제와 경력 상세는 `content/ledger/experiences/`의 해당 경험 카드에서 수정합니다.
 
 ## 포트폴리오 내용 수정
 
@@ -67,7 +92,9 @@ frontmatter의 같은 필드는 override가 없을 때의 fallback입니다.
   (첫 화면에는 116px 원형으로 들어가므로 정사각형에 가까운 이미지가 좋습니다)
 - 이력서: `public/resume.pdf` 추가 후 `resumeHref`를 `/resume.pdf`로 설정
 - 첫 화면 이력 카드: `content/profile.json`의 `education`, `career`, `certifications` 수정
-- 경력·교육 연혁: `content/experience.json` 수정
+- 경력·교육 연혁: `content/ledger/affiliations.json`과 해당 경험 카드 수정
+  (세부 항목은 카드의 `headline`·`highlights`에서 자동으로 만들어집니다)
+- 경험별 수치와 근거 페이지: `content/ledger/experiences/EXP-*.md` 수정
 - 대표 성과: `content/profile.json`의 `metrics`, `impacts` 수정
 - 학력·자격·병역 요약표: `app/page.tsx`의 `qualifications` 배열 수정
 
@@ -97,7 +124,11 @@ npm run dev     # 개발 서버 실행 → http://localhost:3000
 ```
 
 사이트 구조·스타일을 바꾸려면: 페이지 골격은 `app/page.tsx`(경력·역량 섹션 포함),
-프로젝트 상세 페이지는 `app/projects/[slug]/page.tsx`, 스타일은 `app/globals.css`.
+프로젝트 상세 페이지는 `app/projects/[slug]/page.tsx`, 경험 카드 페이지는
+`app/experience/[id]/page.tsx`, 스타일은 `app/globals.css`.
+
+`npm run dev`와 `npm run build`는 시작 전에 원장을 검증하고 `public/ai/`와 `llms.txt`를
+다시 만듭니다. 이 생성물은 커밋하지 않습니다.
 
 정적 빌드 결과를 확인하려면:
 

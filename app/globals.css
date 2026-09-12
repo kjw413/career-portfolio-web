@@ -375,6 +375,67 @@ footer h2 { margin: 0; font-size: clamp(28px, 3.4vw, 46px); line-height: 1.25; l
 .project-page footer { padding: 26px clamp(24px, 6vw, 92px); }
 .project-page footer .footer-bottom { padding-bottom: 0; border-bottom: 0; }
 
+/* ── 경험 카드 (원장에서 생성) ───────────────────────────── */
+/* 훑어볼 사실. 본문을 읽기 전에 먼저 보이는 요약입니다. */
+.card-highlights { margin: 34px 0 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
+.card-highlights li {
+  position: relative; padding: 14px 0 14px 20px; border-bottom: 1px solid var(--line);
+  color: var(--body); font-size: 15.5px; line-height: 1.75; word-break: keep-all;
+}
+.card-highlights li::before {
+  content: ""; position: absolute; left: 0; top: 24px;
+  width: 6px; height: 6px; border-radius: 50%; background: var(--blue);
+}
+
+/* 수치는 값만 두지 않고 산출 조건과 확인 근거를 함께 보여 줍니다. */
+.metric-evidence-list { margin-top: 48px; }
+.metric-evidence-list h2 {
+  margin: 0 0 20px; font-size: 22px; letter-spacing: -.02em;
+  display: flex; align-items: center; gap: 12px;
+}
+.metric-evidence-list h2::before { content: ""; width: 18px; height: 3px; background: var(--blue); }
+.metric-evidence-list dl {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1px; margin: 0; border: 1px solid var(--line); background: var(--line);
+}
+.metric-evidence-list dl > div { padding: 20px 22px; background: var(--surface); }
+.metric-evidence-list dt {
+  font-size: 22px; font-weight: 800; letter-spacing: -.02em; color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.metric-evidence-list dd { margin: 8px 0 0; color: var(--body); font-size: 14.5px; line-height: 1.6; word-break: keep-all; }
+.metric-evidence-list .metric-condition { color: var(--muted); font-size: 13.5px; }
+.metric-evidence-list .metric-basis { margin-top: 10px; color: var(--blue-dark); font-size: var(--label); letter-spacing: var(--label-track); }
+
+.team-context {
+  margin: 34px 0 0; padding: 16px 20px; border-left: 3px solid var(--blue);
+  background: var(--sky); color: var(--ink); font-size: 15px; line-height: 1.75; word-break: keep-all;
+}
+.team-context strong { display: block; margin-bottom: 4px; color: var(--blue-dark); font-size: var(--label); letter-spacing: var(--label-track); }
+
+.evidence-list { margin: 0; padding: 0; list-style: none; }
+.evidence-list li { border-bottom: 1px solid var(--line); }
+.evidence-list a { display: block; padding: 16px 0; color: var(--blue-dark); font-size: 15.5px; font-weight: 700; transition: color .2s ease; }
+.evidence-list a:hover { color: var(--blue); }
+
+/* 경험 카드 목록 화면 */
+.experience-group { margin-top: 54px; }
+.experience-group h2 {
+  margin: 0 0 8px; font-size: 21px; letter-spacing: -.02em;
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 12px;
+}
+.experience-group h2 small { color: var(--muted); font-size: 14px; font-weight: 500; letter-spacing: 0; }
+.experience-card-list { margin: 18px 0 0; padding: 0; list-style: none; border-top: 1px solid var(--ink); }
+.experience-card-list li { border-bottom: 1px solid var(--line); }
+.experience-card-list a { display: block; padding: 20px 0; transition: padding-left .2s ease; }
+.experience-card-list a:hover { padding-left: 10px; }
+.experience-card-title { display: block; font-size: 17.5px; font-weight: 700; letter-spacing: -.015em; word-break: keep-all; }
+.experience-card-headline { display: block; margin-top: 8px; color: var(--body); font-size: 15px; line-height: 1.7; word-break: keep-all; }
+
+@media (prefers-reduced-motion: reduce) {
+  .experience-card-list a:hover { padding-left: 0; }
+}
+
 @media (max-width: 1150px) {
   .archive-row { grid-template-columns: 42px 1.2fr 1.5fr 100px 24px; }
   .archive-stack { display: none; }
@@ -470,3 +531,10 @@ footer h2 { margin: 0; font-size: clamp(28px, 3.4vw, 46px); line-height: 1.25; l
     transform: none !important;
   }
 }
+
+/* 홈 섹션에서 경험 카드 목록으로 보내는 링크 */
+.section-link {
+  display: inline-block; margin-top: 10px; color: var(--blue);
+  font-weight: 700; transition: color .2s ease;
+}
+.section-link:hover { color: var(--blue-dark); }

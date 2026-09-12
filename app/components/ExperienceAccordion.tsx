@@ -1,4 +1,4 @@
-import type { Experience } from "../../lib/content";
+import type { Experience } from "../../lib/ledger";
 
 export default function ExperienceAccordion({ items }: { items: Experience[] }) {
   return (

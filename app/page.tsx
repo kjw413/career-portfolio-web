@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getCatalogCategories, getProjectCatalog } from "../lib/catalog";
-import { getExperiences, getProfile } from "../lib/content";
+import { getProfile } from "../lib/content";
+import { getExperiences } from "../lib/ledger";
 import { getFeaturedProjects, withBasePath } from "../lib/projects";
 import Archive from "./archive";
 import ExperienceAccordion from "./components/ExperienceAccordion";
@@ -74,6 +75,7 @@ export default function Home() {
           <a href="#impact">주요 성과</a>
           <a href="#projects">프로젝트</a>
           <a href="#experience">경력</a>
+          <Link href="/experience/">경험 카드</Link>
           <a href="#contact">연락처</a>
         </nav>
       </header>
@@ -141,7 +143,13 @@ export default function Home() {
             <p className="section-index">03</p>
             <h2>경력 · 교육</h2>
           </div>
-          <p>재직 중인 회사와 이수한 교육 과정입니다.</p>
+          <p>
+            재직 중인 회사와 이수한 교육 과정입니다.
+            <br />
+            <Link className="section-link" href="/experience/">
+              경험별 수치와 근거 보기 →
+            </Link>
+          </p>
         </div>
         <ExperienceAccordion items={experiences} />
       </section>

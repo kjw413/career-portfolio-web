@@ -1,5 +1,4 @@
 import profileJson from "../content/profile.json";
-import experiencesJson from "../content/experience.json";
 import projectOverridesJson from "../content/project-overrides.json";
 import { careerYearOrdinal, completedMonths, formatMonths } from "./tenure";
 
@@ -21,10 +20,6 @@ export type Profile = {
   githubUrl: string; emailHref: string | null;
   education: Education; career: Career; certifications: string[];
   metrics: Metric[]; impacts: Impact[];
-};
-export type Experience = {
-  id: string; period: string; organization: string; role: string;
-  summary: string; details: string[]; tags: string[];
 };
 export type ProjectOverride = {
   repoName: string; title?: string; summary?: string; category?: string;
@@ -147,21 +142,6 @@ function parseProfile(value: unknown): Profile {
   };
 }
 
-function parseExperiences(value: unknown): Experience[] {
-  return requireArray(value, "experiences").map((item, index) => {
-    const experience = requireRecord(item, `experiences[${index}]`);
-    return {
-      id: requireString(experience.id, `experiences[${index}].id`),
-      period: requireString(experience.period, `experiences[${index}].period`),
-      organization: requireString(experience.organization, `experiences[${index}].organization`),
-      role: requireString(experience.role, `experiences[${index}].role`),
-      summary: requireString(experience.summary, `experiences[${index}].summary`),
-      details: requireStringArray(experience.details, `experiences[${index}].details`),
-      tags: requireStringArray(experience.tags, `experiences[${index}].tags`),
-    };
-  });
-}
-
 function parseProjectOverrides(value: unknown): ProjectOverride[] {
   const repoNames = new Set<string>();
   return requireArray(value, "project overrides").map((item, index) => {
@@ -191,7 +171,6 @@ function parseProjectOverrides(value: unknown): ProjectOverride[] {
 }
 
 const profile = parseProfile(profileJson);
-const experiences = parseExperiences(experiencesJson);
 const projectOverrides = parseProjectOverrides(projectOverridesJson);
 
 /**
@@ -216,14 +195,6 @@ function resolveProfileTokens(source: Profile, asOf: Date): Profile {
 /** `asOf`는 테스트에서 시간을 고정하기 위한 것이고, 빌드에서는 오늘을 씁니다. */
 export function getProfile(asOf: Date = new Date()): Profile {
   return freezeProfile(resolveProfileTokens(profile, asOf));
-}
-
-export function getExperiences(): Experience[] {
-  return Object.freeze(experiences.map((experience) => Object.freeze({
-    ...experience,
-    details: Object.freeze([...experience.details]) as string[],
-    tags: Object.freeze([...experience.tags]) as string[],
-  }))) as Experience[];
 }
 
 export function getProjectOverrides(): ProjectOverride[] {

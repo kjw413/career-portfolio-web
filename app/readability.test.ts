@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 
@@ -18,7 +18,10 @@ const COPY_SOURCES = [
   "app/components/Hero.tsx",
   "app/components/ImpactGrid.tsx",
   "content/profile.json",
-  "content/experience.json",
+  // 경력·교육 문구는 이제 원장의 경험 카드에서 생성됩니다.
+  ...readdirSync(join(process.cwd(), "content/ledger/experiences"))
+    .filter((file) => file.endsWith(".md"))
+    .map((file) => `content/ledger/experiences/${file}`),
 ];
 
 /** 한 번 걷어낸 수사적 표현. 다시 들어오면 실패합니다. */

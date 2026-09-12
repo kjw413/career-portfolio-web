@@ -6,9 +6,12 @@
     "node": ">=20.9.0"
   },
   "scripts": {
-    "dev": "next dev",
+    "dev": "npm run ai:exports && next dev",
     "build": "next build",
+    "prebuild": "node scripts/ledger-lint.mjs && node scripts/build-ai-exports.mjs",
     "lint": "eslint .",
+    "lint:ledger": "node scripts/ledger-lint.mjs",
+    "ai:exports": "node scripts/build-ai-exports.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
     "sync:github": "node scripts/sync-github.mjs"

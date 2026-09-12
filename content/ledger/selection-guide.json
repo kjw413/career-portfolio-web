@@ -1,0 +1,79 @@
+[
+  {
+    "job": "생산기술·설비기술",
+    "primary": ["EXP-BG-MIXEDPACK", "EXP-BG-ENERGY-WEB"],
+    "secondary": ["EXP-BG-DATA-RPA", "EXP-BG-INVEST-RPA", "EXP-BG-SYSTEM-COLLAB", "EXP-BG-PLC-ROBOT"],
+    "exclude": ["EXP-TELECHIPS-EMBEDDED", "EXP-UNIV-MCU"],
+    "excludeReason": "직무와 무관한 임베디드 세부내용은 기본 제외"
+  },
+  {
+    "job": "MES 운영·스마트팩토리",
+    "primary": ["EXP-BG-DATA-RPA", "EXP-BG-SYSTEM-COLLAB"],
+    "secondary": ["EXP-BG-ENERGY-WEB", "EXP-BG-ENERGY-FORECAST"],
+    "exclude": ["EXP-CLUB-BUDGET"],
+    "excludeReason": "B2B 수주 프로젝트만 요구하는 프로젝트란에는 사내 개선활동을 입력하지 않는다"
+  },
+  {
+    "job": "제조 AI·데이터",
+    "primary": ["EXP-BG-ENERGY-FORECAST", "EXP-BG-ENERGY-WEB"],
+    "secondary": ["EXP-DATA-LAG3", "EXP-BG-DATA-RPA"],
+    "exclude": ["EXP-CLUB-BUDGET", "EXP-MIL-LEADERSHIP"],
+    "excludeReason": "관련성 낮은 일반 활동은 역량 문항 외에는 제외"
+  },
+  {
+    "job": "에너지·유틸리티",
+    "primary": ["EXP-BG-ENERGY-WEB", "EXP-BG-ENERGY-FORECAST"],
+    "secondary": ["EXP-BG-DATA-RPA", "EXP-BG-SYSTEM-COLLAB"],
+    "exclude": ["EXP-TELECHIPS-EMBEDDED", "EXP-UNIV-MCU"],
+    "excludeReason": "임베디드·반도체 교육은 기본 제외"
+  },
+  {
+    "job": "생산관리·생산계획",
+    "primary": ["EXP-UNIV-POWERFLOW", "EXP-BG-MIXEDPACK"],
+    "secondary": ["EXP-BG-ENERGY-FORECAST", "EXP-DATA-LAG3"],
+    "exclude": ["EXP-INBODY-CLAIM"],
+    "excludeReason": "인바디 CS 세부내용은 제외"
+  },
+  {
+    "job": "반도체 공정·기반기술",
+    "primary": ["EXP-BG-ENERGY-FORECAST"],
+    "secondary": ["EXP-BG-DATA-RPA", "EXP-BG-ENERGY-WEB"],
+    "exclude": ["EXP-CLUB-BUDGET"],
+    "excludeReason": "무관한 동아리 경험은 역량 문항 외에는 제외. EDU-SEMI-01을 우선 사용한다"
+  },
+  {
+    "job": "임베디드·자동차 전장 SW",
+    "primary": ["EXP-TELECHIPS-EMBEDDED", "EXP-UNIV-MCU"],
+    "secondary": ["EXP-INBODY-CLAIM", "EXP-BG-DATA-RPA"],
+    "exclude": ["EXP-BG-MIXEDPACK"],
+    "excludeReason": "반도체 공정교육은 공고에 관련 있을 때만 사용"
+  },
+  {
+    "job": "기술지원·CS·품질",
+    "primary": ["EXP-INBODY-CLAIM"],
+    "secondary": ["EXP-TELECHIPS-EMBEDDED", "EXP-UNIV-MCU", "EXP-MIL-LEADERSHIP"],
+    "exclude": [],
+    "excludeReason": "에너지 프로젝트의 상세 기술은 문항과 관련 있을 때만 사용"
+  },
+  {
+    "job": "제조 일반·비반도체",
+    "primary": ["EXP-BG-MIXEDPACK", "EXP-BG-DATA-RPA"],
+    "secondary": ["EXP-BG-ENERGY-WEB", "EXP-INBODY-CLAIM"],
+    "exclude": [],
+    "excludeReason": "EDU-SEMI-01은 기본 제외"
+  },
+  {
+    "job": "협업·리더십 공통문항",
+    "primary": ["EXP-BG-SYSTEM-COLLAB", "EXP-CLUB-BUDGET"],
+    "secondary": ["EXP-MIL-LEADERSHIP"],
+    "exclude": [],
+    "excludeReason": "직무 전문성의 근거로 단독 사용하지 않는다"
+  },
+  {
+    "job": "어려움 극복·제약 하 문제해결",
+    "primary": ["EXP-UNIV-MCU", "EXP-TELECHIPS-EMBEDDED"],
+    "secondary": ["EXP-BG-SYSTEM-COLLAB"],
+    "exclude": [],
+    "excludeReason": ""
+  }
+]

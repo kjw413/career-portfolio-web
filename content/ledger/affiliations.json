@@ -1,0 +1,147 @@
+[
+  {
+    "id": "binggrae",
+    "kind": "career",
+    "organization": "빙그레 · 생산담당 생산기술팀",
+    "role": "사원 · 유틸리티/에너지 관리, 생산 시스템 개선",
+    "start": "2024-12-23",
+    "end": null,
+    "endLabel": "재직 중",
+    "summary": "5개 공장의 에너지·생산 데이터를 통합하고, 매일 반복되던 수집·검토 업무를 자동화했습니다.",
+    "tags": [
+      "생산기술",
+      "제조 데이터",
+      "업무 자동화",
+      "에너지·유틸리티"
+    ],
+    "cardIds": [
+      "EXP-BG-ENERGY-WEB",
+      "EXP-BG-ENERGY-FORECAST",
+      "EXP-BG-DATA-RPA",
+      "EXP-BG-INVEST-RPA",
+      "EXP-BG-SYSTEM-COLLAB",
+      "EXP-BG-MIXEDPACK",
+      "EXP-BG-PLC-ROBOT",
+      "EXP-DATA-LAG3",
+      "EXP-BG-SAMPLING-RPA"
+    ],
+    "status": "진행중",
+    "showInTimeline": true,
+    "order": 1
+  },
+  {
+    "id": "ai-elite",
+    "kind": "education",
+    "eduId": "EDU-AIELITE-01",
+    "organization": "빙그레 사내 AI 전문가 육성과정 (AI Elite)",
+    "role": "제조 데이터 기반 서비스 개발",
+    "start": "2026-02-03",
+    "end": "2026-05-07",
+    "endLabel": "수료",
+    "summary": "전사 지원자 약 300명 중 50명(약 6:1)에 선발되어 제조 데이터 서비스를 개발했습니다. 선발 계기는 투자품의 전산 등록 검토 자동화였고, 수료 후에도 사내 AI 전문가로 전사 업무혁신 과제 발굴을 맡고 있습니다.",
+    "tags": [
+      "제조 AI",
+      "시계열 예측",
+      "LLM",
+      "웹 서비스"
+    ],
+    "cardIds": [
+      "EXP-BG-ENERGY-WEB",
+      "EXP-BG-ENERGY-FORECAST"
+    ],
+    "status": "확정",
+    "showInTimeline": true,
+    "order": 2
+  },
+  {
+    "id": "telechips-school",
+    "kind": "education",
+    "eduId": "EDU-TELECHIPS-01",
+    "organization": "텔레칩스 임베디드 스쿨 1기",
+    "role": "임베디드 시스템 개발 과정 · 1,000시간",
+    "start": "2024-06-17",
+    "end": "2024-12-20",
+    "endLabel": null,
+    "summary": "Linux와 FreeRTOS 환경에서 통신과 제어 경로를 직접 구현하고 검증했습니다.",
+    "tags": [
+      "임베디드 Linux",
+      "FreeRTOS",
+      "SPI",
+      "CAN",
+      "UART",
+      "YOLOv5"
+    ],
+    "cardIds": [
+      "EXP-TELECHIPS-EMBEDDED"
+    ],
+    "status": "확정",
+    "showInTimeline": true,
+    "order": 3
+  },
+  {
+    "id": "inbody",
+    "kind": "career",
+    "organization": "인바디 · 품질파트 CS팀",
+    "role": "인턴 · 국내 Customer Service Engineer 실습",
+    "start": "2024-01-29",
+    "end": "2024-02-27",
+    "endLabel": null,
+    "summary": "병원에 설치된 체성분 분석기의 측정값 이상 원인을 찾는 데 참여했습니다.",
+    "tags": [
+      "기술지원",
+      "품질",
+      "원인 분석"
+    ],
+    "cardIds": [
+      "EXP-INBODY-CLAIM"
+    ],
+    "status": "확정",
+    "showInTimeline": true,
+    "order": 4
+  },
+  {
+    "id": "hongik",
+    "kind": "university",
+    "organization": "홍익대학교 전자전기공학부",
+    "role": "학사 · 전자전기공학",
+    "start": "2018-03-01",
+    "end": "2024-02-22",
+    "endLabel": "졸업",
+    "summary": "전력계통 해석과 MCU 펌웨어를 과목 프로젝트로 직접 구현했습니다.",
+    "tags": [
+      "전력계통",
+      "MATLAB",
+      "MCU",
+      "펌웨어"
+    ],
+    "cardIds": [
+      "EXP-UNIV-POWERFLOW",
+      "EXP-UNIV-MCU",
+      "EXP-CLUB-BUDGET"
+    ],
+    "status": "확정",
+    "showInTimeline": true,
+    "order": 5
+  },
+  {
+    "id": "military",
+    "kind": "military",
+    "organization": "육군",
+    "role": "병장 만기제대 · 분대장",
+    "start": "2019-01-21",
+    "end": "2020-08-27",
+    "endLabel": "전역",
+    "summary": "분대장으로 구성원 상황을 기록하며 문제를 해결했습니다.",
+    "tags": [
+      "리더십",
+      "갈등관리",
+      "현장 대응"
+    ],
+    "cardIds": [
+      "EXP-MIL-LEADERSHIP"
+    ],
+    "status": "확정",
+    "showInTimeline": false,
+    "order": 6
+  }
+]

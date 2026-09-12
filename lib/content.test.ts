@@ -1,7 +1,8 @@
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { getExperiences, getProfile } from "./content";
+import { getProfile } from "./content";
+import { getExperiences } from "./ledger";
 
 const read = (path: string) => readFileSync(join(process.cwd(), path), "utf8");
 
@@ -16,7 +17,6 @@ function publishedSources(): [string, string][] {
 
   return [
     "content/profile.json",
-    "content/experience.json",
     ...projects,
     ...diagrams,
     "app/page.tsx",
@@ -97,9 +97,9 @@ describe("portfolio content", () => {
   it("credits the AI Elite selection to the investment review automation", () => {
     const aiElite = getExperiences().find((item) => item.id === "ai-elite");
 
-    expect(aiElite?.period).toContain("수료");
-    expect(aiElite?.details[0]).toContain("투자품의");
-    expect(aiElite?.details[0]).not.toContain("예측모델");
+    expect(aiElite?.period).toContain("2026.05 수료");
+    expect(aiElite?.summary).toContain("투자품의");
+    expect(aiElite?.summary).not.toContain("예측모델");
   });
 
   it("computes the career-year wording instead of freezing it in the content", () => {
@@ -125,8 +125,19 @@ describe("portfolio content", () => {
     for (const item of getExperiences()) {
       expect(item.summary.length).toBeGreaterThan(0);
       expect(item.details.length).toBeGreaterThanOrEqual(1);
-      expect(item.details.length).toBeLessThanOrEqual(5);
+      // 한 소속이 여러 경험 카드를 묶으므로 재직 기간은 항목이 더 많습니다.
+      expect(item.details.length).toBeLessThanOrEqual(10);
     }
+  });
+
+  it("builds the experience details from the ledger instead of hand-written copy", () => {
+    const details = getExperiences().flatMap((item) => item.details);
+
+    // 수치 토큰이 화면에 그대로 나가면 안 됩니다.
+    expect(details.join(" ")).not.toContain("{{");
+    // 레지스트리를 거친 값이 그대로 보입니다.
+    expect(details.join(" ")).toContain("MAPE 7.3%");
+    expect(details.join(" ")).toContain("일 40분");
   });
 
   it("keeps experience content as the only field-evidence source", () => {
