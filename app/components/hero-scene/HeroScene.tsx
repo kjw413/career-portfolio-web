@@ -1,15 +1,15 @@
 "use client";
 
 /**
- * 남한 지도 위에 다섯 사업장을 제자리에 세우고, 각 사업장의 전력·연료·용수 데이터가
- * 하나의 화면(BEMS)으로 모이는 장면입니다. 화면에는 실측과 예측 구간이 흐릅니다.
- * 사내 BEMS가 다루는 것을 지도 위에 도식화한 것이라, 그림만 보고도 무슨 일을 했는지
- * 읽히는 것을 목표로 합니다.
+ * 남한 지도 위에 다섯 사업장을 제자리에 두고, 각 사업장의 전력·연료·용수 데이터가
+ * 지도 위에 떠 있는 하나의 통합 화면(원형 패널 링)으로 모이는 장면입니다.
+ * 어두운 무대 위의 홀로그램처럼 그려, 무엇이 어디서 모이는지가 그림만으로 읽히게 합니다.
  *
  * 장식이 아니라 구현 증거로 두는 것이므로 규칙을 정해 두었습니다.
- *   - 색은 CSS 토큰에서 읽습니다. 다크 모드에서 장면만 따로 놀지 않게 합니다.
- *   - glTF 같은 외부 자산을 두지 않고 지오메트리를 코드로 만듭니다. 해안선도 좌표 배열입니다.
- *   - 공장 이름은 원장에서 받고, 위치는 geo.ts의 좌표표에서 찾습니다.
+ *   - 색은 CSS 토큰(--scene-*)에서 읽습니다. 무대는 테마와 무관하게 어둡습니다.
+ *   - glTF·이미지 같은 외부 자산을 두지 않습니다. 지도·아이콘·패널은 캔버스에 그려 텍스처로 쓰고,
+ *     해안선은 좌표 배열입니다.
+ *   - 패널에 적는 수치는 원장에서 props로 받습니다. 장면 안에 수치를 적어 두지 않습니다.
  *   - 화면 밖에 있으면 렌더 루프를 멈춥니다.
  */
 
@@ -19,35 +19,29 @@ import * as THREE from "three";
 import { PLANT_SITES, project } from "./geo";
 import { ISLAND_DOTS, KOREA_RINGS } from "./korea-outline";
 
-/** 지도판 두께. 공장과 이름표는 이 위에 올라갑니다. */
-const PLATE_DEPTH = 0.1;
-/** 전력 · 연료 · 용수. 사업장마다 이 세 줄기가 화면으로 흐릅니다. */
-const STREAM_OFFSETS = [-0.09, 0, 0.09];
+export type SceneMetric = { display: string; condition?: string };
+
+/** 전력 · 연료 · 용수. 사업장마다 이 세 줄기가 링으로 흐릅니다. */
+const STREAM_OFFSETS = [-0.1, 0, 0.1];
 /** 한 줄기에 알갱이 두 개를 반 주기 간격으로 띄워, 흐름이 끊겨 보이지 않게 합니다. */
 const PULSES_PER_STREAM = 2;
 
-/**
- * 데이터가 모이는 화면. 서해 위에 세워 두고 아래 모서리로 데이터를 받습니다.
- * 지도 뒤(북쪽)에 두면 줄기가 화면에서 수직선으로 보여 흐름이 읽히지 않습니다.
- */
-const PANEL = {
-  position: new THREE.Vector3(-2.8, 1.85, -0.4),
-  width: 3.5,
-  height: 1.85,
-  /** 뒤로 눕히고 지도 쪽으로 돌려 카메라를 향하게 합니다. */
-  tilt: -0.3,
-  yaw: 0.42,
+/** 통합 화면. 지도 북쪽 위 허공에 떠 있는 패널 링입니다. */
+const RING = {
+  center: new THREE.Vector3(0.1, 2.05, -0.7),
+  radius: 1.7,
+  /** 바닥 원반(데이터가 들어오는 자리)은 링 아래 모서리에 둡니다. */
+  floorY: 1.55,
 };
 
-/** 카메라가 바라보는 곳. 지도와 화면 사이를 봅니다. */
-const FOCUS = new THREE.Vector3(-0.3, 0.7, 0.35);
+/** 카메라가 바라보는 곳. 지도와 링 사이입니다. */
+const FOCUS = new THREE.Vector3(0.1, 1.1, 0.55);
 
 type Palette = {
-  line: string;
-  blue: string;
-  cyan: string;
-  ink: string;
-  surface: string;
+  bg: string;
+  glow: string;
+  accent: string;
+  text: string;
   muted: string;
   font: string;
 };
@@ -58,37 +52,74 @@ function readPalette(): Palette {
     style.getPropertyValue(name).trim() || fallback;
 
   return {
-    line: token("--line", "#dce5f0"),
-    blue: token("--blue", "#1d5fd0"),
-    cyan: token("--cyan", "#38bdf8"),
-    ink: token("--ink", "#0f172a"),
-    surface: token("--surface", "#ffffff"),
-    muted: token("--muted", "#55637a"),
-    // 이름표 글꼴은 본문과 같게 합니다. 캔버스에 그리는 글자라 CSS가 닿지 않습니다.
+    bg: token("--scene-bg", "#071021"),
+    glow: token("--scene-glow", "#4fd8ff"),
+    accent: token("--scene-accent", "#2f7de1"),
+    text: token("--scene-text", "#e6f6ff"),
+    muted: token("--scene-muted", "#8fb3cc"),
+    // 글자는 본문 글꼴로 씁니다. 캔버스에 그리는 글자라 CSS가 닿지 않습니다.
     font: getComputedStyle(document.body).fontFamily || "sans-serif",
   };
 }
 
-/** 화면의 로컬 좌표를 장면 좌표로 바꿉니다. 데이터 줄기의 끝점을 정할 때 씁니다. */
-function panelToWorld(local: THREE.Vector3): THREE.Vector3 {
-  const frame = new THREE.Object3D();
-  frame.position.copy(PANEL.position);
-  // 먼저 제 축으로 눕힌 뒤 돌립니다(YXZ). 반대로 하면 기울기가 세계 축을 따라가 비뚤어집니다.
-  frame.rotation.set(PANEL.tilt, PANEL.yaw, 0, "YXZ");
-  frame.updateMatrixWorld();
-  return frame.localToWorld(local.clone());
+/* ── 캔버스 도우미 ───────────────────────────────────────────── */
+
+function rgba(hex: string, alpha: number) {
+  const value = hex.replace("#", "");
+  const full = value.length === 3 ? value.split("").map((c) => c + c).join("") : value;
+  const n = parseInt(full, 16);
+  return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${alpha})`;
 }
 
-/**
- * 데이터가 화면으로 들어가는 자리(화면 로컬 좌표). 화면은 지도 서쪽에 있으므로 줄기는
- * 오른쪽 모서리 한 점으로 모입니다. 다섯 곳에서 한 곳으로 모이는 것이 이 장면의 요지라,
- * 자리를 사업장마다 나누지 않습니다.
- */
-const INLET = new THREE.Vector3(PANEL.width / 2 + 0.06, -0.2, 0.06);
+function makeCanvas(width: number, height: number) {
+  const canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext("2d");
+  return ctx ? { canvas, ctx } : null;
+}
 
-/* ── 캔버스 글자 ─────────────────────────────────────────────── */
+function toTexture(canvas: HTMLCanvasElement) {
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.minFilter = THREE.LinearMipmapLinearFilter;
+  texture.anisotropy = 4;
+  return texture;
+}
 
-const LABEL_DPR = 2;
+/** 네온 획. 흐린 획을 먼저 깔고 선명한 획을 겹쳐 빛나는 것처럼 보이게 합니다. */
+function neonStroke(ctx: CanvasRenderingContext2D, color: string, width: number, blur: number) {
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.lineJoin = "round";
+  ctx.lineCap = "round";
+  ctx.shadowColor = color;
+  ctx.shadowBlur = blur;
+  ctx.lineWidth = width * 2.2;
+  ctx.globalAlpha = 0.35;
+  ctx.stroke();
+  ctx.globalAlpha = 1;
+  ctx.shadowBlur = blur * 0.5;
+  ctx.lineWidth = width;
+  ctx.stroke();
+  ctx.restore();
+}
+
+function neonText(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  x: number,
+  y: number,
+  color: string,
+  blur = 10,
+) {
+  ctx.save();
+  ctx.shadowColor = color;
+  ctx.shadowBlur = blur;
+  ctx.fillStyle = color;
+  ctx.fillText(text, x, y);
+  ctx.restore();
+}
 
 function roundedRect(
   ctx: CanvasRenderingContext2D,
@@ -107,307 +138,565 @@ function roundedRect(
   ctx.closePath();
 }
 
-/** 이름표 한 장. 반투명 알약 위에 글자를 올려 해안선 위에서도 읽히게 합니다. */
-function makeLabelTexture(text: string, palette: Palette) {
-  const FONT_PX = 13;
-  const HEIGHT_PX = 28;
-  const PAD_PX = 9;
-  const canvas = document.createElement("canvas");
-  const ctx = canvas.getContext("2d");
-  if (!ctx) return null;
-
-  const font = `600 ${FONT_PX * LABEL_DPR}px ${palette.font}`;
-  ctx.font = font;
-  const width = Math.ceil(ctx.measureText(text).width + PAD_PX * 2 * LABEL_DPR);
-  const height = HEIGHT_PX * LABEL_DPR;
-  canvas.width = width;
-  canvas.height = height;
-
-  ctx.font = font;
-  ctx.globalAlpha = 0.94;
-  ctx.fillStyle = palette.surface;
-  roundedRect(ctx, 1, 1, width - 2, height - 2, height / 2);
-  ctx.fill();
-  ctx.globalAlpha = 1;
-  ctx.lineWidth = LABEL_DPR;
-  ctx.strokeStyle = palette.line;
-  ctx.stroke();
-  ctx.fillStyle = palette.ink;
-  ctx.textBaseline = "middle";
-  ctx.fillText(text, PAD_PX * LABEL_DPR, height / 2 + LABEL_DPR);
-
-  const texture = new THREE.CanvasTexture(canvas);
-  texture.colorSpace = THREE.SRGBColorSpace;
-  texture.minFilter = THREE.LinearFilter;
-  return { texture, aspect: width / height };
-}
-
-/**
- * 화면 앞면 한 장. 제목은 왼쪽 위에, 범례는 오른쪽 아래에 그리고 가운데는 비워 둡니다.
- * 비운 자리에는 매 프레임 움직이는 차트 지오메트리가 올라갑니다.
- */
-function makePanelTexture(palette: Palette) {
-  const PX_PER_UNIT = 200 * LABEL_DPR;
-  const width = Math.round(PANEL.width * PX_PER_UNIT);
-  const height = Math.round(PANEL.height * PX_PER_UNIT);
-  const canvas = document.createElement("canvas");
-  const ctx = canvas.getContext("2d");
-  if (!ctx) return null;
-  canvas.width = width;
-  canvas.height = height;
-
-  const px = (n: number) => n * LABEL_DPR;
-  const pad = px(22);
-
-  ctx.textBaseline = "top";
-  ctx.font = `700 ${px(26)}px ${palette.font}`;
-  ctx.fillStyle = palette.ink;
-  ctx.fillText("5개 공장 에너지 사용량 예측", pad, pad);
-
-  // 범례는 제목 아래 둘째 줄. 줄기가 들어오는 자리와 겹치지 않는 곳입니다.
-  ctx.textBaseline = "middle";
-  ctx.font = `500 ${px(19)}px ${palette.font}`;
-  const legendY = pad + px(26) + px(26);
-  let cursor = pad;
-  const item = (label: string, swatchWidth: number, draw: (x: number) => void) => {
-    draw(cursor);
-    cursor += swatchWidth + px(8);
-    ctx.fillStyle = palette.muted;
-    ctx.fillText(label, cursor, legendY);
-    cursor += ctx.measureText(label).width + px(22);
+/** 결정적 의사난수. 장식 차트가 렌더마다 달라지지 않게 합니다. */
+function pseudoRandom(seed: number) {
+  let state = seed;
+  return () => {
+    state = (state * 1664525 + 1013904223) % 4294967296;
+    return state / 4294967296;
   };
-  item("실측", px(28), (x) => {
-    ctx.strokeStyle = palette.blue;
-    ctx.lineWidth = px(2.5);
-    ctx.beginPath();
-    ctx.moveTo(x, legendY);
-    ctx.lineTo(x + px(28), legendY);
-    ctx.stroke();
-  });
-  item("예측 구간 P05~P95", px(28), (x) => {
-    ctx.globalAlpha = 0.32;
-    ctx.fillStyle = palette.blue;
-    ctx.fillRect(x, legendY - px(8), px(28), px(16));
-    ctx.globalAlpha = 1;
-  });
-
-  // 범례 아래 구분선
-  ctx.fillStyle = palette.line;
-  ctx.fillRect(pad, legendY + px(22), width - pad * 2, px(1.5));
-
-  const texture = new THREE.CanvasTexture(canvas);
-  texture.colorSpace = THREE.SRGBColorSpace;
-  texture.minFilter = THREE.LinearFilter;
-  return texture;
 }
 
 /* ── 지도 ────────────────────────────────────────────────────── */
 
-function Ground({ palette }: { palette: Palette }) {
-  const grid = useMemo(() => {
-    const helper = new THREE.GridHelper(18, 30, palette.line, palette.line);
-    const material = helper.material as THREE.Material;
-    material.transparent = true;
-    material.opacity = 0.45;
-    return helper;
-  }, [palette.line]);
+type Site = { name: string; x: number; z: number; units: number };
 
-  useEffect(() => () => grid.dispose(), [grid]);
-  return <primitive object={grid} position={[0, -0.01, 0]} />;
+const MAP_PADDING = 0.55;
+const MAP_PX_PER_UNIT = 400;
+
+/** 지도판의 범위(장면 좌표). 해안선·섬·이름표가 다 들어가게 여백을 둡니다. */
+function mapBounds() {
+  let xMin = Infinity;
+  let xMax = -Infinity;
+  let zMin = Infinity;
+  let zMax = -Infinity;
+  const include = (lon: number, lat: number) => {
+    const { x, z } = project(lon, lat);
+    xMin = Math.min(xMin, x);
+    xMax = Math.max(xMax, x);
+    zMin = Math.min(zMin, z);
+    zMax = Math.max(zMax, z);
+  };
+  for (const ring of KOREA_RINGS) for (const [lon, lat] of ring) include(lon, lat);
+  for (const island of ISLAND_DOTS) include(island.lon, island.lat);
+  return {
+    xMin: xMin - MAP_PADDING,
+    xMax: xMax + MAP_PADDING,
+    zMin: zMin - MAP_PADDING,
+    zMax: zMax + MAP_PADDING,
+  };
 }
 
-/** 남한 지도판. 해안선 좌표로 면을 만들어 얇게 뽑아 올리고, 윗면 테두리에 해안선을 긋습니다. */
-function MapPlate({ palette }: { palette: Palette }) {
-  const { plate, coast } = useMemo(() => {
-    const shapes = KOREA_RINGS.map((ring) => {
-      const shape = new THREE.Shape();
-      ring.forEach(([lon, lat], index) => {
-        const { x, z } = project(lon, lat);
-        // Shape는 2차원(x, y)이라 y에 -z를 넣고, 아래에서 판을 눕힙니다.
-        if (index === 0) shape.moveTo(x, -z);
-        else shape.lineTo(x, -z);
-      });
-      shape.closePath();
-      return shape;
-    });
-    const plate = new THREE.ExtrudeGeometry(shapes, { depth: PLATE_DEPTH, bevelEnabled: false });
-    // x축으로 -90° 돌리면 shape의 y가 -z(북쪽)로, 뽑아 올린 방향이 +y가 됩니다.
-    plate.rotateX(-Math.PI / 2);
-
-    const points: number[] = [];
-    for (const ring of KOREA_RINGS) {
-      for (let i = 0; i < ring.length; i += 1) {
-        const a = project(ring[i][0], ring[i][1]);
-        const next = ring[(i + 1) % ring.length];
-        const b = project(next[0], next[1]);
-        points.push(a.x, PLATE_DEPTH + 0.003, a.z, b.x, PLATE_DEPTH + 0.003, b.z);
-      }
-    }
-    const coast = new THREE.BufferGeometry();
-    coast.setAttribute("position", new THREE.Float32BufferAttribute(points, 3));
-    return { plate, coast };
-  }, []);
-
-  useEffect(
-    () => () => {
-      plate.dispose();
-      coast.dispose();
-    },
-    [plate, coast],
-  );
-
-  return (
-    <group>
-      <mesh geometry={plate}>
-        <meshStandardMaterial
-          color={palette.surface}
-          roughness={0.9}
-          metalness={0}
-          emissive={palette.blue}
-          emissiveIntensity={0.1}
-        />
-      </mesh>
-      <lineSegments geometry={coast}>
-        <lineBasicMaterial color={palette.blue} transparent opacity={0.6} />
-      </lineSegments>
-      {ISLAND_DOTS.map((island) => {
-        const { x, z } = project(island.lon, island.lat);
-        return (
-          <group key={island.name} position={[x, 0, z]}>
-            <mesh position={[0, PLATE_DEPTH / 2, 0]}>
-              <cylinderGeometry args={[island.radius, island.radius, PLATE_DEPTH, 10]} />
-              <meshStandardMaterial
-                color={palette.surface}
-                emissive={palette.blue}
-                emissiveIntensity={0.1}
-              />
-            </mesh>
-            <mesh position={[0, PLATE_DEPTH + 0.003, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-              <ringGeometry args={[island.radius - 0.01, island.radius, 14]} />
-              <meshBasicMaterial color={palette.blue} transparent opacity={0.6} />
-            </mesh>
-          </group>
-        );
-      })}
-    </group>
-  );
+/** 공장 아이콘. 톱니 지붕 실루엣입니다. */
+function factoryGlyph(ctx: CanvasRenderingContext2D, cx: number, cy: number, size: number) {
+  const h = size * 0.62;
+  const tooth = size / 3;
+  const left = cx - size / 2;
+  const top = cy - h / 2;
+  ctx.beginPath();
+  ctx.moveTo(left, cy + h / 2);
+  ctx.lineTo(left, top + tooth * 0.45);
+  for (let i = 0; i < 3; i += 1) {
+    const x0 = left + i * tooth;
+    ctx.lineTo(x0 + tooth, top);
+    ctx.lineTo(x0 + tooth, top + tooth * 0.45);
+  }
+  ctx.lineTo(cx + size / 2, cy + h / 2);
+  ctx.closePath();
+  ctx.fill();
+  // 굴뚝
+  ctx.fillRect(left + tooth * 0.12, top - tooth * 0.5, tooth * 0.28, tooth * 0.9);
 }
-
-/* ── 공장 ────────────────────────────────────────────────────── */
 
 /**
- * 공장 한 채. 톱니 지붕의 옆모습을 그려 앞뒤로 뽑아 올린 지오메트리 하나라,
- * 공장 한 채가 draw call 한 번입니다.
+ * 지도 한 장. 해안선·섬·공장 아이콘·이름표를 캔버스에 네온으로 그려 바닥에 깝니다.
+ * 지오메트리로 만들면 글로우를 낼 수 없어, 지도는 그림으로 두고 흐름만 3D로 둡니다.
  */
-function factoryGeometry(width = 0.24, depth = 0.2, wall = 0.13, teeth = 3, tooth = 0.065) {
-  const shape = new THREE.Shape();
-  shape.moveTo(0, 0);
-  shape.lineTo(0, wall);
-  const toothWidth = width / teeth;
-  for (let i = 0; i < teeth; i += 1) {
-    // 완만한 지붕면을 올라갔다가 채광창 쪽으로 가파르게 떨어집니다.
-    shape.lineTo(i * toothWidth + toothWidth * 0.62, wall + tooth);
-    shape.lineTo((i + 1) * toothWidth, wall);
-  }
-  shape.lineTo(width, 0);
-  shape.closePath();
+function makeMapTexture(sites: Site[], palette: Palette) {
+  const bounds = mapBounds();
+  const width = Math.round((bounds.xMax - bounds.xMin) * MAP_PX_PER_UNIT);
+  const height = Math.round((bounds.zMax - bounds.zMin) * MAP_PX_PER_UNIT);
+  const made = makeCanvas(width, height);
+  if (!made) return null;
+  const { canvas, ctx } = made;
+  const px = (x: number) => ((x - bounds.xMin) / (bounds.xMax - bounds.xMin)) * width;
+  const py = (z: number) => ((z - bounds.zMin) / (bounds.zMax - bounds.zMin)) * height;
+  const unit = MAP_PX_PER_UNIT;
 
-  const geometry = new THREE.ExtrudeGeometry(shape, { depth, bevelEnabled: false });
-  geometry.translate(-width / 2, 0, -depth / 2);
-  return geometry;
+  // 땅. 바다보다 살짝 밝은 남색 위에 네온 해안선
+  const trace = (ring: readonly (readonly [number, number])[]) => {
+    ring.forEach(([lon, lat], index) => {
+      const { x, z } = project(lon, lat);
+      if (index === 0) ctx.moveTo(px(x), py(z));
+      else ctx.lineTo(px(x), py(z));
+    });
+    ctx.closePath();
+  };
+  ctx.beginPath();
+  for (const ring of KOREA_RINGS) trace(ring);
+  ctx.fillStyle = rgba(palette.glow, 0.16);
+  ctx.fill();
+  neonStroke(ctx, palette.glow, 4, 28);
+
+  for (const island of ISLAND_DOTS) {
+    const { x, z } = project(island.lon, island.lat);
+    ctx.beginPath();
+    ctx.arc(px(x), py(z), island.radius * unit, 0, Math.PI * 2);
+    ctx.fillStyle = rgba(palette.glow, 0.1);
+    ctx.fill();
+    neonStroke(ctx, palette.glow, 3, 16);
+  }
+
+  // 사업장: 자리 고리, 아이콘, 이름표
+  ctx.textBaseline = "middle";
+  for (const site of sites) {
+    const cx = px(site.x);
+    const cy = py(site.z);
+    const ringRadius = (site.units > 1 ? 0.36 : 0.28) * unit;
+    ctx.beginPath();
+    ctx.arc(cx, cy, ringRadius, 0, Math.PI * 2);
+    ctx.fillStyle = rgba(palette.glow, 0.08);
+    ctx.fill();
+    neonStroke(ctx, palette.glow, 2, 14);
+
+    ctx.save();
+    ctx.fillStyle = palette.glow;
+    ctx.shadowColor = palette.glow;
+    ctx.shadowBlur = 22;
+    const glyph = 0.22 * unit;
+    for (let unitIndex = 0; unitIndex < site.units; unitIndex += 1) {
+      factoryGlyph(ctx, cx + (unitIndex - (site.units - 1) / 2) * glyph * 1.15, cy, glyph);
+    }
+    ctx.restore();
+
+    const label = PLANT_SITES[site.name]?.label ?? { side: "right" as const };
+    ctx.font = `600 ${0.17 * unit}px ${palette.font}`;
+    const gap = ringRadius + 0.06 * unit;
+    if (label.side === "top") {
+      ctx.textAlign = "center";
+      neonText(ctx, site.name, cx, cy - gap - 0.06 * unit, palette.text, 12);
+    } else {
+      ctx.textAlign = label.side === "left" ? "right" : "left";
+      const dx = label.side === "left" ? -gap : gap;
+      neonText(ctx, site.name, cx + dx, cy + (label.dz ?? 0) * unit, palette.text, 12);
+    }
+  }
+
+  return {
+    texture: toTexture(canvas),
+    width: bounds.xMax - bounds.xMin,
+    height: bounds.zMax - bounds.zMin,
+    centerX: (bounds.xMin + bounds.xMax) / 2,
+    centerZ: (bounds.zMin + bounds.zMax) / 2,
+  };
 }
 
-function PlantSiteMarker({
-  name,
-  x,
-  z,
-  units,
-  labelSide,
-  labelDz,
-  palette,
-  geometry,
-}: {
-  name: string;
-  x: number;
-  z: number;
-  units: number;
-  labelSide: "left" | "right" | "top";
-  labelDz: number;
-  palette: Palette;
-  geometry: THREE.ExtrudeGeometry;
-}) {
-  const label = useMemo(() => makeLabelTexture(name, palette), [name, palette]);
-  useEffect(() => () => label?.texture.dispose(), [label]);
-
-  const LABEL_HEIGHT = 0.26;
-  const padRadius = units > 1 ? 0.4 : 0.3;
-  // 이름표는 자리 판 바깥에 붙입니다. 위쪽이면 북쪽(카메라에서 먼 쪽)입니다.
-  const labelX =
-    labelSide === "top" ? x : x + (labelSide === "left" ? -padRadius - 0.02 : padRadius + 0.02);
-  const labelZ = labelSide === "top" ? z - padRadius - 0.04 : z;
-  const anchor = useMemo(
-    () =>
-      labelSide === "top"
-        ? new THREE.Vector2(0.5, 0)
-        : new THREE.Vector2(labelSide === "left" ? 1 : 0, 0.5),
-    [labelSide],
-  );
-
+function GroundMap({ sites, palette }: { sites: Site[]; palette: Palette }) {
+  const map = useMemo(() => makeMapTexture(sites, palette), [sites, palette]);
+  useEffect(() => () => map?.texture.dispose(), [map]);
+  if (!map) return null;
   return (
-    <group>
-      {/* 자리를 표시하는 판. 공장이 작아도 위치가 눈에 들어오게 합니다. */}
-      <mesh position={[x, PLATE_DEPTH + 0.004, z]} rotation={[-Math.PI / 2, 0, 0]}>
-        <circleGeometry args={[padRadius, 28]} />
-        <meshBasicMaterial color={palette.blue} transparent opacity={0.14} />
+    <mesh position={[map.centerX, 0.004, map.centerZ]} rotation={[-Math.PI / 2, 0, 0]}>
+      <planeGeometry args={[map.width, map.height]} />
+      <meshBasicMaterial map={map.texture} transparent depthWrite={false} />
+    </mesh>
+  );
+}
+
+/* ── 통합 화면(패널 링) ──────────────────────────────────────── */
+
+type PanelKind = "forecast" | "gauge" | "bars" | "lines" | "donut" | "table";
+
+type PanelSpec = {
+  kind: PanelKind;
+  title: string;
+  /** 링 위의 각도(도). 0이 카메라 쪽(+z)입니다. */
+  angle: number;
+  /** 패널이 차지하는 각도 폭(도) */
+  span: number;
+  height: number;
+};
+
+const PANELS: PanelSpec[] = [
+  { kind: "forecast", title: "에너지 사용량 예측", angle: 0, span: 62, height: 1.0 },
+  { kind: "gauge", title: "예측 오차", angle: 58, span: 38, height: 0.86 },
+  { kind: "bars", title: "전력 · 연료 · 용수", angle: -58, span: 38, height: 0.86 },
+  { kind: "lines", title: "공장별 원단위", angle: 118, span: 40, height: 0.8 },
+  { kind: "donut", title: "설비별 사용 구성", angle: -118, span: 40, height: 0.8 },
+  { kind: "table", title: "일일 점검", angle: 180, span: 44, height: 0.8 },
+];
+
+const PANEL_PX = { width: 720, height: 400 };
+
+function drawPanelFrame(ctx: CanvasRenderingContext2D, palette: Palette, title: string) {
+  const { width, height } = PANEL_PX;
+  ctx.clearRect(0, 0, width, height);
+  roundedRect(ctx, 6, 6, width - 12, height - 12, 18);
+  ctx.fillStyle = rgba(palette.bg, 0.72);
+  ctx.fill();
+  const gradient = ctx.createLinearGradient(0, 0, 0, height);
+  gradient.addColorStop(0, rgba(palette.glow, 0.14));
+  gradient.addColorStop(1, rgba(palette.accent, 0.06));
+  ctx.fillStyle = gradient;
+  ctx.fill();
+  neonStroke(ctx, palette.glow, 2.5, 18);
+
+  ctx.textBaseline = "middle";
+  ctx.textAlign = "left";
+  ctx.font = `600 32px ${palette.font}`;
+  neonText(ctx, title, 30, 42, palette.text, 8);
+  ctx.fillStyle = rgba(palette.glow, 0.35);
+  ctx.fillRect(30, 68, width - 60, 1.5);
+}
+
+const PANEL_BODY = { x: 34, y: 84, w: PANEL_PX.width - 68, h: PANEL_PX.height - 112 };
+
+function drawForecast(ctx: CanvasRenderingContext2D, palette: Palette, time: number) {
+  const { x, y, w, h } = PANEL_BODY;
+  // 눈금
+  ctx.strokeStyle = rgba(palette.glow, 0.18);
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 3; i += 1) {
+    const gy = y + (h / 3) * i;
+    ctx.beginPath();
+    ctx.moveTo(x, gy);
+    ctx.lineTo(x + w, gy);
+    ctx.stroke();
+  }
+  const SAMPLES = 60;
+  const mid = y + h * 0.52;
+  const centre = (u: number) =>
+    mid - (Math.sin(u * 5.2 - time) * 0.22 + Math.sin(u * 2.1 - time * 0.7) * 0.12) * h;
+  const spread = (u: number) => (0.11 + Math.sin(u * 3.1 + time * 0.5) * 0.035) * h;
+
+  // 예측 구간(P05~P95)
+  ctx.beginPath();
+  for (let i = 0; i <= SAMPLES; i += 1) {
+    const u = i / SAMPLES;
+    ctx.lineTo(x + u * w, centre(u) - spread(u));
+  }
+  for (let i = SAMPLES; i >= 0; i -= 1) {
+    const u = i / SAMPLES;
+    ctx.lineTo(x + u * w, centre(u) + spread(u));
+  }
+  ctx.closePath();
+  ctx.fillStyle = rgba(palette.glow, 0.22);
+  ctx.fill();
+
+  // 실측선
+  ctx.beginPath();
+  for (let i = 0; i <= SAMPLES; i += 1) {
+    const u = i / SAMPLES;
+    ctx.lineTo(x + u * w, centre(u) + Math.sin(u * 9.3 - time * 1.6) * 0.045 * h);
+  }
+  neonStroke(ctx, palette.glow, 3, 14);
+
+  ctx.font = `500 19px ${palette.font}`;
+  ctx.textAlign = "right";
+  ctx.fillStyle = palette.muted;
+  ctx.fillText("실측 ─   예측 구간 P05~P95 ▬", x + w, y + h + 16);
+  ctx.textAlign = "left";
+}
+
+function drawGauge(ctx: CanvasRenderingContext2D, palette: Palette, metric?: SceneMetric) {
+  const { x, y, w, h } = PANEL_BODY;
+  const cx = x + w * 0.3;
+  const cy = y + h * 0.55;
+  const r = h * 0.42;
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, Math.PI * 0.75, Math.PI * 2.25);
+  ctx.strokeStyle = rgba(palette.glow, 0.18);
+  ctx.lineWidth = 14;
+  ctx.lineCap = "round";
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, Math.PI * 0.75, Math.PI * 1.05);
+  neonStroke(ctx, palette.glow, 14, 18);
+
+  ctx.textAlign = "left";
+  ctx.font = `700 40px ${palette.font}`;
+  neonText(ctx, metric?.display ?? "—", x + w * 0.56, cy - 14, palette.text, 10);
+  ctx.font = `500 18px ${palette.font}`;
+  ctx.fillStyle = palette.muted;
+  const condition = metric?.condition ?? "";
+  // 조건은 두 줄까지 접습니다.
+  const words = condition.split(" ");
+  const lines: string[] = [];
+  let current = "";
+  for (const word of words) {
+    const next = current ? `${current} ${word}` : word;
+    if (ctx.measureText(next).width > w * 0.42 && current) {
+      lines.push(current);
+      current = word;
+    } else current = next;
+  }
+  if (current) lines.push(current);
+  lines.slice(0, 2).forEach((line, index) => {
+    ctx.fillText(line, x + w * 0.56, cy + 22 + index * 24);
+  });
+}
+
+function drawBars(ctx: CanvasRenderingContext2D, palette: Palette) {
+  const { x, y, w, h } = PANEL_BODY;
+  const random = pseudoRandom(7);
+  const groups = 5;
+  const groupWidth = w / groups;
+  for (let g = 0; g < groups; g += 1) {
+    for (let k = 0; k < 3; k += 1) {
+      const value = 0.35 + random() * 0.55;
+      const barWidth = groupWidth * 0.2;
+      const bx = x + g * groupWidth + groupWidth * 0.14 + k * barWidth * 1.15;
+      const barHeight = value * (h - 20);
+      ctx.fillStyle = rgba(palette.glow, 0.28 + k * 0.22);
+      ctx.shadowColor = palette.glow;
+      ctx.shadowBlur = 10;
+      ctx.fillRect(bx, y + h - barHeight, barWidth, barHeight);
+      ctx.shadowBlur = 0;
+    }
+  }
+  ctx.fillStyle = rgba(palette.glow, 0.4);
+  ctx.fillRect(x, y + h, w, 1.5);
+}
+
+function drawLines(ctx: CanvasRenderingContext2D, palette: Palette) {
+  const { x, y, w, h } = PANEL_BODY;
+  const random = pseudoRandom(3);
+  ctx.strokeStyle = rgba(palette.glow, 0.18);
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 3; i += 1) {
+    ctx.beginPath();
+    ctx.moveTo(x, y + (h / 3) * i);
+    ctx.lineTo(x + w, y + (h / 3) * i);
+    ctx.stroke();
+  }
+  for (let series = 0; series < 3; series += 1) {
+    ctx.beginPath();
+    let level = 0.3 + random() * 0.4;
+    for (let i = 0; i <= 14; i += 1) {
+      level = Math.min(0.9, Math.max(0.1, level + (random() - 0.5) * 0.25));
+      ctx.lineTo(x + (i / 14) * w, y + h - level * h);
+    }
+    neonStroke(ctx, series === 0 ? palette.glow : palette.accent, 2.5, 10);
+  }
+}
+
+function drawDonut(ctx: CanvasRenderingContext2D, palette: Palette) {
+  const { x, y, w, h } = PANEL_BODY;
+  const cx = x + w * 0.3;
+  const cy = y + h * 0.52;
+  const r = h * 0.4;
+  const parts = [0.42, 0.33, 0.25];
+  let start = -Math.PI / 2;
+  parts.forEach((part, index) => {
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, start + 0.04, start + part * Math.PI * 2 - 0.04);
+    ctx.lineWidth = 16;
+    ctx.strokeStyle = rgba(palette.glow, 0.9 - index * 0.3);
+    ctx.shadowColor = palette.glow;
+    ctx.shadowBlur = 12;
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+    start += part * Math.PI * 2;
+  });
+  for (let i = 0; i < 3; i += 1) {
+    ctx.fillStyle = rgba(palette.glow, 0.9 - i * 0.3);
+    ctx.fillRect(x + w * 0.6, y + 30 + i * 46, 14, 14);
+    ctx.fillStyle = rgba(palette.glow, 0.3);
+    ctx.fillRect(x + w * 0.6 + 26, y + 34 + i * 46, w * 0.3 - (i * w) / 14, 6);
+  }
+}
+
+function drawTable(ctx: CanvasRenderingContext2D, palette: Palette) {
+  const { x, y, w, h } = PANEL_BODY;
+  const random = pseudoRandom(11);
+  const rows = 5;
+  for (let i = 0; i < rows; i += 1) {
+    const ry = y + 12 + (i * (h - 12)) / rows;
+    ctx.fillStyle = rgba(palette.glow, 0.2 + random() * 0.3);
+    ctx.beginPath();
+    ctx.arc(x + 12, ry + 10, 7, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = rgba(palette.glow, 0.28);
+    ctx.fillRect(x + 36, ry + 6, w * (0.25 + random() * 0.3), 8);
+    ctx.fillStyle = rgba(palette.glow, 0.16);
+    ctx.fillRect(x + w * 0.7, ry + 6, w * 0.3 * random(), 8);
+    ctx.fillStyle = rgba(palette.glow, 0.12);
+    ctx.fillRect(x, ry + 28, w, 1);
+  }
+}
+
+function drawPanel(
+  ctx: CanvasRenderingContext2D,
+  spec: PanelSpec,
+  palette: Palette,
+  time: number,
+  metric?: SceneMetric,
+) {
+  drawPanelFrame(ctx, palette, spec.title);
+  switch (spec.kind) {
+    case "forecast":
+      drawForecast(ctx, palette, time);
+      break;
+    case "gauge":
+      drawGauge(ctx, palette, metric);
+      break;
+    case "bars":
+      drawBars(ctx, palette);
+      break;
+    case "lines":
+      drawLines(ctx, palette);
+      break;
+    case "donut":
+      drawDonut(ctx, palette);
+      break;
+    case "table":
+      drawTable(ctx, palette);
+      break;
+  }
+}
+
+/** 링 위의 굽은 패널 한 장. 예측 패널은 매 몇 프레임마다 다시 그려 띠가 흐릅니다. */
+function RingPanel({
+  spec,
+  palette,
+  metric,
+}: {
+  spec: PanelSpec;
+  palette: Palette;
+  metric?: SceneMetric;
+}) {
+  const made = useMemo(() => {
+    const canvas = makeCanvas(PANEL_PX.width, PANEL_PX.height);
+    if (!canvas) return null;
+    drawPanel(canvas.ctx, spec, palette, 0, metric);
+    const texture = toTexture(canvas.canvas);
+    // 카메라 반대편 패널은 안쪽 면이 보이므로 그림을 좌우로 뒤집어 글자가 바로 읽히게 합니다.
+    const inside = Math.abs(spec.angle) > 90;
+    texture.wrapS = THREE.RepeatWrapping;
+    texture.repeat.x = inside ? -1 : 1;
+    texture.offset.x = inside ? 1 : 0;
+    return { ...canvas, texture };
+  }, [spec, palette, metric]);
+  useEffect(() => () => made?.texture.dispose(), [made]);
+
+  // 매 프레임 다시 그리는 캔버스는 ref로 잡습니다. 렌더 결과를 콜백에서 고치지 않기 위해서입니다.
+  const live = useRef<typeof made>(null);
+  useEffect(() => {
+    live.current = made;
+  }, [made]);
+  const frames = useRef(0);
+  useFrame(({ clock }) => {
+    const target = live.current;
+    if (!target || spec.kind !== "forecast") return;
+    frames.current += 1;
+    if (frames.current % 3 !== 0) return;
+    drawPanel(target.ctx, spec, palette, clock.elapsedTime * 0.45, metric);
+    target.texture.needsUpdate = true;
+  });
+
+  if (!made) return null;
+  const theta = THREE.MathUtils.degToRad(spec.span);
+  const start = THREE.MathUtils.degToRad(spec.angle) - theta / 2;
+  return (
+    <mesh position={RING.center}>
+      <cylinderGeometry args={[RING.radius, RING.radius, spec.height, 24, 1, true, start, theta]} />
+      <meshBasicMaterial
+        map={made.texture}
+        transparent
+        side={THREE.DoubleSide}
+        depthWrite={false}
+      />
+    </mesh>
+  );
+}
+
+/** 링 바닥의 동심원 원반. 데이터가 들어오는 자리입니다. */
+function makeFloorTexture(palette: Palette) {
+  const size = 768;
+  const made = makeCanvas(size, size);
+  if (!made) return null;
+  const { canvas, ctx } = made;
+  const c = size / 2;
+  const glow = ctx.createRadialGradient(c, c, 0, c, c, c);
+  glow.addColorStop(0, rgba(palette.glow, 0.28));
+  glow.addColorStop(0.45, rgba(palette.glow, 0.08));
+  glow.addColorStop(1, rgba(palette.glow, 0));
+  ctx.fillStyle = glow;
+  ctx.fillRect(0, 0, size, size);
+  for (const [radius, width] of [
+    [0.96, 3],
+    [0.8, 1.5],
+    [0.62, 2],
+  ]) {
+    ctx.beginPath();
+    ctx.arc(c, c, radius * c * 0.98, 0, Math.PI * 2);
+    neonStroke(ctx, palette.glow, width, 14);
+  }
+  // 눈금
+  ctx.strokeStyle = rgba(palette.glow, 0.5);
+  ctx.lineWidth = 2;
+  for (let i = 0; i < 48; i += 1) {
+    const a = (i / 48) * Math.PI * 2;
+    const inner = 0.88 * c;
+    const outer = (i % 4 === 0 ? 0.94 : 0.91) * c;
+    ctx.beginPath();
+    ctx.moveTo(c + Math.cos(a) * inner, c + Math.sin(a) * inner);
+    ctx.lineTo(c + Math.cos(a) * outer, c + Math.sin(a) * outer);
+    ctx.stroke();
+  }
+  return toTexture(canvas);
+}
+
+function RingFloor({ palette }: { palette: Palette }) {
+  const texture = useMemo(() => makeFloorTexture(palette), [palette]);
+  useEffect(() => () => texture?.dispose(), [texture]);
+  const core = useRef<THREE.Group>(null);
+  useFrame(({ clock }) => {
+    if (!core.current) return;
+    core.current.children[0].rotation.z = clock.elapsedTime * 0.35;
+    core.current.children[1].rotation.z = -clock.elapsedTime * 0.22;
+  });
+  if (!texture) return null;
+  const size = RING.radius * 2.15;
+  return (
+    <group position={[RING.center.x, RING.floorY, RING.center.z]}>
+      <mesh rotation={[-Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[size, size]} />
+        <meshBasicMaterial map={texture} transparent depthWrite={false} />
       </mesh>
-      <mesh position={[x, PLATE_DEPTH + 0.005, z]} rotation={[-Math.PI / 2, 0, 0]}>
-        <ringGeometry args={[padRadius - 0.012, padRadius, 40]} />
-        <meshBasicMaterial color={palette.blue} transparent opacity={0.55} />
-      </mesh>
-      {Array.from({ length: units }, (_, unit) => (
-        <mesh
-          key={unit}
-          geometry={geometry}
-          position={[x + (unit - (units - 1) / 2) * 0.3, PLATE_DEPTH, z]}
-        >
-          <meshStandardMaterial
-            color={palette.blue}
-            emissive={palette.blue}
-            emissiveIntensity={0.18}
-            roughness={0.55}
+      {/* 가운데 도는 고리 두 개 */}
+      <group ref={core} rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.03, 0]}>
+        <mesh>
+          <ringGeometry args={[0.46, 0.5, 48, 1, 0, Math.PI * 1.6]} />
+          <meshBasicMaterial
+            color={palette.glow}
+            transparent
+            opacity={0.9}
+            side={THREE.DoubleSide}
+            blending={THREE.AdditiveBlending}
+            depthWrite={false}
           />
         </mesh>
-      ))}
-      {label && (
-        <sprite
-          position={[labelX, PLATE_DEPTH + 0.16, labelZ + labelDz]}
-          scale={[LABEL_HEIGHT * label.aspect, LABEL_HEIGHT, 1]}
-          center={anchor}
-        >
-          <spriteMaterial map={label.texture} transparent depthWrite={false} />
-        </sprite>
-      )}
+        <mesh>
+          <ringGeometry args={[0.3, 0.33, 48, 1, 0, Math.PI * 1.3]} />
+          <meshBasicMaterial
+            color={palette.glow}
+            transparent
+            opacity={0.7}
+            side={THREE.DoubleSide}
+            blending={THREE.AdditiveBlending}
+            depthWrite={false}
+          />
+        </mesh>
+      </group>
     </group>
   );
 }
 
 /* ── 데이터 흐름 ─────────────────────────────────────────────── */
 
-type Site = { name: string; x: number; z: number; units: number };
-
-/** 사업장에서 화면 입구로 흘러 들어가는 곡선. 사업장마다 세 줄기입니다. */
+/** 사업장에서 링 바닥 가운데로 솟아오르는 곡선. 사업장마다 세 줄기입니다. */
 function buildStreams(sites: Site[]) {
+  const target = new THREE.Vector3(RING.center.x, RING.floorY, RING.center.z);
   return sites.flatMap((site) =>
     STREAM_OFFSETS.map((offset) => {
-      const start = new THREE.Vector3(site.x + offset * 0.4, PLATE_DEPTH + 0.26, site.z + offset);
-      // 세 줄기는 입구에서 거의 하나로 합쳐집니다.
-      const end = panelToWorld(INLET.clone().add(new THREE.Vector3(0, offset * 0.15, 0)));
-      // 화면 오른쪽 바깥에서 수평으로 들어가게 합니다. 화면 좌표로 잡아야 화면을 돌려도 맞습니다.
-      const approach = panelToWorld(
-        INLET.clone().add(new THREE.Vector3(0.95, offset * 0.8 - 0.05, 0.15)),
-      );
-      const lift = start.clone().lerp(approach, 0.45).add(new THREE.Vector3(0, 0.5, 0));
-      return new THREE.CatmullRomCurve3([start, lift, approach, end], false, "centripetal");
+      const start = new THREE.Vector3(site.x + offset * 0.5, 0.02, site.z + offset);
+      const end = target.clone().add(new THREE.Vector3(offset * 0.8, 0, offset * 0.4));
+      // 공장에서 곧게 솟아오른 뒤 바깥에서 링 안으로 휘어 들어갑니다. 분수를 거꾸로 돌린 모양입니다.
+      const outward = new THREE.Vector3(start.x - target.x, 0, start.z - target.z).normalize();
+      const lift = start.clone().add(new THREE.Vector3(0, 1.25, 0)).add(outward.clone().multiplyScalar(0.25));
+      const settle = end.clone().add(outward.multiplyScalar(0.95)).add(new THREE.Vector3(0, 0.4, 0));
+      return new THREE.CatmullRomCurve3([start, lift, settle, end], false, "centripetal");
     }),
   );
 }
@@ -415,7 +704,7 @@ function buildStreams(sites: Site[]) {
 /** 줄기의 길. 알갱이만 띄우면 어디로 가는지 읽히지 않아, 옅은 선으로 길을 깔아 둡니다. */
 function StreamPaths({ curves, palette }: { curves: THREE.CatmullRomCurve3[]; palette: Palette }) {
   const geometry = useMemo(() => {
-    const SEGMENTS = 36;
+    const SEGMENTS = 40;
     const points: number[] = [];
     for (const curve of curves) {
       const samples = curve.getPoints(SEGMENTS);
@@ -433,21 +722,58 @@ function StreamPaths({ curves, palette }: { curves: THREE.CatmullRomCurve3[]; pa
 
   return (
     <lineSegments geometry={geometry}>
-      <lineBasicMaterial color={palette.blue} transparent opacity={0.28} />
+      <lineBasicMaterial
+        color={palette.glow}
+        transparent
+        opacity={0.4}
+        blending={THREE.AdditiveBlending}
+        depthWrite={false}
+      />
     </lineSegments>
   );
 }
 
-/** 길 위를 지나는 데이터 알갱이. 전부 InstancedMesh 하나라 draw call 한 번입니다. */
+/** 부드러운 빛 알갱이 스프라이트 */
+function makeGlowTexture() {
+  const size = 96;
+  const made = makeCanvas(size, size);
+  if (!made) return null;
+  const { canvas, ctx } = made;
+  const c = size / 2;
+  const gradient = ctx.createRadialGradient(c, c, 0, c, c, c);
+  gradient.addColorStop(0, "rgba(255,255,255,1)");
+  gradient.addColorStop(0.25, "rgba(255,255,255,0.85)");
+  gradient.addColorStop(0.6, "rgba(255,255,255,0.18)");
+  gradient.addColorStop(1, "rgba(255,255,255,0)");
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, size, size);
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  return texture;
+}
+
+/** 길 위를 지나는 데이터 알갱이. 점 하나짜리 Points라 draw call 한 번입니다. */
 function DataPulses({ curves, palette }: { curves: THREE.CatmullRomCurve3[]; palette: Palette }) {
-  const meshRef = useRef<THREE.InstancedMesh>(null);
-  const dummy = useMemo(() => new THREE.Object3D(), []);
   const pulseCount = curves.length * PULSES_PER_STREAM;
+  const geometry = useMemo(() => {
+    const geometry = new THREE.BufferGeometry();
+    const attribute = new THREE.BufferAttribute(new Float32Array(pulseCount * 3), 3);
+    attribute.setUsage(THREE.DynamicDrawUsage);
+    geometry.setAttribute("position", attribute);
+    return geometry;
+  }, [pulseCount]);
+  const sprite = useMemo(() => makeGlowTexture(), []);
+  useEffect(
+    () => () => {
+      geometry.dispose();
+      sprite?.dispose();
+    },
+    [geometry, sprite],
+  );
+  const scratch = useMemo(() => new THREE.Vector3(), []);
 
   useFrame(({ clock }) => {
-    const mesh = meshRef.current;
-    if (!mesh) return;
-
+    const position = geometry.getAttribute("position") as THREE.BufferAttribute;
     for (let index = 0; index < pulseCount; index += 1) {
       const curveIndex = index % curves.length;
       const pulse = Math.floor(index / curves.length);
@@ -461,175 +787,45 @@ function DataPulses({ curves, palette }: { curves: THREE.CatmullRomCurve3[]; pal
         pulse / PULSES_PER_STREAM +
         stream / (STREAM_OFFSETS.length * PULSES_PER_STREAM) +
         site * 0.618;
-      const t = (clock.elapsedTime * 0.14 + phase) % 1;
-      curves[curveIndex].getPointAt(t, dummy.position);
-      // 화면에 가까워질수록 작아져, 모여서 하나로 들어가는 것으로 읽히게 합니다.
-      dummy.scale.setScalar(0.062 * (1 - t * 0.35));
-      dummy.updateMatrix();
-      mesh.setMatrixAt(index, dummy.matrix);
+      const t = (clock.elapsedTime * 0.13 + phase) % 1;
+      curves[curveIndex].getPointAt(t, scratch);
+      position.setXYZ(index, scratch.x, scratch.y, scratch.z);
     }
-    mesh.instanceMatrix.needsUpdate = true;
+    position.needsUpdate = true;
   });
 
+  if (!sprite) return null;
   return (
-    <instancedMesh ref={meshRef} args={[undefined, undefined, pulseCount]}>
-      <sphereGeometry args={[1, 10, 8]} />
-      <meshStandardMaterial
-        color={palette.cyan}
-        emissive={palette.cyan}
-        emissiveIntensity={0.9}
-        roughness={0.3}
+    <points geometry={geometry}>
+      <pointsMaterial
+        map={sprite}
+        color={palette.glow}
+        size={0.3}
+        sizeAttenuation
+        transparent
+        depthWrite={false}
+        blending={THREE.AdditiveBlending}
       />
-    </instancedMesh>
+    </points>
   );
 }
 
-/* ── 화면 ────────────────────────────────────────────────────── */
-
-/**
- * 화면 위를 흐르는 예측 구간(P05~P95)과 실측선.
- * 값 하나가 아니라 범위를 내놓는다는 것이 이 모델의 핵심이라 띠로 표현합니다.
- */
-const CHART = {
-  samples: 72,
-  left: -PANEL.width / 2 + 0.24,
-  right: PANEL.width / 2 - 0.24,
-  /** 제목·범례 아래, 판 아래 여백 위의 가운데 */
-  baseY: -0.2,
-  /** 판 앞면보다 살짝 앞 */
-  front: 0.045,
-};
-
-function ForecastChart({ palette }: { palette: Palette }) {
-  const { left: LEFT, right: RIGHT, baseY: BASE_Y, front: FRONT } = CHART;
-
-  const bandGeometry = useMemo(() => {
-    const geometry = new THREE.BufferGeometry();
-    geometry.setAttribute(
-      "position",
-      new THREE.BufferAttribute(new Float32Array(CHART.samples * 2 * 3), 3),
-    );
-    const indices: number[] = [];
-    for (let i = 0; i < CHART.samples - 1; i += 1) {
-      const a = i * 2;
-      indices.push(a, a + 1, a + 2, a + 1, a + 3, a + 2);
-    }
-    geometry.setIndex(indices);
-    return geometry;
-  }, []);
-
-  const lineGeometry = useMemo(() => {
-    const geometry = new THREE.BufferGeometry();
-    geometry.setAttribute(
-      "position",
-      new THREE.BufferAttribute(new Float32Array(CHART.samples * 3), 3),
-    );
-    return geometry;
-  }, []);
-
-  const actualLine = useMemo(
-    () => new THREE.Line(lineGeometry, new THREE.LineBasicMaterial({ color: palette.blue })),
-    [lineGeometry, palette.blue],
-  );
-
-  /** 눈금선 세 줄. 띠가 허공에 뜬 그림이 아니라 차트라는 것을 알려 줍니다. */
-  const gridGeometry = useMemo(() => {
-    const points: number[] = [];
-    for (const dy of [-0.34, 0, 0.34]) {
-      points.push(LEFT, BASE_Y + dy, FRONT - 0.005, RIGHT, BASE_Y + dy, FRONT - 0.005);
-    }
-    const geometry = new THREE.BufferGeometry();
-    geometry.setAttribute("position", new THREE.Float32BufferAttribute(points, 3));
-    return geometry;
-  }, [LEFT, RIGHT, BASE_Y, FRONT]);
-
-  useEffect(
-    () => () => {
-      bandGeometry.dispose();
-      lineGeometry.dispose();
-      gridGeometry.dispose();
-    },
-    [bandGeometry, lineGeometry, gridGeometry],
-  );
-
-  useFrame(({ clock }) => {
-    const time = clock.elapsedTime * 0.45;
-    const band = bandGeometry.getAttribute("position") as THREE.BufferAttribute;
-    const line = lineGeometry.getAttribute("position") as THREE.BufferAttribute;
-
-    for (let i = 0; i < CHART.samples; i += 1) {
-      const u = i / (CHART.samples - 1);
-      const x = LEFT + u * (RIGHT - LEFT);
-      const centre = Math.sin(u * 5.2 - time) * 0.2 + Math.sin(u * 2.1 - time * 0.7) * 0.11;
-      const spread = 0.13 + Math.sin(u * 3.1 + time * 0.5) * 0.04;
-
-      band.setXYZ(i * 2, x, BASE_Y + centre + spread, FRONT);
-      band.setXYZ(i * 2 + 1, x, BASE_Y + centre - spread, FRONT);
-      // 실측선은 구간 안에서 조금씩 다르게 움직입니다.
-      line.setXYZ(i, x, BASE_Y + centre + Math.sin(u * 9.3 - time * 1.6) * 0.045, FRONT + 0.006);
-    }
-
-    band.needsUpdate = true;
-    line.needsUpdate = true;
-  });
-
+/** 링 가운데의 빛. 데이터가 모이는 곳이라는 표시입니다. */
+function CoreGlow({ palette }: { palette: Palette }) {
+  const texture = useMemo(() => makeGlowTexture(), []);
+  useEffect(() => () => texture?.dispose(), [texture]);
+  if (!texture) return null;
   return (
-    <group>
-      <lineSegments geometry={gridGeometry}>
-        <lineBasicMaterial color={palette.line} />
-      </lineSegments>
-      <mesh geometry={bandGeometry}>
-        <meshBasicMaterial
-          color={palette.blue}
-          transparent
-          opacity={0.3}
-          side={THREE.DoubleSide}
-          depthWrite={false}
-        />
-      </mesh>
-      <primitive object={actualLine} />
-    </group>
-  );
-}
-
-/** 데이터가 모이는 화면. 지도 뒤에 세운 판 위에 머리글·범례·차트를 올립니다. */
-function Panel({ palette }: { palette: Palette }) {
-  const face = useMemo(() => makePanelTexture(palette), [palette]);
-  useEffect(() => () => face?.dispose(), [face]);
-
-  const edges = useMemo(
-    () => new THREE.EdgesGeometry(new THREE.BoxGeometry(PANEL.width, PANEL.height, 0.06)),
-    [],
-  );
-  useEffect(() => () => edges.dispose(), [edges]);
-
-  return (
-    <group position={PANEL.position} rotation={[PANEL.tilt, PANEL.yaw, 0, "YXZ"]}>
-      <mesh>
-        <boxGeometry args={[PANEL.width, PANEL.height, 0.06]} />
-        <meshStandardMaterial
-          color={palette.surface}
-          roughness={0.7}
-          emissive={palette.blue}
-          emissiveIntensity={0.04}
-        />
-      </mesh>
-      <lineSegments geometry={edges}>
-        <lineBasicMaterial color={palette.blue} transparent opacity={0.6} />
-      </lineSegments>
-      {face && (
-        <mesh position={[0, 0, 0.032]}>
-          <planeGeometry args={[PANEL.width, PANEL.height]} />
-          <meshBasicMaterial map={face} transparent />
-        </mesh>
-      )}
-      <ForecastChart palette={palette} />
-      {/* 데이터가 들어오는 입구 */}
-      <mesh position={INLET}>
-        <sphereGeometry args={[0.09, 14, 10]} />
-        <meshStandardMaterial color={palette.cyan} emissive={palette.cyan} emissiveIntensity={0.7} />
-      </mesh>
-    </group>
+    <sprite position={[RING.center.x, RING.floorY + 0.12, RING.center.z]} scale={[1.6, 1.6, 1]}>
+      <spriteMaterial
+        map={texture}
+        color={palette.glow}
+        transparent
+        opacity={0.55}
+        blending={THREE.AdditiveBlending}
+        depthWrite={false}
+      />
+    </sprite>
   );
 }
 
@@ -692,9 +888,12 @@ function ParallaxRig({ children }: { children: React.ReactNode }) {
 export default function HeroScene({
   plants,
   active,
+  metric,
 }: {
   plants: string[];
   active: boolean;
+  /** 패널에 적을 예측 오차. 원장에서 옵니다. */
+  metric?: SceneMetric;
 }) {
   /*
    * 이 컴포넌트는 브라우저에서만 불러오므로 첫 렌더에서 바로 토큰을 읽습니다.
@@ -702,7 +901,7 @@ export default function HeroScene({
    */
   const [palette, setPalette] = useState<Palette>(readPalette);
 
-  // 테마가 바뀌면 장면의 색도 따라 바뀝니다. 웹폰트가 늦게 오면 이름표도 다시 그립니다.
+  // 테마가 바뀌면 토큰을 다시 읽고, 웹폰트가 늦게 오면 글자를 다시 그립니다.
   useEffect(() => {
     const update = () => setPalette(readPalette());
     const media = window.matchMedia?.("(prefers-color-scheme: dark)");
@@ -726,45 +925,30 @@ export default function HeroScene({
     [plants],
   );
   const curves = useMemo(() => buildStreams(sites), [sites]);
-  const factory = useMemo(() => factoryGeometry(), []);
-  useEffect(() => () => factory.dispose(), [factory]);
 
   return (
     <Canvas
-      camera={{ position: [0, 7.45, 9.3], fov: 30 }}
-      /* 톤 매핑을 끕니다. 켜 두면 흰색이 회색으로, 토큰의 파랑이 다른 파랑으로 바뀝니다. */
-      flat
+      camera={{ position: [0.1, 4.7, 9.4], fov: 30 }}
       /* 화면 밖에서는 루프를 재웁니다. 마지막 프레임은 캔버스에 그대로 남습니다. */
       frameloop={active ? "always" : "never"}
       dpr={[1, 1.75]}
       gl={{ antialias: true, alpha: true }}
+      /* 톤 매핑을 끕니다. 켜 두면 토큰의 색이 다른 색으로 바뀝니다. */
+      flat
       style={{ width: "100%", height: "100%" }}
       aria-hidden="true"
       onCreated={({ camera }) => camera.lookAt(FOCUS)}
     >
-      {/* 조명 세기는 물리 단위라 1이 1/π 밝기입니다. 흰 판이 희게 보이도록 π 배 가까이 줍니다. */}
-      <ambientLight intensity={2.0} />
-      <directionalLight position={[4, 9, 5]} intensity={1.6} />
       <SceneStats />
       <ParallaxRig>
-        <Ground palette={palette} />
-        <MapPlate palette={palette} />
-        {sites.map((site) => (
-          <PlantSiteMarker
-            key={site.name}
-            name={site.name}
-            x={site.x}
-            z={site.z}
-            units={site.units}
-            labelSide={PLANT_SITES[site.name].label.side}
-            labelDz={PLANT_SITES[site.name].label.dz ?? 0}
-            palette={palette}
-            geometry={factory}
-          />
-        ))}
+        <GroundMap sites={sites} palette={palette} />
         <StreamPaths curves={curves} palette={palette} />
         <DataPulses curves={curves} palette={palette} />
-        <Panel palette={palette} />
+        <RingFloor palette={palette} />
+        <CoreGlow palette={palette} />
+        {PANELS.map((spec) => (
+          <RingPanel key={spec.kind} spec={spec} palette={palette} metric={metric} />
+        ))}
       </ParallaxRig>
     </Canvas>
   );

@@ -70,6 +70,7 @@ export default function Home() {
         </div>
         <HeroSceneGate
           plants={plants}
+          metric={{ display: forecastError.display, condition: forecastError.condition }}
           poster={posterFor("/hero-poster.webp")}
           posterDark={posterFor("/hero-poster-dark.webp")}
           caption="남한 지도 위 다섯 사업장에서 전력·연료·용수 데이터가 한 화면으로 모이고, 화면에는 실측과 예측 구간(P05~P95)이 흐르는 장면. 위치는 시 단위입니다."
