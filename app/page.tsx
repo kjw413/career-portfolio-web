@@ -9,7 +9,12 @@ import {
   getQualifications,
   getTimeline,
 } from "../lib/ledger";
-import { getFeaturedProjects, publicAssetExists, withBasePath } from "../lib/projects";
+import {
+  getFeaturedProjects,
+  publicAssetExists,
+  publicAssetVersion,
+  withBasePath,
+} from "../lib/projects";
 import Archive from "./archive";
 import Timeline from "./components/Timeline";
 import Hero from "./components/Hero";
@@ -26,8 +31,9 @@ export default function Home() {
   // 장면에 세우는 공장 이름과 예측 오차도 원장에서 읽습니다. 화면과 사실이 갈라지지 않게.
   const plants = getPlantNames();
   const forecastError = getMetric("forecast-mape-all");
+  // 포스터는 이름이 같은 채로 다시 만들어지므로, 내용 해시로 캐시를 깹니다.
   const posterFor = (file: string) =>
-    publicAssetExists(file) ? withBasePath(file) : null;
+    publicAssetExists(file) ? `${withBasePath(file)}?v=${publicAssetVersion(file)}` : null;
 
   return (
     <main>

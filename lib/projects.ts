@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
@@ -72,6 +73,16 @@ const PUBLIC_DIR = path.join(process.cwd(), "public");
  */
 export function publicAssetExists(src: string): boolean {
   return mediaExists(src);
+}
+
+/**
+ * 내용이 바뀌면 값이 바뀌는 짧은 해시. 이름이 같은 파일(포스터 등)을 다시 만들었을 때
+ * 브라우저가 캐시한 옛 그림을 계속 보여 주지 않도록 URL 뒤에 붙입니다.
+ */
+export function publicAssetVersion(src: string): string {
+  const file = path.join(PUBLIC_DIR, src.replace(/^\//, ""));
+  if (!fs.existsSync(file)) return "0";
+  return createHash("sha1").update(fs.readFileSync(file)).digest("hex").slice(0, 8);
 }
 
 function mediaExists(src: string): boolean {
