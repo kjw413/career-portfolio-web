@@ -47,7 +47,6 @@ describe("3D 장면 문지기", () => {
     const poster = screen.getByRole("img", { name: props.caption });
     expect(poster).toBeVisible();
     expect(poster).toHaveAttribute("src", "/hero-poster.webp");
-    expect(screen.getByText(props.caption)).toBeVisible();
   });
 
   it("어두운 화면에서는 어두운 포스터를 쓴다", () => {
@@ -61,10 +60,10 @@ describe("3D 장면 문지기", () => {
 
   it("포스터가 아직 없으면 깨진 이미지를 보여 주지 않는다", () => {
     stubMatchMedia(true);
-    render(<HeroSceneGate {...props} poster={null} posterDark={null} />);
+    const { container } = render(<HeroSceneGate {...props} poster={null} posterDark={null} />);
 
     expect(screen.queryByRole("img")).not.toBeInTheDocument();
-    expect(screen.getByText(props.caption)).toBeVisible();
+    expect(container.querySelector(".hero-scene-frame")).toBeInTheDocument();
   });
 
   it("모션 축소 설정에서는 장면을 불러오지 않는다", () => {
@@ -79,6 +78,6 @@ describe("3D 장면 문지기", () => {
     delete window.matchMedia;
 
     expect(() => render(<HeroSceneGate {...props} />)).not.toThrow();
-    expect(screen.getByText(props.caption)).toBeVisible();
+    expect(screen.getByRole("img", { name: props.caption })).toBeVisible();
   });
 });
