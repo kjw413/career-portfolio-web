@@ -36,6 +36,10 @@ npm test              # 검증기가 실제로 오류를 잡는지 확인
 - [Tailwind CSS 4](https://tailwindcss.com/)
 - [GitHub Pages](https://pages.github.com/) + GitHub Actions 자동 배포
 
+화면은 방문자의 운영체제 설정을 따라 밝은 화면과 어두운 화면으로 각각 렌더링됩니다
+(`prefers-color-scheme`). 색은 전부 토큰으로 두었으므로, 새 규칙을 쓸 때도 색을 직접
+적지 말고 `app/globals.css` 상단의 토큰을 씁니다.
+
 서버·데이터베이스 없이 순수 정적 파일로 빌드되므로 무료로 호스팅됩니다.
 
 ## 프로젝트 추가·수정 방법 (코드 수정 불필요)
@@ -85,6 +89,16 @@ frontmatter의 같은 필드는 override가 없을 때의 fallback입니다.
 
 `---` 아래 본문은 자유로운 마크다운입니다 (`## 개요`, `## 수행 과정`, `## 성과` 등).
 현장 개선 과제와 경력 상세는 `content/ledger/experiences/`의 해당 경험 카드에서 수정합니다.
+
+## 사이트 구성
+
+| 경로 | 내용 |
+| --- | --- |
+| `/` | 첫 화면 · 주요 성과 · 대표 프로젝트 · 경력 타임라인 · 보유 기술 · 아카이브 · 기본 이력 |
+| `/experience/` | 경험 카드 목록 (소속별) |
+| `/experience/<카드 ID>/` | 경험 하나의 수행 내용과 수치의 산출 조건 · 확인 근거 |
+| `/projects/<slug>/` | 프로젝트 사례 |
+| `/llms.txt`, `/ai/ledger.json`, `/ai/ledger.md` | AI가 읽는 표면 (빌드가 생성) |
 
 ## 포트폴리오 내용 수정
 

@@ -24,9 +24,17 @@ export default function ImpactGrid({ impacts }: { impacts: Impact[] }) {
               <dd>{impact.action}</dd>
             </div>
           </dl>
-          {impact.projectSlug && (
-            <Link className="impact-link" href={`/projects/${impact.projectSlug}/`}>
-              프로젝트 보기 <span aria-hidden="true">→</span>
+          {(impact.cardId || impact.projectSlug) && (
+            <Link
+              className="impact-link"
+              href={
+                impact.cardId
+                  ? `/experience/${impact.cardId}/`
+                  : `/projects/${impact.projectSlug}/`
+              }
+            >
+              {impact.cardId ? "수치와 근거 보기" : "프로젝트 보기"}{" "}
+              <span aria-hidden="true">→</span>
             </Link>
           )}
         </article>

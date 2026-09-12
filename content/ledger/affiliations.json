@@ -141,7 +141,7 @@
       "EXP-MIL-LEADERSHIP"
     ],
     "status": "확정",
-    "showInTimeline": false,
+    "showInTimeline": true,
     "order": 6
   }
 ]

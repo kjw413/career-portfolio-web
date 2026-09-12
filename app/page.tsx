@@ -1,69 +1,21 @@
 import Link from "next/link";
 import { getCatalogCategories, getProjectCatalog } from "../lib/catalog";
 import { getProfile } from "../lib/content";
-import { getExperiences } from "../lib/ledger";
+import skills from "../content/skills.json";
+import { getHeadlineMetrics, getQualifications, getTimeline } from "../lib/ledger";
 import { getFeaturedProjects, withBasePath } from "../lib/projects";
 import Archive from "./archive";
-import ExperienceAccordion from "./components/ExperienceAccordion";
+import Timeline from "./components/Timeline";
 import Hero from "./components/Hero";
 import ImpactGrid from "./components/ImpactGrid";
 
-const capabilities = [
-  {
-    index: "A",
-    title: "데이터 · AI",
-    text: "설비와 생산 데이터를 정리하고, 예측 모델과 LLM을 붙여 보고서까지 자동으로 만듭니다.",
-    skills: ["Python", "SQL", "시계열 예측", "이상 감지", "LangChain", "LLM API"],
-  },
-  {
-    index: "B",
-    title: "소프트웨어 · 자동화",
-    text: "반복 업무의 입력부터 검증, 보고까지를 프로그램으로 만들어 현업이 직접 쓰게 합니다.",
-    skills: ["Streamlit", "RPA", "MySQL", "Tkinter", "Git", "엑셀 자동화"],
-  },
-  {
-    index: "C",
-    title: "임베디드 · 제어",
-    text: "Linux와 MCU 환경에서 통신과 제어 로직을 구현하고 동작을 검증합니다.",
-    skills: ["C/C++", "Linux", "FreeRTOS", "CAN", "SPI", "OpenCV", "PLC"],
-  },
-  {
-    index: "D",
-    title: "제조 도메인",
-    text: "생산·유틸리티·설비에서 일어나는 현상을 데이터로 옮기고 개선 과제로 정리합니다.",
-    skills: ["에너지", "유틸리티", "냉동", "생산관리", "투자 타당성", "공정 개선"],
-  },
-];
-
-const qualifications = [
-  {
-    label: "학력",
-    title: "홍익대학교 전자전기공학부 학사",
-    detail: "2018.03 입학 · 2024.02 졸업 · 학점 3.50 / 4.50 (이수 136학점)",
-  },
-  {
-    label: "자격증",
-    title: "ADsP · 컴퓨터활용능력 1급",
-    detail: "데이터분석 준전문가 2026.03 취득 · 컴퓨터활용능력 1급 2021.09 취득",
-  },
-  {
-    label: "어학",
-    title: "OPIc 영어 IH",
-    detail: "2025.08 응시 · Intermediate High",
-  },
-  {
-    label: "병역",
-    title: "육군 병장 만기제대",
-    detail: "2019.01 입대 · 2020.08 전역",
-  },
-];
-
 export default function Home() {
   const profile = getProfile();
-  const experiences = getExperiences();
+  const timeline = getTimeline();
   const catalog = getProjectCatalog();
   const featured = getFeaturedProjects(catalog);
   const filters = ["ALL", ...getCatalogCategories()];
+  const qualifications = getQualifications();
 
   return (
     <main>
@@ -80,7 +32,7 @@ export default function Home() {
         </nav>
       </header>
 
-      <Hero profile={profile} />
+      <Hero profile={profile} metrics={getHeadlineMetrics(profile.headlineMetricIds)} />
 
       <section className="impact-section" id="impact">
         <div className="section-heading">
@@ -151,7 +103,7 @@ export default function Home() {
             </Link>
           </p>
         </div>
-        <ExperienceAccordion items={experiences} />
+        <Timeline entries={timeline} />
       </section>
 
       <section className="capability-section" id="profile">
@@ -163,7 +115,7 @@ export default function Home() {
           <p>실제 프로젝트와 업무에서 사용한 기술입니다.</p>
         </div>
         <div className="capability-grid">
-          {capabilities.map((capability) => (
+          {skills.map((capability) => (
             <article className="capability-card" key={capability.index}>
               <div className="capability-index">{capability.index}</div>
               <h3>{capability.title}</h3>

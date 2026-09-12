@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { fillMetrics, getCardsForProject } from "../../../lib/ledger";
 import { getProject, getProjects } from "../../../lib/projects";
 
 export const dynamicParams = false;
@@ -31,6 +32,7 @@ export default async function ProjectPage({
   const { slug } = await params;
   const project = getProject(slug);
   if (!project) notFound();
+  const experiences = getCardsForProject(slug);
 
   return (
     <main className="project-page">
@@ -123,6 +125,25 @@ export default async function ProjectPage({
                 {item.caption && <figcaption>{item.caption}</figcaption>}
               </figure>
             ))}
+          </section>
+        )}
+
+        {experiences.length > 0 && (
+          <section className="detail-gallery">
+            <h2>이 프로젝트가 나온 경험</h2>
+            <p className="detail-intro">
+              아래 카드에는 같은 일을 업무 관점에서 정리한 내용과, 여기 적힌 수치의 산출
+              조건·확인 근거가 있습니다.
+            </p>
+            <ul className="evidence-list">
+              {experiences.map((card) => (
+                <li key={card.id}>
+                  <Link href={`/experience/${card.id}/`}>
+                    {card.title} — {fillMetrics(card.headline)} →
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </section>
         )}
 

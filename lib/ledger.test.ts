@@ -8,7 +8,7 @@ import {
   validateApplications,
   validateLedger,
 } from "./ledger-core.mjs";
-import { getExperiences, getMetric, getPublicCards, fillMetrics } from "./ledger";
+import { getMetric, getPublicCards, getTimeline, fillMetrics } from "./ledger";
 
 /** 실제 원장을 조금씩 망가뜨려, 검증기가 그걸 잡는지 확인합니다. */
 function brokenLedger(mutate: (ledger: ReturnType<typeof readLedger>) => void) {
@@ -137,7 +137,8 @@ describe("화면용 파생", () => {
 
     expect(forecast.display).toBe("MAPE 7.3%");
     expect(fillMetrics("평균 {{metric:forecast-mape-all}}")).toBe("평균 MAPE 7.3%");
-    expect(getExperiences().flatMap((item) => item.details).join(" ")).toContain(forecast.display);
+    const shown = getTimeline().flatMap((entry) => entry.items.map((item) => item.headline));
+    expect(shown.join(" ")).toContain(forecast.display);
   });
 
   it("사이트에는 확정되지 않은 카드를 내보내지 않는다", () => {
@@ -149,7 +150,7 @@ describe("화면용 파생", () => {
   });
 
   it("소속 기간을 시작·종료일에서 만든다", () => {
-    const byId = new Map(getExperiences().map((item) => [item.id, item]));
+    const byId = new Map(getTimeline().map((entry) => [entry.id, entry]));
 
     expect(byId.get("binggrae")?.period).toBe("2024.12 ~ 재직 중");
     expect(byId.get("ai-elite")?.period).toBe("2026.02 ~ 2026.05 수료");
