@@ -122,6 +122,14 @@ async function renderPoster(browser, scheme, file) {
     await page.evaluate(() => {
       const poster = document.querySelector(".hero-scene-frame img");
       if (poster instanceof HTMLElement) poster.style.visibility = "hidden";
+      /*
+       * 장면은 띠 전체에 깔려 있고 그 위에 글이 얹힙니다. 그대로 찍으면 글자가
+       * 그림에 구워져, 3D를 켜지 않는 환경에서 글이 두 번 보입니다.
+       */
+      const overlay = document.querySelector(".scene-inner");
+      if (overlay instanceof HTMLElement) overlay.style.visibility = "hidden";
+      const band = document.querySelector(".scene-section");
+      if (band instanceof HTMLElement) band.classList.add("is-capturing");
     });
     await page.waitForTimeout(120);
 

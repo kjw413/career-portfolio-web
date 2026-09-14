@@ -33,7 +33,9 @@ export default function Home() {
   const forecastError = getMetric("forecast-mape-all");
   // 포스터는 이름이 같은 채로 다시 만들어지므로, 내용 해시로 캐시를 깹니다.
   const posterFor = (file: string) =>
-    publicAssetExists(file) ? `${withBasePath(file)}?v=${publicAssetVersion(file)}` : null;
+    publicAssetExists(file)
+      ? `${withBasePath(file)}?v=${publicAssetVersion(file)}`
+      : null;
 
   return (
     <main>
@@ -50,30 +52,38 @@ export default function Home() {
         </nav>
       </header>
 
-      <Hero profile={profile} metrics={getHeadlineMetrics(profile.headlineMetricIds)} />
+      <Hero
+        profile={profile}
+        metrics={getHeadlineMetrics(profile.headlineMetricIds)}
+      />
 
       <section className="scene-section" aria-labelledby="scene-heading">
-        <div className="scene-intro">
-          <p className="section-index">공장 에너지 AI 플랫폼</p>
-          <h2 id="scene-heading">
-            다섯 공장의 에너지 데이터가
-            <br />한 화면에 모입니다.
-          </h2>
-          <p>
-            전력·연료·용수와 생산 실적을 하나로 모아 AI 예측과 실측을 나란히 보는,
-            사내에서 운영 중인 시스템입니다.
-          </p>
-          <Link className="section-link" href="/projects/ai-elite-bems/">
-            프로젝트 보기 →
-          </Link>
-        </div>
         <HeroSceneGate
           plants={plants}
-          metric={{ display: forecastError.display, condition: forecastError.condition }}
+          metric={{
+            display: forecastError.display,
+            condition: forecastError.condition,
+          }}
           poster={posterFor("/hero-poster.webp")}
           posterDark={posterFor("/hero-poster-dark.webp")}
           caption="남한 지도 위 다섯 공장에서 에너지 데이터가 하나의 화면으로 모이는 모습"
         />
+        <div className="scene-inner">
+          <div className="scene-intro">
+            <p className="section-index">공장 에너지 AI 플랫폼</p>
+            <h2 id="scene-heading">
+              다섯 공장의 에너지 데이터가
+              <br />한 화면에 모입니다.
+            </h2>
+            <p>
+              전력·연료·용수와 생산 실적을 하나로 모아 AI 예측과 실측을 나란히
+              보는, 사내에서 운영 중인 시스템입니다.
+            </p>
+            <Link className="section-link" href="/projects/ai-elite-bems/">
+              프로젝트 보기 →
+            </Link>
+          </div>
+        </div>
       </section>
 
       <section className="impact-section" id="impact">
@@ -118,9 +128,13 @@ export default function Home() {
               <h3>{project.title}</h3>
               <p>{project.intro}</p>
               <div className="tag-row">
-                {project.tags.map((tag) => <span key={tag}>{tag}</span>)}
+                {project.tags.map((tag) => (
+                  <span key={tag}>{tag}</span>
+                ))}
               </div>
-              <div className="card-link">자세히 보기 <b>→</b></div>
+              <div className="card-link">
+                자세히 보기 <b>→</b>
+              </div>
             </Link>
           ))}
         </div>
@@ -153,7 +167,9 @@ export default function Home() {
               <h3>{capability.title}</h3>
               <p>{capability.text}</p>
               <div className="skill-list">
-                {capability.skills.map((skill) => <span key={skill}>{skill}</span>)}
+                {capability.skills.map((skill) => (
+                  <span key={skill}>{skill}</span>
+                ))}
               </div>
             </article>
           ))}
@@ -181,14 +197,24 @@ export default function Home() {
       <footer id="contact">
         <div>
           <p>연락처</p>
-          <h2>채용 문의는<br />이메일로 부탁드립니다.</h2>
+          <h2>
+            채용 문의는
+            <br />
+            이메일로 부탁드립니다.
+          </h2>
         </div>
         <div className="footer-links">
           {profile.emailHref && (
-            <a href={profile.emailHref}>{profile.emailHref.replace(/^mailto:/, "")}</a>
+            <a href={profile.emailHref}>
+              {profile.emailHref.replace(/^mailto:/, "")}
+            </a>
           )}
-          <a href={profile.githubUrl} target="_blank" rel="noreferrer">GitHub ↗</a>
-          {profile.resumeHref && <a href={withBasePath(profile.resumeHref)}>이력서</a>}
+          <a href={profile.githubUrl} target="_blank" rel="noreferrer">
+            GitHub ↗
+          </a>
+          {profile.resumeHref && (
+            <a href={withBasePath(profile.resumeHref)}>이력서</a>
+          )}
         </div>
         <div className="footer-bottom">
           <span>© 2026 김종우</span>
