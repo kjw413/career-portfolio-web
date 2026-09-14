@@ -28,14 +28,17 @@ const PULSES_PER_STREAM = 2;
 
 /** 통합 화면. 지도 북쪽 위 허공에 떠 있는 패널 링입니다. */
 const RING = {
-  center: new THREE.Vector3(0.1, 2.05, -0.7),
-  radius: 1.7,
+  center: new THREE.Vector3(0.2, 2.25, -2.8),
+  radius: 3.0,
   /** 바닥 원반(데이터가 들어오는 자리)은 링 아래 모서리에 둡니다. */
-  floorY: 1.55,
+  floorY: 1.78,
 };
 
-/** 카메라가 바라보는 곳. 지도와 링 사이입니다. */
-const FOCUS = new THREE.Vector3(0.1, 1.1, 0.55);
+/*
+ * 카메라가 바라보는 곳. 장면을 화면 오른쪽에 놓기 위해 실제 주제(x ≈ 0.2)보다
+ * 왼쪽을 겨눕니다. 왼쪽 빈자리에는 글이 얹힙니다.
+ */
+const FOCUS = new THREE.Vector3(-2.6, 1.05, 0.45);
 
 type Palette = {
   bg: string;
@@ -83,7 +86,8 @@ function toTexture(canvas: HTMLCanvasElement) {
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
   texture.minFilter = THREE.LinearMipmapLinearFilter;
-  texture.anisotropy = 4;
+  // 기울어진 면에 붙는 글자가 뭉개지지 않게 이방성 필터를 넉넉히 줍니다(three가 장치 최대치로 잘라 줍니다).
+  texture.anisotropy = 16;
   return texture;
 }
 
@@ -152,7 +156,7 @@ function pseudoRandom(seed: number) {
 type Site = { name: string; x: number; z: number; units: number };
 
 const MAP_PADDING = 0.55;
-const MAP_PX_PER_UNIT = 400;
+const MAP_PX_PER_UNIT = 560;
 
 /** 지도판의 범위(장면 좌표). 해안선·섬·이름표가 다 들어가게 여백을 둡니다. */
 function mapBounds() {
@@ -307,19 +311,31 @@ type PanelSpec = {
   height: number;
 };
 
+/*
+ * 각도 폭은 호의 길이(반지름 × 각도)가 패널 그림의 가로세로비와 맞도록 정합니다.
+ * 맞추지 않으면 패널 안의 글자와 차트가 가로로 늘어납니다.
+ */
 const PANELS: PanelSpec[] = [
-  { kind: "forecast", title: "에너지 사용량 예측", angle: 0, span: 62, height: 1.0 },
-  { kind: "gauge", title: "예측 오차", angle: 58, span: 38, height: 0.86 },
-  { kind: "bars", title: "전력 · 연료 · 용수", angle: -58, span: 38, height: 0.86 },
-  { kind: "lines", title: "공장별 원단위", angle: 118, span: 40, height: 0.8 },
-  { kind: "donut", title: "설비별 사용 구성", angle: -118, span: 40, height: 0.8 },
-  { kind: "table", title: "일일 점검", angle: 180, span: 44, height: 0.8 },
+  { kind: "forecast", title: "에너지 사용량 예측", angle: 0, span: 33, height: 0.95 },
+  { kind: "gauge", title: "예측 오차", angle: 52, span: 28, height: 0.82 },
+  { kind: "bars", title: "전력 · 연료 · 용수", angle: -52, span: 28, height: 0.82 },
+  { kind: "lines", title: "공장별 원단위", angle: 104, span: 28, height: 0.82 },
+  { kind: "donut", title: "설비별 사용 구성", angle: -104, span: 28, height: 0.82 },
+  { kind: "table", title: "일일 점검", angle: 180, span: 30, height: 0.82 },
 ];
 
-const PANEL_PX = { width: 720, height: 400 };
+/** 패널을 그리는 좌표계. 아래 SCALE만큼 키운 캔버스에 같은 그림을 찍어 글자를 선명하게 만듭니다. */
+const PANEL_DESIGN = { width: 720, height: 400 };
+const PANEL_SCALE = 2.4;
+const PANEL_PX = {
+  width: Math.round(PANEL_DESIGN.width * PANEL_SCALE),
+  height: Math.round(PANEL_DESIGN.height * PANEL_SCALE),
+};
 
 function drawPanelFrame(ctx: CanvasRenderingContext2D, palette: Palette, title: string) {
-  const { width, height } = PANEL_PX;
+  const { width, height } = PANEL_DESIGN;
+  // 설계 좌표로 그리고 캔버스 배율만 올립니다. 글자 크기를 일일이 고칠 필요가 없습니다.
+  ctx.setTransform(PANEL_SCALE, 0, 0, PANEL_SCALE, 0, 0);
   ctx.clearRect(0, 0, width, height);
   roundedRect(ctx, 6, 6, width - 12, height - 12, 18);
   ctx.fillStyle = rgba(palette.bg, 0.72);
@@ -339,7 +355,7 @@ function drawPanelFrame(ctx: CanvasRenderingContext2D, palette: Palette, title: 
   ctx.fillRect(30, 68, width - 60, 1.5);
 }
 
-const PANEL_BODY = { x: 34, y: 84, w: PANEL_PX.width - 68, h: PANEL_PX.height - 112 };
+const PANEL_BODY = { x: 34, y: 84, w: PANEL_DESIGN.width - 68, h: PANEL_DESIGN.height - 112 };
 
 function drawForecast(ctx: CanvasRenderingContext2D, palette: Palette, time: number) {
   const { x, y, w, h } = PANEL_BODY;
@@ -647,7 +663,7 @@ function RingFloor({ palette }: { palette: Palette }) {
     core.current.children[1].rotation.z = -clock.elapsedTime * 0.22;
   });
   if (!texture) return null;
-  const size = RING.radius * 2.15;
+  const size = RING.radius * 1.2;
   return (
     <group position={[RING.center.x, RING.floorY, RING.center.z]}>
       <mesh rotation={[-Math.PI / 2, 0, 0]}>
@@ -871,20 +887,6 @@ function SceneStats() {
   return null;
 }
 
-/** 마우스를 따라 아주 조금만 기울입니다. 회전이 아니라 시차 정도의 움직임입니다. */
-function ParallaxRig({ children }: { children: React.ReactNode }) {
-  const group = useRef<THREE.Group>(null);
-  const { pointer } = useThree();
-
-  useFrame(() => {
-    if (!group.current) return;
-    group.current.rotation.y += (pointer.x * 0.05 - group.current.rotation.y) * 0.05;
-    group.current.rotation.x += (-pointer.y * 0.025 - group.current.rotation.x) * 0.05;
-  });
-
-  return <group ref={group}>{children}</group>;
-}
-
 export default function HeroScene({
   plants,
   active,
@@ -928,10 +930,10 @@ export default function HeroScene({
 
   return (
     <Canvas
-      camera={{ position: [0.1, 4.7, 9.4], fov: 30 }}
+      camera={{ position: [0.2, 4.63, 9.71], fov: 30 }}
       /* 화면 밖에서는 루프를 재웁니다. 마지막 프레임은 캔버스에 그대로 남습니다. */
       frameloop={active ? "always" : "never"}
-      dpr={[1, 1.75]}
+      dpr={[1, 2]}
       gl={{ antialias: true, alpha: true }}
       /* 톤 매핑을 끕니다. 켜 두면 토큰의 색이 다른 색으로 바뀝니다. */
       flat
@@ -940,7 +942,7 @@ export default function HeroScene({
       onCreated={({ camera }) => camera.lookAt(FOCUS)}
     >
       <SceneStats />
-      <ParallaxRig>
+      <group>
         <GroundMap sites={sites} palette={palette} />
         <StreamPaths curves={curves} palette={palette} />
         <DataPulses curves={curves} palette={palette} />
@@ -949,7 +951,7 @@ export default function HeroScene({
         {PANELS.map((spec) => (
           <RingPanel key={spec.kind} spec={spec} palette={palette} metric={metric} />
         ))}
-      </ParallaxRig>
+      </group>
     </Canvas>
   );
 }

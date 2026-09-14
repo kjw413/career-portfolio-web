@@ -689,12 +689,31 @@ footer h2 { margin: 0; font-size: clamp(28px, 3.4vw, 46px); line-height: 1.25; l
  * 넓혀 그림이 화면의 일부가 되게 합니다. 수치는 위(첫 화면)와 아래(주요 성과)에 있으므로
  * 여기서는 되풀이하지 않습니다.
  */
+/*
+ * 장면을 띠 전체에 깔고 글을 그 위에 얹습니다. 두 칸으로 나누면 글이 그림보다 짧아
+ * 옆과 아래가 비고, 넓은 화면일수록 그 빈칸이 커집니다.
+ */
 .scene-section {
-  display: grid; grid-template-columns: minmax(0, .78fr) minmax(0, 1.22fr);
-  gap: clamp(24px, 3vw, 48px); align-items: center;
-  padding: clamp(56px, 7vh, 88px) clamp(24px, 5vw, 78px);
+  position: relative; isolation: isolate; overflow: hidden;
+  display: grid; align-items: center;
+  min-height: clamp(440px, 40vw, 620px);
+  padding: clamp(48px, 6vh, 72px) clamp(24px, 5vw, 78px);
   background: var(--scene-bg); color: var(--scene-text);
 }
+/* 글이 놓이는 왼쪽을 가려 주는 막. 그림 위에서도 글이 읽히게 합니다. */
+/* 포스터를 찍을 때는 막을 걷습니다(scripts/render-hero-poster.mjs). */
+.scene-section.is-capturing::before { display: none; }
+.scene-section::before {
+  content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: linear-gradient(
+    100deg,
+    var(--scene-bg) 0%,
+    color-mix(in srgb, var(--scene-bg) 88%, transparent) 30%,
+    transparent 58%
+  );
+}
+.scene-inner { position: relative; z-index: 2; width: 100%; max-width: 1320px; margin: 0 auto; }
+.scene-intro { max-width: 440px; }
 .scene-intro .section-index { color: var(--scene-glow); }
 .scene-intro h2 {
   margin: 0 0 20px; color: var(--scene-text);
@@ -706,12 +725,12 @@ footer h2 { margin: 0; font-size: clamp(28px, 3.4vw, 46px); line-height: 1.25; l
 }
 .scene-intro .section-link { margin-top: 22px; color: var(--scene-glow); }
 .scene-intro .section-link:hover { color: var(--scene-text); }
-.hero-scene { margin: 0; }
+.hero-scene { position: absolute; inset: 0; z-index: 0; margin: 0; }
 /* 비율을 미리 잡아 두어, 장면이 늦게 켜져도 아래 내용이 밀리지 않게 합니다. */
 .hero-scene-frame {
-  position: relative; aspect-ratio: 16 / 10; max-width: 100%; overflow: hidden;
-  /* 무대 가운데만 살짝 밝힙니다. 가장자리는 띠 배경과 같은 색이라 경계가 없습니다. */
-  background: radial-gradient(ellipse 46% 42% at 50% 46%, var(--scene-bg-2), var(--scene-bg) 100%);
+  position: absolute; inset: 0; overflow: hidden;
+  /* 무대 오른쪽만 살짝 밝힙니다. 글이 놓이는 왼쪽은 어둡게 둡니다. */
+  background: radial-gradient(ellipse 42% 54% at 68% 48%, var(--scene-bg-2), var(--scene-bg) 100%);
 }
 .hero-scene-frame img {
   position: absolute; inset: 0; width: 100%; height: 100%;
@@ -725,6 +744,16 @@ footer h2 { margin: 0; font-size: clamp(28px, 3.4vw, 46px); line-height: 1.25; l
 .hero-scene-frame picture { position: absolute; inset: 0; display: block; }
 
 @media (max-width: 950px) {
-  .scene-section { grid-template-columns: 1fr; padding-top: 56px; padding-bottom: 40px; }
-  .scene-intro { padding-bottom: 8px; }
+  /*
+   * 좁은 화면에서는 겹치지 않고 위아래로 놓습니다. 가로로 긴 장면을 좁은 칸에 꽉 채우면
+   * 양옆이 잘려 무엇이 모이는지 안 보이므로, 잘라내지 않고 그대로 담습니다.
+   */
+  .scene-section { display: block; min-height: 0; padding: 52px clamp(20px, 5vw, 24px) 44px; }
+  .scene-section::before { display: none; }
+  .hero-scene { position: static; }
+  .hero-scene-frame { position: relative; aspect-ratio: 4 / 3; background: none; }
+  /* 포스터는 가로로 긴 그림이라, 좁은 칸에서는 주제가 있는 오른쪽을 기준으로 담습니다. */
+  .hero-scene-frame img { object-fit: cover; object-position: 70% 50%; }
+  .scene-inner { margin-top: 22px; }
+  .scene-intro { max-width: none; }
 }
