@@ -283,12 +283,23 @@ h1 {
 .section-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 30px; margin-bottom: 46px; }
 .section-heading h2 { margin: 0; font-size: clamp(28px, 3.2vw, 42px); line-height: 1.25; letter-spacing: -.025em; word-break: keep-all; }
 .section-heading > p { margin: 0 0 4px; color: var(--body); font-size: 15.5px; line-height: 1.75; word-break: keep-all; }
-.project-grid { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--ink); }
-.project-card { min-height: 420px; padding: 28px; display: flex; flex-direction: column; border-right: 1px solid var(--line); background: var(--surface-soft); transition: .25s ease; }
+/* 설명문을 없앤 섹션에서는 링크만 오른쪽 아래에 놓입니다. */
+.section-heading > .section-link { margin: 0 0 6px; }
+/*
+ * 대표 프로젝트는 4장입니다. 3열로 두면 마지막 한 장이 홀로 남아 빈 칸이 생기므로,
+ * 한 줄에 넉 장을 놓고 좁아지면 2열 → 1열로 접습니다.
+ */
+.project-grid { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--ink); }
+@media (max-width: 1180px) { .project-grid { grid-template-columns: repeat(2, 1fr); } }
+.project-card { min-height: 420px; padding: 26px 24px; display: flex; flex-direction: column; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--surface-soft); transition: .25s ease; }
 .project-card:first-child { border-left: 1px solid var(--line); }
 .project-card:hover { background: var(--surface); transform: translateY(-5px); box-shadow: var(--shadow-card); }
 .card-top { display: flex; justify-content: space-between; gap: 12px; color: var(--blue); font-weight: 700; }
-.project-card .card-top span:last-child { display: inline-flex; align-items: center; text-align: right; }
+/* 분류와 "진행 중" 칩이 한 줄에 안 들어가면 칩만 아랫줄로 내립니다. */
+.project-card .card-top span:last-child {
+  display: inline-flex; align-items: center; justify-content: flex-end;
+  flex-wrap: wrap; gap: 4px 6px; text-align: right;
+}
 .project-card > p { margin: 0; color: var(--body); font-size: 15px; line-height: 1.7; word-break: keep-all; }
 .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 22px; }
 .tag-row span { padding: 6px 10px; border-radius: 5px; background: var(--sky); color: var(--blue-dark); font-weight: 700; }
@@ -474,7 +485,7 @@ footer h2 { margin: 0; font-size: clamp(28px, 3.4vw, 46px); line-height: 1.25; l
 }
 .card-cover img { width: 100%; height: 100%; object-fit: cover; object-position: left top; display: block; }
 .project-card:hover .card-cover { border-color: var(--blue); }
-.project-card h3 { margin: 24px 0 14px; font-size: 22px; letter-spacing: -.02em; line-height: 1.35; word-break: keep-all; }
+.project-card h3 { margin: 24px 0 14px; font-size: 20px; letter-spacing: -.02em; line-height: 1.35; word-break: keep-all; }
 
 .detail-cover { margin: 44px 0 0; }
 .detail-cover img,

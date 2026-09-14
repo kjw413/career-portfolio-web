@@ -22,11 +22,11 @@ relatedCards: [EXP-BG-ENERGY-FORECAST, EXP-BG-DATA-RPA]
 projectSlugs: [ai-elite-bems]
 evidence:
   - type: repo
-    label: "AI-Elite-BEMS — 사내 운영 버전"
-    url: "https://github.com/kjw413/AI-Elite-BEMS"
-  - type: repo
-    label: "ai-elite-bems-next — 개발 중인 React·FastAPI 버전"
+    label: "ai-elite-bems-next — 사내 운영 버전 (React·Next.js · FastAPI · MySQL)"
     url: "https://github.com/kjw413/ai-elite-bems-next"
+  - type: repo
+    label: "AI-Elite-BEMS — 최초 Streamlit 버전"
+    url: "https://github.com/kjw413/AI-Elite-BEMS"
 canonical:
   - "공장별로 다른 생산·에너지 데이터 형식을 표준화해 로컬 MySQL에 저장하고, 조회·비교·원단위 분석·예측·AI 보고서를 한 시스템에서 수행하도록 구성했다."
   - "담당자들의 월간 에너지 실적 보고용 취합 업무를 대체해 월 4시간을 절감했다."
@@ -55,9 +55,10 @@ order: 1
 - 생산·날씨 기반 예측과 AI 보고서 기능 구성
 - 사내망 기반으로 타 팀 직원도 접속해 실적을 확인할 수 있도록 배포
 
-기술 구성은 Python, MySQL, FastAPI 백엔드에 Streamlit 프론트엔드이고, 시계열 예측과
-LangChain 기반 LLM 보고서를 함께 씁니다. 백엔드·UI·머신러닝 코드는 AI 에이전트
-프롬프팅으로 구현했습니다.
+기술 구성은 MySQL과 FastAPI 백엔드에 React 19 / Next.js 화면이고, 시계열 예측과
+LangChain 기반 LLM 보고서를 함께 씁니다. 처음에는 Streamlit으로 만들어 사내에 먼저
+띄웠고, 쓰이는 것을 확인한 뒤 같은 백엔드·모델 위에서 화면만 교체했습니다.
+백엔드·UI·머신러닝 코드는 AI 에이전트 프롬프팅으로 구현했습니다.
 
 ## 성과
 
@@ -73,11 +74,12 @@ LangChain 기반 LLM 보고서를 함께 씁니다. 백엔드·UI·머신러닝 
 늘어나는 역행 현상을 발견하면 접속해 실적·분석 화면과 예측값을 확인합니다. 예측값은
 주 판단 기준이 아니라 추가 확인을 위한 보조지표입니다.
 
-## 운영 중인 것과 개발 중인 것
+## 화면 교체 이력
 
 | | 구성 | 상태 |
 |---|---|---|
-| 운영 중 | MySQL + FastAPI 백엔드 + Streamlit 화면 | 사내에서 실제로 쓰는 버전 |
-| 개발 중 | 같은 백엔드·모델 위에 React 19 / Next.js UI | 화면만 교체하는 v2 |
+| v1 | MySQL + FastAPI 백엔드 + Streamlit 화면 | 최초 구축 · 현재는 대체됨 |
+| v2 | 같은 백엔드·모델 위에 React 19 / Next.js 화면 | **사내 운영 중** (사용자 확정 2026-09-14) |
 
-자기소개서에는 운영 중인 구성을 씁니다.
+백엔드와 예측모델은 그대로 두고 화면만 바꿨으므로, 두 벌을 별개 프로젝트로 세지
+않습니다. 자기소개서에는 현행 운영 구성(React·Next.js · FastAPI · MySQL)을 씁니다.
