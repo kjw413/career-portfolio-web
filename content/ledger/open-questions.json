@@ -4,7 +4,9 @@
     "topic": "OPIc 등록번호",
     "state": "성적표 원본 대조 전",
     "rule": "지원서에 입력하기 전 성적표 원본과 대조한다. 기억에 의존해 입력하지 않는다",
-    "relates": ["facts.languages"],
+    "relates": [
+      "facts.languages"
+    ],
     "blocking": true
   },
   {
@@ -12,7 +14,9 @@
     "topic": "외국어 작문·독해, 컴퓨터 활용 자기평가 수준",
     "state": "미확정",
     "rule": "기업별 등급 정의를 읽고 사용자에게 물어본다. 임의로 선택하지 않는다",
-    "relates": ["facts.languages"],
+    "relates": [
+      "facts.languages"
+    ],
     "blocking": true
   },
   {
@@ -20,7 +24,9 @@
     "topic": "AI Elite 총 교육시간",
     "state": "미확정",
     "rule": "수료증 또는 사내 공지를 확인한 뒤 입력한다",
-    "relates": ["EDU-AIELITE-01"],
+    "relates": [
+      "EDU-AIELITE-01"
+    ],
     "blocking": false
   },
   {
@@ -28,7 +34,10 @@
     "topic": "2026 하반기 AMAT 지원서의 '원단위 Alert 화면'",
     "state": "개선 3건 중 1건으로 기재됐으나 사용자 확정은 2건",
     "rule": "별도 과제인지, MIS·MES 2건에 포함되는지, 본인 단독 구현물인지 확인한다. 건수는 2건을 기준으로 쓴다",
-    "relates": ["EXP-BG-SYSTEM-COLLAB", "system-collab-count"],
+    "relates": [
+      "EXP-BG-SYSTEM-COLLAB",
+      "system-collab-count"
+    ],
     "blocking": false
   },
   {
@@ -36,7 +45,9 @@
     "topic": "혼합기획팩 OJT 수행 월과 본인 기여도",
     "state": "미확정",
     "rule": "정량 문구는 확정분만 쓴다. 기여율(%)은 사용자 확인 후 입력한다",
-    "relates": ["EXP-BG-MIXEDPACK"],
+    "relates": [
+      "EXP-BG-MIXEDPACK"
+    ],
     "blocking": false
   },
   {
@@ -44,7 +55,10 @@
     "topic": "판매·날씨 시계열 분석의 대상 제품, 데이터 기간, 수행 시기",
     "state": "미확정 — 빙그레 재직 중 수행으로 분류했으나 시기가 확인되지 않음",
     "rule": "상관계수를 인용하기 전 분석자료를 확인한다. 수행 방법까지만 쓰고 수치는 확인 후 쓴다",
-    "relates": ["EXP-DATA-LAG3", "lag3-correlation"],
+    "relates": [
+      "EXP-DATA-LAG3",
+      "lag3-correlation"
+    ],
     "blocking": true
   },
   {
@@ -52,7 +66,9 @@
     "topic": "군 분대장 사건의 구체적 배경과 결과",
     "state": "미확정",
     "rule": "사실관계를 사용자에게 확인한 뒤 자기소개서 사례로 쓴다",
-    "relates": ["EXP-MIL-LEADERSHIP"],
+    "relates": [
+      "EXP-MIL-LEADERSHIP"
+    ],
     "blocking": true
   },
   {
@@ -60,7 +76,10 @@
     "topic": "IT종합시스템설계와 MCU/IoT실험의 수행 학기",
     "state": "미확정",
     "rule": "성적증명서를 확인한다",
-    "relates": ["EXP-UNIV-POWERFLOW", "EXP-UNIV-MCU"],
+    "relates": [
+      "EXP-UNIV-POWERFLOW",
+      "EXP-UNIV-MCU"
+    ],
     "blocking": false
   },
   {
@@ -68,7 +87,10 @@
     "topic": "인바디 측정값 역전 발생 횟수",
     "state": "기억에 의존한 3회 기록",
     "rule": "증빙 확인 전에는 정량 문구로 쓰지 않는다",
-    "relates": ["EXP-INBODY-CLAIM", "inbody-reversal-count"],
+    "relates": [
+      "EXP-INBODY-CLAIM",
+      "inbody-reversal-count"
+    ],
     "blocking": true
   },
   {
@@ -76,7 +98,9 @@
     "topic": "PLC 2축 직교로봇 시퀀스 구현의 기간과 성과",
     "state": "포트폴리오에는 기재되어 있으나 원장에 정량 성과가 없음",
     "rule": "기간과 결과를 확인한 뒤 카드를 확정으로 올린다",
-    "relates": ["EXP-BG-PLC-ROBOT"],
+    "relates": [
+      "EXP-BG-PLC-ROBOT"
+    ],
     "blocking": false
   },
   {
@@ -84,7 +108,9 @@
     "topic": "사내 데이터 샘플링 자동화",
     "state": "과거 지원서에 언급됐으나 내용·시기·성과 미확정",
     "rule": "실체를 확인한 뒤 카드로 만들거나 폐기한다. 확인 전에는 지원서에 쓰지 않는다",
-    "relates": ["EXP-BG-SAMPLING-RPA"],
+    "relates": [
+      "EXP-BG-SAMPLING-RPA"
+    ],
     "blocking": false
   },
   {
@@ -92,15 +118,19 @@
     "topic": "자동화시스템 도입 기초 수료증(2025-05)의 과정명과 기관",
     "state": "수료증 파일만 있고 원장에 기록 없음",
     "rule": "수료증을 열어 과정명·기관·시간을 확인한다",
-    "relates": ["EDU-AUTOMATION-01"],
+    "relates": [
+      "EDU-AUTOMATION-01"
+    ],
     "blocking": false
   },
   {
     "id": "OQ-BEMS-STACK",
-    "topic": "BEMS의 운영 버전과 개발 중 버전 표기",
-    "state": "운영은 MySQL·FastAPI·Streamlit, 개발 중은 React·Next.js UI로 구분해 기재 중",
-    "rule": "자기소개서에는 운영 버전을 쓴다. 개발 중 버전을 현행 운영으로 쓰지 않는다",
-    "relates": ["EXP-BG-ENERGY-WEB"],
+    "topic": "BEMS 화면 구성 표기 (해소됨)",
+    "state": "2026-09-14 사용자 확정: React·Next.js 화면(v2)이 사내 운영 중. Streamlit(v1)은 대체됨",
+    "rule": "현행 운영 구성(React·Next.js · FastAPI · MySQL)을 쓴다. v2를 개발 중으로 쓰지 않는다",
+    "relates": [
+      "EXP-BG-ENERGY-WEB"
+    ],
     "blocking": false
   },
   {
@@ -108,7 +138,9 @@
     "topic": "총 경력 산정 범위",
     "state": "빙그레 단독인지 인바디 인턴 포함인지 기업 양식마다 다름",
     "rule": "고정값을 재사용하지 않고 지원일 기준으로 다시 계산한다. 양식의 정의를 먼저 읽는다",
-    "relates": ["facts.career"],
+    "relates": [
+      "facts.career"
+    ],
     "blocking": true
   }
 ]

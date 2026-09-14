@@ -2,106 +2,183 @@
   "preferred": [
     {
       "use": "해결에 기여했다",
-      "insteadOf": ["클레임을 해결했다", "클레임을 해결하였다"],
-      "cardIds": ["EXP-INBODY-CLAIM"],
+      "insteadOf": [
+        "클레임을 해결했다",
+        "클레임을 해결하였다"
+      ],
+      "cardIds": [
+        "EXP-INBODY-CLAIM"
+      ],
       "reason": "원인 규명과 필터 처방에 기여했고 단독으로 종결한 것은 아니다"
     },
     {
       "use": "IT종합시스템설계",
-      "insteadOf": ["학부 종합설계", "종합설계 과목"],
-      "cardIds": ["EXP-UNIV-POWERFLOW"],
+      "insteadOf": [
+        "학부 종합설계",
+        "종합설계 과목"
+      ],
+      "cardIds": [
+        "EXP-UNIV-POWERFLOW"
+      ],
       "reason": "공식 과목명이다. 축약 표기를 쓰지 않는다"
     },
     {
       "use": "광주공장",
-      "insteadOf": ["G공장"],
-      "cardIds": ["EXP-BG-SYSTEM-COLLAB"],
+      "insteadOf": [
+        "G공장"
+      ],
+      "cardIds": [
+        "EXP-BG-SYSTEM-COLLAB"
+      ],
       "reason": "익명화 표기를 남기지 않는다"
     },
     {
       "use": "전자전기공학부",
-      "insteadOf": ["전기전자공학부"],
+      "insteadOf": [
+        "전기전자공학부"
+      ],
       "cardIds": [],
       "reason": "학교 검색값 기준. 공식 증명서를 요구하면 원문과 대조한다"
     },
     {
       "use": "MIS 1건 + MES 1건 (총 2건)",
-      "insteadOf": ["MIS 개선 테마 3건", "MES 개선 과제 3건"],
-      "cardIds": ["EXP-BG-SYSTEM-COLLAB"],
+      "insteadOf": [
+        "MIS 개선 테마 3건",
+        "MES 개선 과제 3건"
+      ],
+      "cardIds": [
+        "EXP-BG-SYSTEM-COLLAB"
+      ],
       "reason": "사용자 확정은 2건이다"
     },
     {
       "use": "사용량 예측치는 실적과 함께 살펴보며 추가 확인을 위한 보조지표로 활용하고 있다",
       "insteadOf": [],
-      "cardIds": ["EXP-BG-ENERGY-FORECAST", "EXP-BG-ENERGY-WEB"],
+      "cardIds": [
+        "EXP-BG-ENERGY-FORECAST",
+        "EXP-BG-ENERGY-WEB"
+      ],
       "reason": "2026-09-12 확정 정본 표현"
+    },
+    {
+      "use": "MySQL·FastAPI 백엔드에 React·Next.js 화면으로 사내에서 운영 중이다",
+      "insteadOf": [
+        "Streamlit 화면으로 운영하고 있고",
+        "화면을 React·Next.js로 교체하는 v2를 개발하고 있습니다"
+      ],
+      "cardIds": [
+        "EXP-BG-ENERGY-WEB"
+      ],
+      "reason": "2026-09-14 사용자 확정. v1(Streamlit)은 대체되었다"
     }
   ],
   "forbidden": [
     {
       "pattern": "예측값 기준의 전사 관리 체계",
       "reason": "예측값을 일일 점검의 주 기준으로 채택한 적이 없다",
-      "cardIds": ["EXP-BG-ENERGY-FORECAST", "EXP-BG-ENERGY-WEB"]
+      "cardIds": [
+        "EXP-BG-ENERGY-FORECAST",
+        "EXP-BG-ENERGY-WEB"
+      ]
     },
     {
       "pattern": "수치 기반 관리 체계로 전환",
       "reason": "2026 하반기 현대모비스 초안 표현. 예측값의 위상을 과장한다",
-      "cardIds": ["EXP-BG-ENERGY-FORECAST"]
+      "cardIds": [
+        "EXP-BG-ENERGY-FORECAST"
+      ]
     },
     {
       "pattern": "예측값을 활용해 이상 사용을 점검하는 체계로 확장",
       "reason": "2026 하반기 KT&G 초안 표현. 예측값의 위상을 과장한다",
-      "cardIds": ["EXP-BG-ENERGY-FORECAST"]
+      "cardIds": [
+        "EXP-BG-ENERGY-FORECAST"
+      ]
     },
     {
       "pattern": "예측치를 공식 점검 기준으로",
       "reason": "전사적 합의를 얻은 사실이 없다",
-      "cardIds": ["EXP-BG-ENERGY-FORECAST"]
+      "cardIds": [
+        "EXP-BG-ENERGY-FORECAST"
+      ]
     },
     {
       "pattern": "이상 여부 판단 기준으로 사용",
       "reason": "예측값은 보조지표다",
-      "cardIds": ["EXP-BG-ENERGY-FORECAST"]
+      "cardIds": [
+        "EXP-BG-ENERGY-FORECAST"
+      ]
     },
     {
       "pattern": "예측범위 이탈로 에너지 낭비",
       "reason": "예측범위 이탈이 낭비나 고장을 확정하지 않는다",
-      "cardIds": ["EXP-BG-ENERGY-FORECAST"]
+      "cardIds": [
+        "EXP-BG-ENERGY-FORECAST"
+      ]
     },
     {
       "pattern": "CAN 통신을 구현",
       "reason": "CAN은 오류 분석까지였고 최종 구현은 UART다",
-      "cardIds": ["EXP-TELECHIPS-EMBEDDED"]
+      "cardIds": [
+        "EXP-TELECHIPS-EMBEDDED"
+      ]
     },
     {
       "pattern": "CAN can0·can1 송수신 구현",
       "reason": "보드 외부 통신을 해결하지 못했다",
-      "cardIds": ["EXP-TELECHIPS-EMBEDDED"]
+      "cardIds": [
+        "EXP-TELECHIPS-EMBEDDED"
+      ]
     },
     {
       "pattern": "SPI/CAN 통신을 구현",
       "reason": "SPI는 구현·검증했고 CAN은 분석까지다. 둘을 묶어 쓰지 않는다",
-      "cardIds": ["EXP-TELECHIPS-EMBEDDED"]
+      "cardIds": [
+        "EXP-TELECHIPS-EMBEDDED"
+      ]
     },
     {
       "pattern": "예측모델 개발이 선정 근거",
       "reason": "AI Elite 선발 계기는 투자품의 검토 자동화다",
-      "cardIds": ["EXP-BG-INVEST-RPA", "EXP-BG-ENERGY-FORECAST"]
+      "cardIds": [
+        "EXP-BG-INVEST-RPA",
+        "EXP-BG-ENERGY-FORECAST"
+      ]
     },
     {
       "pattern": "선발 근거가 된 사전 성과",
       "reason": "선발 계기를 여러 성과로 늘려 쓰지 않는다",
-      "cardIds": ["EXP-BG-INVEST-RPA"]
+      "cardIds": [
+        "EXP-BG-INVEST-RPA"
+      ]
     },
     {
       "pattern": "평균 표준오차",
       "reason": "산출 조건이 확인되지 않은 지표명이다. MAPE를 쓴다",
-      "cardIds": ["EXP-BG-ENERGY-FORECAST"]
+      "cardIds": [
+        "EXP-BG-ENERGY-FORECAST"
+      ]
     },
     {
       "pattern": "10% 이하로 개선",
       "reason": "10%는 연료·용수의 값이자 상한이다. 전체 성과로 쓰지 않는다",
-      "cardIds": ["EXP-BG-ENERGY-FORECAST"]
+      "cardIds": [
+        "EXP-BG-ENERGY-FORECAST"
+      ]
+    },
+    {
+      "pattern": "React·Next.js로 교체하는 v2를 개발하고 있습니다",
+      "reason": "v2는 2026-09-14 기준 사내 운영 중이다. 개발 중으로 쓰지 않는다",
+      "cardIds": [
+        "EXP-BG-ENERGY-WEB"
+      ]
+    },
+    {
+      "pattern": "개발 중인 React·FastAPI 버전",
+      "reason": "v2는 2026-09-14 기준 사내 운영 중이다. 개발 중으로 쓰지 않는다",
+      "cardIds": [
+        "EXP-BG-ENERGY-WEB"
+      ]
     }
   ],
   "recompute": [

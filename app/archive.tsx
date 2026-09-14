@@ -80,7 +80,7 @@ export default function Archive({
       <div className="archive-header">
         <div>
           <p className="section-index">05</p>
-          <h2>전체 프로젝트 저장소</h2>
+          <h2>전체 프로젝트</h2>
         </div>
         <div className="filter-row" role="group" aria-label="프로젝트 분야 필터">
           {filters.map((item) => (

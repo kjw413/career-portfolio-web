@@ -82,7 +82,6 @@ export default function Home() {
             <p className="section-index">01</p>
             <h2>주요 성과</h2>
           </div>
-          <p>실제 업무에 적용해 수치로 확인한 결과입니다.</p>
         </div>
         <ImpactGrid impacts={profile.impacts} />
       </section>
@@ -93,10 +92,6 @@ export default function Home() {
             <p className="section-index">02</p>
             <h2>대표 프로젝트</h2>
           </div>
-          <p>
-            데이터 수집부터 모델링, 서비스 구현,
-            <br />현장 적용까지 직접 진행한 프로젝트입니다.
-          </p>
         </div>
         <div className="project-grid">
           {featured.map((project, index) => (
@@ -137,13 +132,9 @@ export default function Home() {
             <p className="section-index">03</p>
             <h2>경력 · 교육</h2>
           </div>
-          <p>
-            재직 중인 회사와 이수한 교육 과정입니다.
-            <br />
-            <Link className="section-link" href="/experience/">
-              경험별 수치와 근거 보기 →
-            </Link>
-          </p>
+          <Link className="section-link" href="/experience/">
+            전체 경험 보기 →
+          </Link>
         </div>
         <Timeline entries={timeline} />
       </section>
@@ -154,7 +145,6 @@ export default function Home() {
             <p className="section-index">04</p>
             <h2>보유 기술</h2>
           </div>
-          <p>실제 프로젝트와 업무에서 사용한 기술입니다.</p>
         </div>
         <div className="capability-grid">
           {skills.map((capability) => (
@@ -176,7 +166,6 @@ export default function Home() {
         <div className="qualification-intro">
           <p className="section-index">06</p>
           <h2>학력 · 자격 · 병역</h2>
-          <p>지원서에 기재하는 기본 이력입니다.</p>
         </div>
         <div className="qualification-list">
           {qualifications.map((item) => (

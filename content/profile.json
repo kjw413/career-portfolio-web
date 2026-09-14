@@ -55,7 +55,7 @@
       "id": "embedded",
       "title": "카메라 인지 결과를 제어까지 연결",
       "problem": "카메라가 인식한 결과를 실제 임베디드 제어로 전달해야 했습니다.",
-      "action": "YOLOv5 적색 신호 인지를 구현하고, Linux·FreeRTOS 사이의 SPI와 CAN을 검증하다 보드 외부 통신 오류를 넘지 못해 제출 10일 전 UART로 전환했습니다.",
+      "action": "YOLOv5로 적색 신호 인지를 구현했고, SPI와 CAN이 보드 밖에서 막히자 제출 10일 전 UART로 경로를 바꿔 동작을 확인했습니다.",
       "result": "인지 → 통신 → 제어 경로 동작 확인",
       "projectSlug": "telechips-embedded-school-pmsa-project",
       "cardId": "EXP-TELECHIPS-EMBEDDED"
