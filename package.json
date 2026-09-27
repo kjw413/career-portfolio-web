@@ -6,9 +6,9 @@
     "node": ">=20.9.0"
   },
   "scripts": {
-    "dev": "npm run ai:exports && next dev",
+    "dev": "npm run ai:exports && npm run pdf && next dev",
     "build": "next build",
-    "prebuild": "node scripts/ledger-lint.mjs && node scripts/build-ai-exports.mjs",
+    "prebuild": "node scripts/ledger-lint.mjs && node scripts/build-ai-exports.mjs && node scripts/generate-portfolio-pdf.mjs",
     "lint": "eslint .",
     "lint:ledger": "node scripts/ledger-lint.mjs",
     "ai:exports": "node scripts/build-ai-exports.mjs",
@@ -16,6 +16,7 @@
     "test:watch": "vitest",
     "sync:github": "node scripts/sync-github.mjs",
     "poster": "node scripts/render-hero-poster.mjs",
+    "pdf": "node scripts/generate-portfolio-pdf.mjs",
     "lint:claims": "node scripts/claim-lint.mjs"
   },
   "dependencies": {

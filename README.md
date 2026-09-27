@@ -133,6 +133,8 @@ npm run poster    # 장면을 띄워 밝은 화면·어두운 화면 포스터�
 - 사진: `public/profile.webp` 추가 후 `content/profile.json`의 `photoSrc`를 `/profile.webp`로 설정
   (첫 화면에는 116px 원형으로 들어가므로 정사각형에 가까운 이미지가 좋습니다)
 - 이력서: `public/resume.pdf` 추가 후 `resumeHref`를 `/resume.pdf`로 설정
+- 제출용 포트폴리오 PDF: 빌드할 때 `public/portfolio.pdf`로 자동 생성되며,
+  로컬에서 PDF만 확인하려면 `npm run pdf` 실행 (생성된 바이너리는 커밋하지 않음)
 - 첫 화면 이력 카드: `content/profile.json`의 `education`, `career`, `certifications` 수정
 - 경력·교육 연혁: `content/ledger/affiliations.json`과 해당 경험 카드 수정
   (세부 항목은 카드의 `headline`·`highlights`에서 자동으로 만들어집니다)

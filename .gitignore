@@ -36,3 +36,5 @@ next-env.d.ts
 /public/ai/
 /public/llms.txt
 /public/llms-full.txt
+# 제출용 PDF도 원본 콘텐츠에서 빌드할 때 생성합니다. 바이너리는 Git에 커밋하지 않습니다.
+/public/portfolio.pdf

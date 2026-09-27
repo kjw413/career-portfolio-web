@@ -3,9 +3,9 @@
   "nameEn": "Jong Woo Kim",
   "role": "공장 데이터를 모으고, 자동화하고, 예측합니다.",
   "major": "전자전기공학",
-  "summary": "빙그레 생산기술팀에서 5개 공장의 에너지·생산 데이터를 통합하고, 매일 반복되던 수집과 검토 업무를 자동화했습니다. 전자전기공학 전공과 1,000시간 임베디드 교육을 거쳐 설비와 제어까지 함께 다룹니다.",
+  "summary": "빙그레 생산기술팀에서 5개 공장의 에너지·생산 데이터를 통합하고, 매일 반복되던 수집과 검토 업무를 자동화했습니다. 전자전기공학 전공과 1,000시간 임베디드 교육을 거쳐 설비와 제어까지 함께 다루며, 멀티 에이전트 오케스트레이션 도구도 개발하고 있습니다.",
   "photoSrc": null,
-  "resumeHref": null,
+  "resumeHref": "/portfolio.pdf",
   "githubUrl": "https://github.com/kjw413",
   "emailHref": "mailto:kjw2110@naver.com",
   "education": {
