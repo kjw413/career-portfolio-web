@@ -16,6 +16,7 @@
     "test:watch": "vitest",
     "sync:github": "node scripts/sync-github.mjs",
     "poster": "node scripts/render-hero-poster.mjs",
+    "pdf": "node scripts/generate-portfolio-pdf.mjs",
     "lint:claims": "node scripts/claim-lint.mjs"
   },
   "dependencies": {
