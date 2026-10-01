@@ -107,13 +107,13 @@ async function renderPoster(browser, scheme, file) {
       );
     }
 
-    // 장면은 화면에 들어와야 켜집니다. 포스터를 찍으려면 먼저 그 자리로 갑니다.
-    await page.locator(".scene-section").scrollIntoViewIfNeeded();
+    // 장면은 첫 화면 무대에 있습니다. 맨 위(첫 화면 전경 카메라)에서 찍습니다.
+    await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
 
     const canvas = page.locator(".hero-scene-canvas canvas");
     await canvas.waitFor({ state: "attached", timeout: 20000 });
-    // 펄스가 한 바퀴 돌아 장면이 자리 잡을 때까지 둡니다.
-    await page.waitForTimeout(2600);
+    // 펄스가 한 바퀴 돌고 카메라 감쇠가 끝나 장면이 자리 잡을 때까지 둡니다.
+    await page.waitForTimeout(3200);
 
     /*
      * 캔버스는 투명 배경으로 그리고 그 아래에 지난 포스터가 깔려 있습니다.
@@ -123,13 +123,14 @@ async function renderPoster(browser, scheme, file) {
       const poster = document.querySelector(".hero-scene-frame img");
       if (poster instanceof HTMLElement) poster.style.visibility = "hidden";
       /*
-       * 장면은 띠 전체에 깔려 있고 그 위에 글이 얹힙니다. 그대로 찍으면 글자가
-       * 그림에 구워져, 3D를 켜지 않는 환경에서 글이 두 번 보입니다.
+       * 장면 위에는 첫 화면 글과 머리글이 얹힙니다. 그대로 찍으면 글자가 그림에 구워져,
+       * 3D를 켜지 않는 환경에서 글이 두 번 보입니다. 글 뒤의 막도 걷습니다.
        */
-      const overlay = document.querySelector(".scene-inner");
-      if (overlay instanceof HTMLElement) overlay.style.visibility = "hidden";
-      const band = document.querySelector(".scene-section");
-      if (band instanceof HTMLElement) band.classList.add("is-capturing");
+      for (const selector of [".hero", ".story", ".site-header"]) {
+        const overlay = document.querySelector(selector);
+        if (overlay instanceof HTMLElement) overlay.style.visibility = "hidden";
+      }
+      document.querySelector(".stage")?.classList.add("is-capturing");
     });
     await page.waitForTimeout(120);
 

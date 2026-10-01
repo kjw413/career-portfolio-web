@@ -17,6 +17,7 @@ const COPY_SOURCES = [
   "app/archive.tsx",
   "app/components/Hero.tsx",
   "app/components/ImpactGrid.tsx",
+  "app/components/Story.tsx",
   "content/profile.json",
   // 경력·교육 문구는 이제 원장의 경험 카드에서 생성됩니다.
   ...readdirSync(join(process.cwd(), "content/ledger/experiences"))
