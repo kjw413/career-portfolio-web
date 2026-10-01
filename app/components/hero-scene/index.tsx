@@ -9,8 +9,18 @@
 
 import { useEffect, useRef, useState, type ComponentType } from "react";
 
+// 타입만 가져오므로 장면 청크가 첫 로드에 섞이지 않습니다.
+import type { StageProgress } from "./HeroScene";
+
+export type { StageProgress };
+
 type SceneMetric = { display: string; condition?: string };
-type SceneProps = { plants: string[]; active: boolean; metric?: SceneMetric };
+type SceneProps = {
+  plants: string[];
+  active: boolean;
+  metric?: SceneMetric;
+  progress?: StageProgress;
+};
 
 function canRunScene(): boolean {
   // matchMedia가 없는 환경(오래된 브라우저, 테스트 DOM)에서는 켜지 않습니다.
@@ -36,6 +46,7 @@ export default function HeroSceneGate({
   posterDark,
   caption,
   metric,
+  progress,
 }: {
   plants: string[];
   poster: string | null;
@@ -44,6 +55,8 @@ export default function HeroSceneGate({
   caption: string;
   /** 장면의 패널에 적을 예측 오차. 원장에서 옵니다. */
   metric?: SceneMetric;
+  /** 무대의 스크롤 위치. 카메라가 단계별로 옮겨 갑니다. */
+  progress?: StageProgress;
 }) {
   const [Scene, setScene] = useState<ComponentType<SceneProps> | null>(null);
   /** 한 번이라도 화면에 들어왔는가. 들어온 뒤에는 계속 붙여 둡니다. */
@@ -104,7 +117,7 @@ export default function HeroSceneGate({
     <figure className="hero-scene" ref={frame}>
       {/*
         장면이 켜지면 포스터를 감춥니다. 캔버스는 투명해서 포스터가 비치는데,
-        마우스 시차로 장면이 움직이면 같은 그림이 두 겹으로 보였습니다.
+        카메라가 단계별로 움직이면 같은 그림이 두 겹으로 보입니다.
       */}
       <div className={`hero-scene-frame${Scene && seen && visible ? " has-live" : ""}`}>
         {/* 포스터가 아직 없으면 빈 판으로 둡니다. 깨진 이미지를 보여 주지 않습니다. */}
@@ -116,7 +129,7 @@ export default function HeroSceneGate({
         )}
         {Scene && seen && (
           <div className={`hero-scene-canvas${visible ? " is-live" : ""}`}>
-            <Scene plants={plants} active={visible} metric={metric} />
+            <Scene plants={plants} active={visible} metric={metric} progress={progress} />
           </div>
         )}
       </div>

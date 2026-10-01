@@ -6,6 +6,14 @@ import { formatCareerPeriod } from "../../lib/tenure";
 
 export type HeadlineMetric = Metric & { id: string; cardId: string | null };
 
+/**
+ * 첫 화면. 어두운 3D 무대 위에 글을 얹습니다.
+ *
+ * 왼쪽 위: 누구인지와 한 문장(제목) · 요약 · 버튼
+ * 왼쪽 아래: 명판 — 채용담당자가 먼저 거르는 학력·경력·자격·연락처
+ * 오른쪽 아래: 수치 HUD — 값과 산출 조건을 함께, 숫자는 근거 카드로 연결
+ * 오른쪽 위는 비워 두어 장면이 보이게 합니다.
+ */
 export default function Hero({
   profile,
   metrics,
@@ -18,9 +26,9 @@ export default function Hero({
   const careerPeriod = formatCareerPeriod(profile.career, new Date());
 
   return (
-    <section className="profile-hero" id="top">
-      <aside className="profile-panel" aria-label="기본 이력">
-        <div className="profile-identity">
+    <section className="hero" id="top" aria-labelledby="hero-title">
+      <div className="hero-main">
+        <div className="hero-identity">
           {profile.photoSrc ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -33,56 +41,14 @@ export default function Hero({
               KJ
             </div>
           )}
-          <div>
-            <p className="profile-name">{profile.name}</p>
-            <p className="profile-name-en">{profile.nameEn}</p>
-          </div>
+          <p>
+            <span className="profile-name">{profile.name}</span>
+            <span className="profile-name-en">{profile.nameEn}</span>
+          </p>
         </div>
 
-        <dl className="profile-facts">
-          <div>
-            <dt>학력</dt>
-            <dd>
-              <strong>
-                {profile.education.school} {profile.education.degree}
-              </strong>
-              <span>{profile.education.period}</span>
-              <span>{profile.education.detail}</span>
-            </dd>
-          </div>
-          <div>
-            <dt>경력</dt>
-            <dd>
-              <strong>
-                {profile.career.company} {profile.career.position}
-              </strong>
-              <span>{careerPeriod}</span>
-              <span>{profile.career.detail}</span>
-            </dd>
-          </div>
-          <div>
-            <dt>자격 · 어학</dt>
-            <dd className="profile-list">
-              {profile.certifications.map((certification) => (
-                <span key={certification}>{certification}</span>
-              ))}
-            </dd>
-          </div>
-          <div>
-            <dt>연락처</dt>
-            <dd className="profile-contact">
-              {email && profile.emailHref && <a href={profile.emailHref}>{email}</a>}
-              <a href={profile.githubUrl} target="_blank" rel="noreferrer">
-                {githubLabel}
-              </a>
-            </dd>
-          </div>
-        </dl>
-      </aside>
-
-      <div className="hero-content">
         <p className="eyebrow">제조 데이터 · 업무 자동화 · 임베디드</p>
-        <h1>{profile.role}</h1>
+        <h1 id="hero-title">{profile.role}</h1>
         <p className="hero-description">{profile.summary}</p>
         <div className={`hero-actions${profile.resumeHref ? " has-resume" : ""}`}>
           <a className="button primary" href="#projects">
@@ -102,29 +68,70 @@ export default function Hero({
             GitHub
           </a>
         </div>
-        {/*
-          수치는 값만 두지 않고 산출 조건을 함께 보여 줍니다. `7%`처럼 조건을 뗀 숫자가
-          지원서로 옮겨 가면서 뜻이 달라지는 일을 막기 위한 것입니다.
-          근거로 가는 길은 숫자 자체에 둡니다. "근거 보기" 같은 문구를 달면 감사 보고서처럼 읽힙니다.
-        */}
-        <dl className="hero-metrics">
-          {metrics.map((metric) => (
-            <div key={metric.id}>
-              <dt>
-                {metric.cardId ? (
-                  <Link href={`/experience/${metric.cardId}/`} title="산출 근거와 경험 카드">
-                    {metric.display}
-                  </Link>
-                ) : (
-                  metric.display
-                )}
-              </dt>
-              <dd>{metric.label}</dd>
-              {metric.condition && <dd className="metric-evidence">{metric.condition}</dd>}
-            </div>
-          ))}
-        </dl>
       </div>
+
+      <dl className="profile-facts" aria-label="기본 이력">
+        <div>
+          <dt>학력</dt>
+          <dd>
+            <strong>
+              {profile.education.school} {profile.education.degree}
+            </strong>
+            <span>{profile.education.period}</span>
+            <span>{profile.education.detail}</span>
+          </dd>
+        </div>
+        <div>
+          <dt>경력</dt>
+          <dd>
+            <strong>
+              {profile.career.company} {profile.career.position}
+            </strong>
+            <span>{careerPeriod}</span>
+            <span>{profile.career.detail}</span>
+          </dd>
+        </div>
+        <div>
+          <dt>자격 · 어학</dt>
+          <dd className="profile-list">
+            {profile.certifications.map((certification) => (
+              <span key={certification}>{certification}</span>
+            ))}
+          </dd>
+        </div>
+        <div>
+          <dt>연락처</dt>
+          <dd className="profile-contact">
+            {email && profile.emailHref && <a href={profile.emailHref}>{email}</a>}
+            <a href={profile.githubUrl} target="_blank" rel="noreferrer">
+              {githubLabel}
+            </a>
+          </dd>
+        </div>
+      </dl>
+
+      {/*
+        수치는 값만 두지 않고 산출 조건을 함께 보여 줍니다. `7%`처럼 조건을 뗀 숫자가
+        지원서로 옮겨 가면서 뜻이 달라지는 일을 막기 위한 것입니다.
+        근거로 가는 길은 숫자 자체에 둡니다. "근거 보기" 같은 문구를 달면 감사 보고서처럼 읽힙니다.
+      */}
+      <dl className="hero-metrics" aria-label="주요 수치">
+        {metrics.map((metric) => (
+          <div key={metric.id}>
+            <dt>
+              {metric.cardId ? (
+                <Link href={`/experience/${metric.cardId}/`} title="산출 근거와 경험 카드">
+                  {metric.display}
+                </Link>
+              ) : (
+                metric.display
+              )}
+            </dt>
+            <dd>{metric.label}</dd>
+            {metric.condition && <dd className="metric-evidence">{metric.condition}</dd>}
+          </div>
+        ))}
+      </dl>
     </section>
   );
 }

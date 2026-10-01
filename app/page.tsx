@@ -18,8 +18,10 @@ import {
 import Archive from "./archive";
 import Timeline from "./components/Timeline";
 import Hero from "./components/Hero";
-import HeroSceneGate from "./components/hero-scene";
 import ImpactGrid from "./components/ImpactGrid";
+import SiteHeader from "./components/SiteHeader";
+import Stage from "./components/Stage";
+import Story from "./components/Story";
 
 export default function Home() {
   const profile = getProfile();
@@ -39,57 +41,36 @@ export default function Home() {
 
   return (
     <main>
-      <header className="site-header">
-        <a className="wordmark" href="#top" aria-label="처음으로">
-          <span>KJ</span>김종우
-        </a>
-        <nav aria-label="주요 메뉴">
-          <a href="#impact">주요 성과</a>
-          <a href="#projects">프로젝트</a>
-          <a href="#experience">경력</a>
-          <Link href="/experience/">경험 카드</Link>
-          <a href="#contact">연락처</a>
-        </nav>
-      </header>
+      <SiteHeader />
 
-      <Hero
-        profile={profile}
-        metrics={getHeadlineMetrics(profile.headlineMetricIds)}
-      />
-
-      <section className="scene-section" aria-labelledby="scene-heading">
-        <HeroSceneGate
-          plants={plants}
-          metric={{
-            display: forecastError.display,
-            condition: forecastError.condition,
-          }}
-          poster={posterFor("/hero-poster.webp")}
-          posterDark={posterFor("/hero-poster-dark.webp")}
-          caption="남한 지도 위 다섯 공장에서 에너지 데이터가 하나의 화면으로 모이는 모습"
+      {/*
+        첫 화면과 단계 설명이 한 무대를 씁니다. 3D 장면은 무대 맨 앞에 고정되고,
+        글은 그 위로 흘러가며 카메라가 단계마다 다른 곳을 비춥니다.
+      */}
+      <Stage
+        plants={plants}
+        metric={{
+          display: forecastError.display,
+          condition: forecastError.condition,
+        }}
+        poster={posterFor("/hero-poster.webp")}
+        posterDark={posterFor("/hero-poster-dark.webp")}
+        caption="남한 지도 위 다섯 공장에서 에너지 데이터가 하나의 화면으로 모이는 모습"
+      >
+        <Hero
+          profile={profile}
+          metrics={getHeadlineMetrics(profile.headlineMetricIds)}
         />
-        <div className="scene-inner">
-          <div className="scene-intro">
-            <p className="section-index">공장 에너지 AI 플랫폼</p>
-            <h2 id="scene-heading">
-              다섯 공장의 에너지 데이터가
-              <br />한 화면에 모입니다.
-            </h2>
-            <p>
-              전력·연료·용수와 생산 실적을 하나로 모아 AI 예측과 실측을 나란히
-              보는, 사내에서 운영 중인 시스템입니다.
-            </p>
-            <Link className="section-link" href="/projects/ai-elite-bems/">
-              프로젝트 보기 →
-            </Link>
-          </div>
-        </div>
-      </section>
+        <Story plants={plants} />
+      </Stage>
 
       <section className="impact-section" id="impact">
         <div className="section-heading">
           <div>
-            <p className="section-index">01</p>
+            <p className="section-index">
+              <span>01</span>
+              IMPACT
+            </p>
             <h2>주요 성과</h2>
           </div>
         </div>
@@ -99,7 +80,10 @@ export default function Home() {
       <section className="projects-section" id="projects">
         <div className="section-heading">
           <div>
-            <p className="section-index">02</p>
+            <p className="section-index">
+              <span>02</span>
+              PROJECTS
+            </p>
             <h2>대표 프로젝트</h2>
           </div>
         </div>
@@ -143,7 +127,10 @@ export default function Home() {
       <section className="experience-section" id="experience">
         <div className="section-heading">
           <div>
-            <p className="section-index">03</p>
+            <p className="section-index">
+              <span>03</span>
+              CAREER
+            </p>
             <h2>경력 · 교육</h2>
           </div>
           <Link className="section-link" href="/experience/">
@@ -156,7 +143,10 @@ export default function Home() {
       <section className="capability-section" id="profile">
         <div className="section-heading light-heading">
           <div>
-            <p className="section-index">04</p>
+            <p className="section-index">
+              <span>04</span>
+              SKILLS
+            </p>
             <h2>보유 기술</h2>
           </div>
         </div>
@@ -180,7 +170,10 @@ export default function Home() {
 
       <section className="qualification-section" id="foundation">
         <div className="qualification-intro">
-          <p className="section-index">06</p>
+          <p className="section-index">
+            <span>06</span>
+            FOUNDATION
+          </p>
           <h2>학력 · 자격 · 병역</h2>
         </div>
         <div className="qualification-list">

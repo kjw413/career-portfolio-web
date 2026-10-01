@@ -79,7 +79,10 @@ export default function Archive({
     <section className="archive-section" id="archive">
       <div className="archive-header">
         <div>
-          <p className="section-index">05</p>
+          <p className="section-index">
+            <span>05</span>
+            ARCHIVE
+          </p>
           <h2>전체 프로젝트</h2>
         </div>
         <div className="filter-row" role="group" aria-label="프로젝트 분야 필터">

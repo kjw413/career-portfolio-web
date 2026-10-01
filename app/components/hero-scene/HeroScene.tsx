@@ -5,21 +5,28 @@
  * 지도 위에 떠 있는 하나의 통합 화면(원형 패널 링)으로 모이는 장면입니다.
  * 어두운 무대 위의 홀로그램처럼 그려, 무엇이 어디서 모이는지가 그림만으로 읽히게 합니다.
  *
+ * 첫 화면 제목("모으고, 자동화하고, 예측합니다")이 곧 장면의 줄거리입니다. 스크롤하면
+ * 카메라가 세 동사를 차례로 비춥니다 — 사업장(모으고) → 검증 게이트(자동화하고) → 예측 패널(예측합니다).
+ * 원천 데이터는 주황으로 솟아올라 게이트를 지나며 표준 데이터(하늘색)로 바뀝니다.
+ *
  * 장식이 아니라 구현 증거로 두는 것이므로 규칙을 정해 두었습니다.
  *   - 색은 CSS 토큰(--scene-*)에서 읽습니다. 무대는 테마와 무관하게 어둡습니다.
  *   - glTF·이미지 같은 외부 자산을 두지 않습니다. 지도·아이콘·패널은 캔버스에 그려 텍스처로 쓰고,
  *     해안선은 좌표 배열입니다.
  *   - 패널에 적는 수치는 원장에서 props로 받습니다. 장면 안에 수치를 적어 두지 않습니다.
  *   - 화면 밖에 있으면 렌더 루프를 멈춥니다.
+ *   - 단계 글을 읽는 동안에는 카메라가 멈춰 있습니다. 단계 사이를 지날 때만 움직입니다.
  */
 
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { PLANT_SITES, project } from "./geo";
 import { ISLAND_DOTS, KOREA_RINGS } from "./korea-outline";
 
 export type SceneMetric = { display: string; condition?: string };
+/** 무대의 스크롤 위치(화면 높이 단위). 0 = 첫 화면, 1·2·3 = 단계 글이 화면을 채운 자리 */
+export type StageProgress = { current: number };
 
 /** 전력 · 연료 · 용수. 사업장마다 이 세 줄기가 링으로 흐릅니다. */
 const STREAM_OFFSETS = [-0.1, 0, 0.1];
@@ -34,16 +41,31 @@ const RING = {
   floorY: 1.78,
 };
 
+/** 검증 게이트. 링 바닥 위, 줄기가 링 안으로 꺾여 들어가는 높이와 반지름에 둡니다. */
+const GATE = { y: RING.floorY + 0.3, radius: 0.95 };
+
 /*
- * 카메라가 바라보는 곳. 장면을 화면 오른쪽에 놓기 위해 실제 주제(x ≈ 0.2)보다
- * 왼쪽을 겨눕니다. 왼쪽 빈자리에는 글이 얹힙니다.
+ * 단계별 카메라. 0 = 첫 화면 전경, 1 = 모으고(사업장), 2 = 자동화하고(검증 게이트),
+ * 3 = 예측합니다(앞 패널). 대상은 실제 주제를 겨누고, 글이 놓이는 왼쪽을 비우는 일은
+ * 렌즈 이동(filmOffset)이 맡습니다. 대상을 비껴 겨누면 원근이 틀어집니다.
  */
-const FOCUS = new THREE.Vector3(-2.6, 1.05, 0.45);
+type Shot = { position: readonly [number, number, number]; target: readonly [number, number, number] };
+// 자동화 단계(2)는 예측 패널(0°)과 오차 패널(52°) 사이 틈(26°)에서 게이트를 내려다봅니다.
+// 패널을 정면으로 끼고 보면 가까운 패널 글자가 화면 귀퉁이에 크게 흐려져 남습니다.
+const SHOTS: readonly Shot[] = [
+  { position: [1.31, 5.38, 13.18], target: [-0.15, 0.2, -0.1] },
+  { position: [2.3, 2.7, 4.9], target: [0.0, 0.15, -0.15] },
+  { position: [2.17, 4.1, 1.24], target: [0.2, 1.85, -2.8] },
+  { position: [0.95, 2.45, 3.7], target: [0.25, 2.2, 0.15] },
+];
+/** 단계 글이 화면 가운데 있는 동안(정수 ± HOLD) 카메라를 세워 둡니다. */
+const HOLD = 0.2;
 
 type Palette = {
   bg: string;
   glow: string;
   accent: string;
+  raw: string;
   text: string;
   muted: string;
   font: string;
@@ -58,6 +80,7 @@ function readPalette(): Palette {
     bg: token("--scene-bg", "#071021"),
     glow: token("--scene-glow", "#4fd8ff"),
     accent: token("--scene-accent", "#2f7de1"),
+    raw: token("--scene-raw", "#ffb347"),
     text: token("--scene-text", "#e6f6ff"),
     muted: token("--scene-muted", "#8fb3cc"),
     // 글자는 본문 글꼴로 씁니다. 캔버스에 그리는 글자라 CSS가 닿지 않습니다.
@@ -768,7 +791,11 @@ function makeGlowTexture() {
   return texture;
 }
 
-/** 길 위를 지나는 데이터 알갱이. 점 하나짜리 Points라 draw call 한 번입니다. */
+/**
+ * 길 위를 지나는 데이터 알갱이. 점 하나짜리 Points라 draw call 한 번입니다.
+ * 원천 데이터(주황)로 솟아올라, 게이트 반지름 안으로 들어서면 표준 데이터(하늘색)로 바뀝니다.
+ * 색은 정점 색이라 알갱이마다 달라도 draw call이 늘지 않습니다.
+ */
 function DataPulses({ curves, palette }: { curves: THREE.CatmullRomCurve3[]; palette: Palette }) {
   const pulseCount = curves.length * PULSES_PER_STREAM;
   const geometry = useMemo(() => {
@@ -776,6 +803,9 @@ function DataPulses({ curves, palette }: { curves: THREE.CatmullRomCurve3[]; pal
     const attribute = new THREE.BufferAttribute(new Float32Array(pulseCount * 3), 3);
     attribute.setUsage(THREE.DynamicDrawUsage);
     geometry.setAttribute("position", attribute);
+    const colors = new THREE.BufferAttribute(new Float32Array(pulseCount * 3), 3);
+    colors.setUsage(THREE.DynamicDrawUsage);
+    geometry.setAttribute("color", colors);
     return geometry;
   }, [pulseCount]);
   const sprite = useMemo(() => makeGlowTexture(), []);
@@ -787,9 +817,18 @@ function DataPulses({ curves, palette }: { curves: THREE.CatmullRomCurve3[]; pal
     [geometry, sprite],
   );
   const scratch = useMemo(() => new THREE.Vector3(), []);
+  const tint = useMemo(
+    () => ({
+      raw: new THREE.Color(palette.raw),
+      clean: new THREE.Color(palette.glow),
+      mixed: new THREE.Color(),
+    }),
+    [palette],
+  );
 
   useFrame(({ clock }) => {
     const position = geometry.getAttribute("position") as THREE.BufferAttribute;
+    const color = geometry.getAttribute("color") as THREE.BufferAttribute;
     for (let index = 0; index < pulseCount; index += 1) {
       const curveIndex = index % curves.length;
       const pulse = Math.floor(index / curves.length);
@@ -806,8 +845,14 @@ function DataPulses({ curves, palette }: { curves: THREE.CatmullRomCurve3[]; pal
       const t = (clock.elapsedTime * 0.13 + phase) % 1;
       curves[curveIndex].getPointAt(t, scratch);
       position.setXYZ(index, scratch.x, scratch.y, scratch.z);
+      // 링 축에서의 거리로 게이트 통과 여부를 정합니다. 바깥은 원천, 게이트 안은 표준 데이터.
+      const radius = Math.hypot(scratch.x - RING.center.x, scratch.z - RING.center.z);
+      const inside = 1 - THREE.MathUtils.smoothstep(radius, GATE.radius - 0.08, GATE.radius + 0.22);
+      tint.mixed.copy(tint.raw).lerp(tint.clean, scratch.y > 1.2 ? inside : 0);
+      color.setXYZ(index, tint.mixed.r, tint.mixed.g, tint.mixed.b);
     }
     position.needsUpdate = true;
+    color.needsUpdate = true;
   });
 
   if (!sprite) return null;
@@ -815,7 +860,8 @@ function DataPulses({ curves, palette }: { curves: THREE.CatmullRomCurve3[]; pal
     <points geometry={geometry}>
       <pointsMaterial
         map={sprite}
-        color={palette.glow}
+        vertexColors
+        color="#ffffff"
         size={0.3}
         sizeAttenuation
         transparent
@@ -845,7 +891,280 @@ function CoreGlow({ palette }: { palette: Palette }) {
   );
 }
 
-/* ── 계측·시차·조립 ──────────────────────────────────────────── */
+/* ── 검증 게이트 · 사업장 빛기둥 · 바닥 ─────────────────────────── */
+
+/**
+ * 자동화 단계의 주인공. 링 안으로 꺾여 들어가는 줄기를 두 겹 고리가 감싸고, 그 위를 훑는
+ * 옅은 호가 돕니다. 알갱이는 이 고리를 지나며 원천(주황)에서 표준 데이터(하늘색)로 바뀝니다.
+ */
+function ValidationGate({ palette }: { palette: Palette }) {
+  const sweep = useRef<THREE.Mesh>(null);
+  useFrame(({ clock }) => {
+    if (sweep.current) sweep.current.rotation.z = -clock.elapsedTime * 1.4;
+  });
+  const glow = {
+    transparent: true,
+    side: THREE.DoubleSide,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+  } as const;
+  return (
+    <group position={[RING.center.x, GATE.y, RING.center.z]} rotation={[-Math.PI / 2, 0, 0]}>
+      <mesh>
+        <ringGeometry args={[GATE.radius - 0.03, GATE.radius, 72]} />
+        <meshBasicMaterial color={palette.glow} opacity={0.95} {...glow} />
+      </mesh>
+      <mesh>
+        <ringGeometry args={[GATE.radius + 0.1, GATE.radius + 0.115, 72]} />
+        <meshBasicMaterial color={palette.glow} opacity={0.45} {...glow} />
+      </mesh>
+      <mesh ref={sweep}>
+        <ringGeometry args={[GATE.radius - 0.05, GATE.radius + 0.12, 24, 1, 0, Math.PI * 0.3]} />
+        <meshBasicMaterial color={palette.glow} opacity={0.22} {...glow} />
+      </mesh>
+    </group>
+  );
+}
+
+/** 위가 흐려지는 세로 빛. 사업장 빛기둥에 씁니다. */
+function makeBeamTexture() {
+  const made = makeCanvas(4, 128);
+  if (!made) return null;
+  const { canvas, ctx } = made;
+  // 원통의 v는 위가 1, 아래가 0이라 캔버스 위쪽이 기둥 꼭대기입니다.
+  const gradient = ctx.createLinearGradient(0, 0, 0, 128);
+  gradient.addColorStop(0, "rgba(255,255,255,0)");
+  gradient.addColorStop(0.7, "rgba(255,255,255,0.45)");
+  gradient.addColorStop(1, "rgba(255,255,255,1)");
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, 4, 128);
+  return toTexture(canvas);
+}
+
+/** 다섯 사업장 위의 빛기둥. 인스턴스 하나라 draw call 한 번입니다. */
+function SiteBeacons({ sites, palette }: { sites: Site[]; palette: Palette }) {
+  const geometry = useMemo(
+    () => new THREE.CylinderGeometry(0.03, 0.075, 0.48, 16, 1, true).translate(0, 0.24, 0),
+    [],
+  );
+  const texture = useMemo(() => makeBeamTexture(), []);
+  useEffect(
+    () => () => {
+      geometry.dispose();
+      texture?.dispose();
+    },
+    [geometry, texture],
+  );
+  const mesh = useRef<THREE.InstancedMesh>(null);
+  useLayoutEffect(() => {
+    const target = mesh.current;
+    if (!target) return;
+    const matrix = new THREE.Matrix4();
+    sites.forEach((site, index) => {
+      matrix.makeTranslation(site.x, 0.01, site.z);
+      target.setMatrixAt(index, matrix);
+    });
+    target.instanceMatrix.needsUpdate = true;
+  }, [sites]);
+  if (!texture || sites.length === 0) return null;
+  return (
+    <instancedMesh ref={mesh} args={[geometry, undefined, sites.length]} frustumCulled={false}>
+      <meshBasicMaterial
+        map={texture}
+        color={palette.glow}
+        transparent
+        opacity={0.4}
+        side={THREE.DoubleSide}
+        blending={THREE.AdditiveBlending}
+        depthWrite={false}
+      />
+    </instancedMesh>
+  );
+}
+
+/**
+ * 지도 밖으로 이어지는 옅은 격자. 가장자리로 갈수록 사라지게 해 무대에 깊이를 줍니다.
+ * 격자는 반복 텍스처, 사라짐은 반복하지 않는 alphaMap이라 판 하나(draw call 한 번)입니다.
+ */
+const GRID = { size: 28, cell: 0.5 };
+
+/** 격자 한 칸(반복)과 가장자리로 갈수록 사라지는 막(반복 안 함) */
+function makeGridTextures() {
+  const grid = makeCanvas(128, 128);
+  const fade = makeCanvas(256, 256);
+  if (!grid || !fade) return null;
+  grid.ctx.strokeStyle = "rgba(255,255,255,0.9)";
+  grid.ctx.lineWidth = 2;
+  grid.ctx.strokeRect(0, 0, 128, 128);
+  const radial = fade.ctx.createRadialGradient(128, 128, 0, 128, 128, 128);
+  radial.addColorStop(0, "#ffffff");
+  radial.addColorStop(0.35, "#8a8a8a");
+  radial.addColorStop(1, "#000000");
+  fade.ctx.fillStyle = radial;
+  fade.ctx.fillRect(0, 0, 256, 256);
+  const map = toTexture(grid.canvas);
+  map.wrapS = THREE.RepeatWrapping;
+  map.wrapT = THREE.RepeatWrapping;
+  map.repeat.set(GRID.size / GRID.cell, GRID.size / GRID.cell);
+  const alpha = new THREE.CanvasTexture(fade.canvas);
+  return { map, alpha };
+}
+
+function GridFloor({ palette }: { palette: Palette }) {
+  const textures = useMemo(() => makeGridTextures(), []);
+  useEffect(
+    () => () => {
+      textures?.map.dispose();
+      textures?.alpha.dispose();
+    },
+    [textures],
+  );
+  if (!textures) return null;
+  return (
+    <mesh position={[0.1, -0.02, -1.2]} rotation={[-Math.PI / 2, 0, 0]}>
+      <planeGeometry args={[GRID.size, GRID.size]} />
+      <meshBasicMaterial
+        map={textures.map}
+        alphaMap={textures.alpha}
+        color={palette.glow}
+        transparent
+        opacity={0.16}
+        depthWrite={false}
+      />
+    </mesh>
+  );
+}
+
+/** 무대에 떠 있는 먼지. 아주 천천히 돌아 공간에 깊이를 줍니다. */
+function Dust({ palette }: { palette: Palette }) {
+  const geometry = useMemo(() => {
+    const random = pseudoRandom(29);
+    const COUNT = 220;
+    const points = new Float32Array(COUNT * 3);
+    for (let i = 0; i < COUNT; i += 1) {
+      points[i * 3] = (random() - 0.5) * 16;
+      points[i * 3 + 1] = 0.3 + random() * 5.5;
+      points[i * 3 + 2] = -9 + random() * 13;
+    }
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute("position", new THREE.BufferAttribute(points, 3));
+    return geometry;
+  }, []);
+  const sprite = useMemo(() => makeGlowTexture(), []);
+  useEffect(
+    () => () => {
+      geometry.dispose();
+      sprite?.dispose();
+    },
+    [geometry, sprite],
+  );
+  const ref = useRef<THREE.Points>(null);
+  useFrame(({ clock }) => {
+    if (ref.current) ref.current.rotation.y = clock.elapsedTime * 0.012;
+  });
+  if (!sprite) return null;
+  return (
+    <points ref={ref} geometry={geometry}>
+      <pointsMaterial
+        map={sprite}
+        color={palette.glow}
+        size={0.06}
+        sizeAttenuation
+        transparent
+        opacity={0.55}
+        depthWrite={false}
+        blending={THREE.AdditiveBlending}
+      />
+    </points>
+  );
+}
+
+/* ── 카메라 ──────────────────────────────────────────────────── */
+
+/** 정수 단계 근처에서는 멈추고, 그 사이에서만 부드럽게 넘어가는 보간 계수 */
+function stepBlend(fraction: number) {
+  if (fraction <= HOLD) return 0;
+  if (fraction >= 1 - HOLD) return 1;
+  return THREE.MathUtils.smoothstep((fraction - HOLD) / (1 - HOLD * 2), 0, 1);
+}
+
+/**
+ * 스크롤 위치를 받아 단계별 카메라 사이를 오갑니다. 스크롤 입력은 감쇠를 거쳐
+ * 따라가므로 휠 한 칸에 화면이 튀지 않습니다. 넓은 화면에서는 렌즈를 옮겨 주제를
+ * 오른쪽에 두고, 왼쪽에는 글이 얹힙니다.
+ */
+function CameraRig({ progress }: { progress?: StageProgress }) {
+  /*
+   * 매 프레임 고치는 벡터는 ref에 담아 둡니다. 카메라는 훅이 돌려준 값이 아니라
+   * 프레임 콜백이 받는 state에서 꺼내 씁니다(렌더 중에 훅 값을 고치지 않기 위해서).
+   */
+  const rig = useRef<{
+    desiredPosition: THREE.Vector3;
+    desiredTarget: THREE.Vector3;
+    position: THREE.Vector3 | null;
+    target: THREE.Vector3;
+    a: THREE.Vector3;
+    b: THREE.Vector3;
+  } | null>(null);
+
+  useFrame((state, delta) => {
+    rig.current ??= {
+      desiredPosition: new THREE.Vector3(),
+      desiredTarget: new THREE.Vector3(),
+      position: null,
+      target: new THREE.Vector3(),
+      a: new THREE.Vector3(),
+      b: new THREE.Vector3(),
+    };
+    const r = rig.current;
+    const camera = state.camera as THREE.PerspectiveCamera;
+
+    const last = SHOTS.length - 1;
+    const stage = THREE.MathUtils.clamp(progress?.current ?? 0, 0, last);
+    const index = Math.min(Math.floor(stage), last - 1);
+    const blend = stage >= last ? 1 : stepBlend(stage - index);
+    const from = SHOTS[index];
+    const to = SHOTS[index + 1];
+    r.desiredPosition.copy(r.a.set(...from.position)).lerp(r.b.set(...to.position), blend);
+    r.desiredTarget.copy(r.a.set(...from.target)).lerp(r.b.set(...to.target), blend);
+
+    // 세로로 긴 화면에서는 뒤로 물러나 주제가 잘리지 않게 합니다.
+    const fit = Math.max(1, 1.5 / camera.aspect);
+    if (fit > 1) {
+      r.desiredPosition.sub(r.desiredTarget).multiplyScalar(fit).add(r.desiredTarget);
+    }
+
+    if (!r.position) {
+      r.position = r.desiredPosition.clone();
+      r.target.copy(r.desiredTarget);
+    } else {
+      const k = 1 - Math.exp(-Math.min(delta, 0.1) * 3.2);
+      r.position.lerp(r.desiredPosition, k);
+      r.target.lerp(r.desiredTarget, k);
+    }
+    camera.position.copy(r.position);
+    camera.lookAt(r.target);
+
+    // 렌즈 이동: 화면 폭의 몇 할만큼 주제를 오른쪽으로 옮길지
+    const width = state.size.width;
+    // 첫 화면이 두 단으로 놓이는 너비(960px, globals.css)부터 주제를 오른쪽으로 옮깁니다.
+    const shift = width >= 960 ? 0.17 : width >= 720 ? 0.06 : 0;
+    const film =
+      -shift *
+      camera.getFilmWidth() *
+      camera.aspect *
+      2 *
+      Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
+    if (Math.abs(camera.filmOffset - film) > 1e-4) {
+      camera.filmOffset = film;
+      camera.updateProjectionMatrix();
+    }
+  });
+
+  return null;
+}
+
+/* ── 계측·조립 ───────────────────────────────────────────────── */
 
 /**
  * 장면의 실제 비용을 재서 남깁니다. 포스터 생성 스크립트가 읽어 가고,
@@ -891,11 +1210,14 @@ export default function HeroScene({
   plants,
   active,
   metric,
+  progress,
 }: {
   plants: string[];
   active: boolean;
   /** 패널에 적을 예측 오차. 원장에서 옵니다. */
   metric?: SceneMetric;
+  /** 무대의 스크롤 위치. 없으면 첫 화면 전경에 머뭅니다(포스터 촬영). */
+  progress?: StageProgress;
 }) {
   /*
    * 이 컴포넌트는 브라우저에서만 불러오므로 첫 렌더에서 바로 토큰을 읽습니다.
@@ -930,7 +1252,7 @@ export default function HeroScene({
 
   return (
     <Canvas
-      camera={{ position: [0.2, 4.63, 9.71], fov: 30 }}
+      camera={{ position: SHOTS[0].position as [number, number, number], fov: 30, near: 0.1, far: 60 }}
       /* 화면 밖에서는 루프를 재웁니다. 마지막 프레임은 캔버스에 그대로 남습니다. */
       frameloop={active ? "always" : "never"}
       dpr={[1, 2]}
@@ -939,15 +1261,19 @@ export default function HeroScene({
       flat
       style={{ width: "100%", height: "100%" }}
       aria-hidden="true"
-      onCreated={({ camera }) => camera.lookAt(FOCUS)}
     >
       <SceneStats />
+      <CameraRig progress={progress} />
       <group>
+        <GridFloor palette={palette} />
         <GroundMap sites={sites} palette={palette} />
+        <SiteBeacons sites={sites} palette={palette} />
         <StreamPaths curves={curves} palette={palette} />
         <DataPulses curves={curves} palette={palette} />
         <RingFloor palette={palette} />
+        <ValidationGate palette={palette} />
         <CoreGlow palette={palette} />
+        <Dust palette={palette} />
         {PANELS.map((spec) => (
           <RingPanel key={spec.kind} spec={spec} palette={palette} metric={metric} />
         ))}
