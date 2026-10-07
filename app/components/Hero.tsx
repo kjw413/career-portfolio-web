@@ -55,13 +55,18 @@ export default function Hero({
             대표 프로젝트 보기
           </a>
           {profile.resumeHref && (
-            <a className="button secondary" href={withBasePath(profile.resumeHref)}>
+            <a
+              className="button secondary"
+              href={withBasePath(profile.resumeHref)}
+              data-goatcounter-click="click-resume"
+            >
               이력서
             </a>
           )}
           <a
             className="button secondary"
             href={profile.githubUrl}
+            data-goatcounter-click="click-github"
             target="_blank"
             rel="noreferrer"
           >
@@ -102,7 +107,9 @@ export default function Hero({
         <div>
           <dt>연락처</dt>
           <dd className="profile-contact">
-            {email && profile.emailHref && <a href={profile.emailHref}>{email}</a>}
+            {email && profile.emailHref && <a href={profile.emailHref} data-goatcounter-click="click-email">
+                {email}
+              </a>}
             <a href={profile.githubUrl} target="_blank" rel="noreferrer">
               {githubLabel}
             </a>

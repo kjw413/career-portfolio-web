@@ -198,19 +198,26 @@ export default function Home() {
         </div>
         <div className="footer-links">
           {profile.emailHref && (
-            <a href={profile.emailHref}>
+            <a href={profile.emailHref} data-goatcounter-click="click-email">
               {profile.emailHref.replace(/^mailto:/, "")}
             </a>
           )}
-          <a href={profile.githubUrl} target="_blank" rel="noreferrer">
+          <a
+            href={profile.githubUrl}
+            target="_blank"
+            rel="noreferrer"
+            data-goatcounter-click="click-github"
+          >
             GitHub ↗
           </a>
           {profile.resumeHref && (
-            <a href={withBasePath(profile.resumeHref)}>이력서</a>
+            <a href={withBasePath(profile.resumeHref)} data-goatcounter-click="click-resume">
+              이력서
+            </a>
           )}
         </div>
         <div className="footer-bottom">
-          <span>© 2026 김종우</span>
+          <span>© 2026 김종우 · 방문 통계는 쿠키 없이 페이지와 유입 경로만 집계합니다</span>
           <a href="#top">맨 위로 ↑</a>
         </div>
       </footer>
