@@ -86,7 +86,12 @@ export default async function ProjectPage({
             <span>저장소</span>
             <strong>
               {project.github ? (
-                <a href={project.github} target="_blank" rel="noreferrer">
+                <a
+                  href={project.github}
+                  target="_blank"
+                  rel="noreferrer"
+                  data-goatcounter-click={`click-repo-${project.slug}`}
+                >
                   {project.visibility === "PUBLIC" ? "공개" : "비공개"} ↗
                 </a>
               ) : (
@@ -157,6 +162,7 @@ export default async function ProjectPage({
               href={project.github}
               target="_blank"
               rel="noreferrer"
+              data-goatcounter-click={`click-repo-${project.slug}`}
             >
               GitHub에서 보기 ↗
             </a>

@@ -121,6 +121,20 @@ npm run poster    # 장면을 띄워 밝은 화면·어두운 화면 포스터�
 
 `npm run poster`는 playwright가 필요합니다. 배포에는 쓰이지 않습니다.
 
+## 방문 통계
+
+[GoatCounter](https://www.goatcounter.com/)로 쿠키 없이 페이지 보기 · 유입 경로 · 기기를 집계합니다
+(`app/components/Analytics.tsx`). 통계는 GoatCounter 대시보드(`https://jwkim413.goatcounter.com`)에
+로그인해야만 보이고, 저장소와 사이트에는 남지 않습니다. 사이트 안에 통계 페이지를 만들지 않습니다.
+정적 사이트에 들어간 데이터는 누구나 볼 수 있기 때문입니다.
+
+- 클릭 이벤트: `data-goatcounter-click` 속성이 붙은 링크(이력서 · GitHub · 이메일 · 프로젝트 저장소)와
+  단계 설명 끝까지 읽음(`story-complete`)
+- 지원서별 유입: 제출하는 링크에 `?ref=코드`(예: `?ref=a07`)를 붙이면 유입 경로에 코드가 잡힙니다.
+  코드와 회사의 대응표는 드라이브 비공개 문서에만 둡니다
+- 본인 방문 제외: 각 기기에서 대시보드 설정의 "Ignore your own views" 안내대로 한 번 설정합니다
+- 로컬 개발 서버(localhost)에서는 세지 않습니다
+
 ## 사이트 구성
 
 | 경로 | 내용 |

@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import Analytics from "./components/Analytics";
 
 export const metadata: Metadata = {
   title: "김종우 — 제조 현장 데이터·자동화 엔지니어",
@@ -60,6 +61,8 @@ export default function RootLayout({
         />
         <script dangerouslySetInnerHTML={{ __html: SWAP_WEBFONTS }} />
         {children}
+        {/* 방문 통계. 쿠키 없음, 대시보드는 GoatCounter 로그인으로만 볼 수 있습니다. */}
+        <Analytics />
       </body>
     </html>
   );
