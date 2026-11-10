@@ -13,7 +13,7 @@ highlights:
   - "병목 공정과 단위공정별 CT를 파악하고 로봇 사양으로 개선 후 Capa 시뮬레이션"
   - "적재 공정 {{metric:mixedpack-stack-ct}}, 라인 전체 {{metric:mixedpack-line-ct}}"
   - "회수기간 {{metric:mixedpack-payback}}으로 2026년 하반기 투자계획에 리스트업"
-teamContext: "지도사원과 함께 수행한 신입사원 OJT 과제다. 단독 수행으로 기술하지 않는다."
+teamContext: "지도사원과 함께 수행한 신입사원 OJT 과제다."
 metricIds: [mixedpack-line-ct, mixedpack-stack-ct, mixedpack-payback]
 tags: [생산기술, 공정자동화, 투자타당성, 라인개선, 데이터분석, 시뮬레이션]
 useFor: [생산기술·설비기술, 생산관리·생산계획, 제조 일반·비반도체]
@@ -52,4 +52,8 @@ order: 6
 - 투자 회수기간 {{metric:mixedpack-payback}}
 - 2026년 하반기 투자계획에 리스트업
 
+## 작성 메모
+
 정확한 수행 월, 본인 기여도, 최종 투자 집행 여부와 절감액은 확인되지 않았습니다.
+
+단독 수행으로 기술하지 않는다.
