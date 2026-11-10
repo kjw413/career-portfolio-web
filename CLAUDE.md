@@ -57,6 +57,7 @@
 - 자기소개서 본문, 면접 복기, 과제 제출물
 - 증명서 실물 (참조는 `drive:증명서/…` 문자열로만)
 - 방문 통계 데이터와, 지원서 링크에 붙인 `?ref=` 코드 ↔ 회사 대응표 (드라이브 비공개 문서에만)
+- 회사별로 만든 포트폴리오 PDF와 그 구성 링크 (`portfolio-out/`은 gitignore, 링크는 비공개 문서에)
 
 빌드가 전화번호·주민번호·상세주소 패턴을 검사해 실수를 막습니다. 지원서에 개인정보가
 필요하면 드라이브의 비공개 부록을 쓰거나 사용자에게 직접 받습니다.
@@ -70,6 +71,9 @@ npm run lint          # ESLint
 npm run build         # 위 검사 → AI 내보내기 생성 → 정적 빌드
 npm run ai:exports    # public/ai/*, llms.txt 재생성 (빌드가 자동 실행)
 npm run poster        # 3D 장면을 고쳤을 때 정적 포스터를 다시 생성 (playwright 필요)
+npm run pdf           # 공개 기본 PDF(public/portfolio.pdf)를 원장에서 다시 생성 (build 뒤, playwright 필요)
+npm run portfolio -- --job "제조 AI·데이터" --ref a07
+                      # 회사별 PDF → portfolio-out/ (커밋되지 않음). --cards · --hide · --date · --contact · --url
 npm run lint:claims -- --file 초안.txt --job "제조 AI·데이터" --date 2026-09-12
                       # 자기소개서 초안을 원장과 대조
 ```
@@ -79,6 +83,17 @@ npm run lint:claims -- --file 초안.txt --job "제조 AI·데이터" --date 202
 
 `app/components/hero-scene/`를 고쳤으면 `npm run poster`로 포스터를 다시 만듭니다.
 포스터는 3D를 켜지 않는 환경에서 그대로 남는 그림이라, 장면과 갈라지면 안 됩니다.
+
+원장이나 프로젝트 사례를 고쳤으면 `npm run build && npm run pdf`로 공개 PDF도 다시 만듭니다.
+PDF는 빌더 화면(`/builder/`)을 그대로 인쇄한 것이라, 문장을 스크립트에 따로 적지 않습니다.
+
+사용자가 특정 회사·직무용 PDF를 요청하면 `npm run portfolio`로 만들어 파일로 전달합니다.
+직무군은 `selection-guide.json`에서 고르고, 스크립트가 알리는 "제출 전 확인"을 함께 전합니다.
+회사명은 명령·파일명·커밋 어디에도 남기지 않고, 구분은 추적 코드(`--ref`)로만 합니다.
+
+카드 본문에서 쓰는 사람에게 남기는 규칙("~로 쓰지 않습니다", "자기소개서에는 ~")은
+`## 작성 메모` 절에 적습니다. 이 절과 `## 확인이 필요한 것`은 사이트의 카드에는 보이지만
+제출용 PDF에는 실리지 않습니다. 다른 절에 섞어 쓰면 테스트(`lib/portfolio.test.ts`)가 잡습니다.
 
 `public/ai/`, `public/llms.txt`, `public/llms-full.txt`는 생성물이라 커밋하지 않습니다.
 
@@ -101,6 +116,10 @@ lib/ledger.ts            화면용 타입과 파생
 scripts/ledger-lint.mjs  검증 실행기
 scripts/build-ai-exports.mjs  llms.txt · ledger.json · ledger.md 생성
 scripts/claim-lint.mjs   자기소개서 본문 ↔ 원장 대조
+scripts/build-portfolio-pdf.mjs  빌더 화면을 인쇄해 PDF 생성 (공개 기본 · 회사별)
+app/builder/             포트폴리오 빌더 — 경험을 골라 제출용 문서를 조립
+lib/portfolio.ts         원장·프로젝트 사례 → 고를 수 있는 모듈
+lib/portfolio-selection.ts  구성(프리셋 · URL 저장 · 경고)의 순수 함수
 scripts/drive/           드라이브 연동 (원장 미러 Apps Script, hwpx 텍스트 추출)
 ```
 

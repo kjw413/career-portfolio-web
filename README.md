@@ -135,6 +135,37 @@ npm run poster    # 장면을 띄워 밝은 화면·어두운 화면 포스터�
 - 본인 방문 제외: 각 기기에서 대시보드 설정의 "Ignore your own views" 안내대로 한 번 설정합니다
 - 로컬 개발 서버(localhost)에서는 세지 않습니다
 
+## 포트폴리오 빌더와 PDF
+
+지원하는 곳에 맞춰 경험을 골라 PDF를 만듭니다. 경험 카드(`content/ledger/experiences/`)와
+카드가 없는 프로젝트 사례가 하나씩 모듈이고, 모듈마다 **제외 · 요약 · 상세**를 고릅니다.
+문서의 문장과 수치는 전부 원장에서 오므로, 원장을 고치면 빌더와 PDF가 함께 따라옵니다.
+
+**브라우저에서** — `/builder/`를 엽니다(메뉴에는 없고 검색에도 잡히지 않게 해 두었습니다).
+
+1. 직무군을 고르면 `selection-guide.json`대로 채워집니다(1순위는 상세, 보조는 요약). 그 뒤 더하거나 뺍니다
+2. 순서, 기본 이력 섹션, 추적 코드(`?ref=`), 기준일, 추가 연락처를 정합니다
+3. "PDF로 저장" → 인쇄 창에서 대상 "PDF로 저장", 용지 A4, 머리글·바닥글 끔, 배경 그래픽 켬
+
+고른 구성은 주소(URL)에만 담깁니다. 다시 쓰려면 "구성 링크 복사"로 받은 주소를 비공개 문서에 둡니다.
+추가 연락처(전화번호 등)는 그 기기에만 저장되고 링크에는 들어가지 않습니다.
+
+**명령으로** — 같은 화면을 헤드리스 브라우저로 인쇄합니다(playwright 필요, 배포에는 쓰이지 않음).
+
+```bash
+npm run build
+npm run pdf                                             # 공개 기본 PDF → public/portfolio.pdf
+npm run portfolio -- --job "제조 AI·데이터" --ref a07      # 직무군 프리셋 → portfolio-out/a07/
+npm run portfolio -- --cards EXP-BG-ENERGY-WEB.d,EXP-BG-DATA-RPA.s --hide skills
+npm run portfolio -- --url "<빌더에서 복사한 구성 링크>" --contact "010-…"
+```
+
+- 회사별 PDF는 `portfolio-out/`에 떨어지고 이 폴더는 커밋되지 않습니다. 무엇을 어디에 냈는지는 저장소에 두지 않습니다
+- 공개 기본 PDF의 구성은 홈 화면을 따릅니다: 주요 성과의 경험은 상세, 대표 프로젝트 중 카드가 없는 사례는 요약
+- 직무에서 제외하기로 한 경험이나 일부 사실이 확정 전인 경험을 넣으면 막지 않고 알립니다
+- 카드 본문의 `## 작성 메모`와 `## 확인이 필요한 것`은 쓰는 사람용이라 문서에 싣지 않습니다
+- 원장이나 프로젝트 사례를 고쳤으면 `npm run build && npm run pdf`로 공개 PDF도 다시 만듭니다
+
 ## 사이트 구성
 
 | 경로 | 내용 |
@@ -143,6 +174,7 @@ npm run poster    # 장면을 띄워 밝은 화면·어두운 화면 포스터�
 | `/experience/` | 경험 카드 목록 (소속별) |
 | `/experience/<카드 ID>/` | 경험 하나의 수행 내용과 수치의 산출 조건 · 확인 근거 |
 | `/projects/<slug>/` | 프로젝트 사례 |
+| `/builder/` | 포트폴리오 빌더 — 경험을 골라 제출용 PDF 생성 (메뉴에 없음, noindex) |
 | `/llms.txt`, `/ai/ledger.json`, `/ai/ledger.md` | AI가 읽는 표면 (빌드가 생성) |
 
 ## 포트폴리오 내용 수정
@@ -150,7 +182,7 @@ npm run poster    # 장면을 띄워 밝은 화면·어두운 화면 포스터�
 - 사진: `public/profile.webp` 추가 후 `content/profile.json`의 `photoSrc`를 `/profile.webp`로 설정
   (첫 화면에는 116px 원형으로 들어가므로 정사각형에 가까운 이미지가 좋습니다)
 - 이력서: `public/resume.pdf` 추가 후 `resumeHref`를 `/resume.pdf`로 설정
-- 제출용 포트폴리오 PDF: `npm run pdf`로 `public/portfolio.pdf` 다시 생성
+- 제출용 포트폴리오 PDF: `npm run build && npm run pdf`로 `public/portfolio.pdf` 다시 생성 (위 "포트폴리오 빌더와 PDF")
 - 첫 화면 이력 카드: `content/profile.json`의 `education`, `career`, `certifications` 수정
 - 경력·교육 연혁: `content/ledger/affiliations.json`과 해당 경험 카드 수정
   (세부 항목은 카드의 `headline`·`highlights`에서 자동으로 만들어집니다)

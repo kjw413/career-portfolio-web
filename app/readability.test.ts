@@ -62,11 +62,23 @@ describe("글자 크기", () => {
   });
 
   it("12px보다 작은 글자를 쓰지 않는다", () => {
-    const tooSmall = [...css.matchAll(/font(?:-size)?:\s*[^;]*?(\d+(?:\.\d+)?)px/g)]
+    // 빌더의 조작 화면도 같은 기준을 따릅니다.
+    const tooSmall = [css, read("app/builder/builder.css")]
+      .flatMap((sheet) => [...sheet.matchAll(/font(?:-size)?:\s*[^;]*?(\d+(?:\.\d+)?)px/g)])
       .map((match) => Number(match[1]))
       .filter((size) => size < 11.5);
 
     expect(tooSmall).toEqual([]);
+  });
+
+  it("제출용 PDF 문서에도 9pt(12px)보다 작은 글자를 쓰지 않는다", () => {
+    // 문서는 인쇄 단위(pt)로 적습니다. 회사에서 종이로 뽑아 읽는 경우까지 생각한 하한입니다.
+    const sizes = [...read("app/builder/builder.css").matchAll(/font-size:\s*(\d+(?:\.\d+)?)pt/g)].map(
+      (match) => Number(match[1]),
+    );
+
+    expect(sizes.length).toBeGreaterThan(0);
+    expect(sizes.filter((size) => size < 9)).toEqual([]);
   });
 
   it("작은 라벨을 Courier로 떨어지는 monospace로 렌더링하지 않는다", () => {

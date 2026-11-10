@@ -14,7 +14,8 @@ vi.mock("next/script", () => ({
     return null;
   },
 }));
-vi.mock("next/navigation", () => ({ usePathname: () => "/" }));
+const route = vi.hoisted(() => ({ pathname: "/" }));
+vi.mock("next/navigation", () => ({ usePathname: () => route.pathname }));
 
 import Analytics from "./Analytics";
 
@@ -23,6 +24,7 @@ type Win = Window & { goatcounter?: { count?: (vars: unknown) => void } };
 afterEach(() => {
   cleanup();
   delete (window as Win).goatcounter;
+  route.pathname = "/";
 });
 
 const flush = () => new Promise((resolve) => setTimeout(resolve, 0));
@@ -39,6 +41,17 @@ describe("방문 통계", () => {
     render(<Analytics />);
 
     await waitFor(() => expect(count).toHaveBeenCalledWith({ path: window.location.pathname }));
+  });
+
+  it("포트폴리오 빌더는 본인이 쓰는 도구라 방문으로 세지 않는다", async () => {
+    route.pathname = "/builder";
+    const count = vi.fn();
+    (window as Win).goatcounter = { count };
+    render(<Analytics />);
+    await flush();
+    await flush();
+
+    expect(count).not.toHaveBeenCalled();
   });
 
   it("data-goatcounter-click이 붙은 링크만 이벤트로 센다", async () => {

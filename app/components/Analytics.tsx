@@ -33,6 +33,8 @@ export default function Analytics() {
   // 페이지 보기: 스크립트가 준비된 뒤, 경로가 바뀔 때마다 한 번
   useEffect(() => {
     if (!ready) return;
+    // 포트폴리오 빌더는 본인이 쓰는 도구라 방문으로 세지 않습니다.
+    if (pathname?.startsWith("/builder")) return;
     counter()?.count?.({ path: window.location.pathname });
   }, [ready, pathname]);
 

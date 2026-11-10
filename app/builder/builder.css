@@ -1,0 +1,253 @@
+/*
+ * 포트폴리오 빌더.
+ *
+ * 왼쪽 조작 화면은 사이트의 토큰을 그대로 써서 밝은·어두운 화면을 따라갑니다.
+ * 오른쪽 문서(.pf-doc)는 종이라서 테마와 무관하게 흰 바탕이고, 색을 자기 안에 고정해 둡니다.
+ * 문서의 치수는 인쇄 단위(mm · pt)로 적습니다. 화면에서 본 것과 PDF가 같은 비례로 나오게 하기 위해서입니다.
+ * 글자는 9pt(12px)보다 작게 쓰지 않습니다.
+ */
+
+@page {
+  size: A4;
+  margin: 14mm;
+}
+
+.pf-page { min-height: 100vh; background: var(--paper); }
+.pf-loading { margin: 0; padding: 80px 24px; color: var(--muted); font-size: 15px; text-align: center; }
+
+.pf-app {
+  display: grid; grid-template-columns: minmax(340px, 400px) minmax(0, 1fr);
+  align-items: start; min-height: 100vh;
+}
+
+/* ── 조작 화면 ───────────────────────────────────────── */
+.pf-panel {
+  position: sticky; top: 0; max-height: 100vh; overflow-y: auto;
+  padding: 24px 22px 40px; border-right: 1px solid var(--line); background: var(--surface);
+}
+.pf-home { display: inline-block; margin-bottom: 14px; color: var(--blue); font-size: 13px; font-weight: 700; }
+.pf-home:hover { color: var(--blue-dark); }
+.pf-panel-title { margin: 0; font-size: 20px; font-weight: 800; letter-spacing: -.02em; }
+.pf-panel-note { margin: 8px 0 0; color: var(--muted); font-size: 13.5px; line-height: 1.65; word-break: keep-all; }
+.pf-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.pf-panel button {
+  min-height: 38px; padding: 0 14px; border: 1px solid var(--line-strong); border-radius: 9px;
+  background: var(--surface); color: var(--ink); font-family: inherit; font-size: 13.5px; font-weight: 700;
+  cursor: pointer; transition: border-color .2s ease, color .2s ease, background-color .2s ease;
+}
+.pf-panel button:hover:not(:disabled) { border-color: var(--blue); color: var(--blue); }
+.pf-panel button:disabled { opacity: .35; cursor: default; }
+.pf-panel button.pf-primary { border-color: var(--blue); background: var(--blue); color: var(--on-blue); }
+.pf-panel button.pf-primary:hover { background: var(--blue-dark); border-color: var(--blue-dark); color: var(--on-blue); }
+
+.pf-block { margin-top: 26px; padding-top: 20px; border-top: 1px solid var(--line); }
+.pf-block h2 {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
+  margin: 0 0 12px; color: var(--blue); font-size: 13px; font-weight: 800; letter-spacing: .06em;
+}
+.pf-block h2 small { color: var(--muted); font-size: 12.5px; font-weight: 600; letter-spacing: 0; }
+.pf-hint { margin: 8px 0 0; color: var(--muted); font-size: 13px; line-height: 1.6; word-break: keep-all; }
+
+.pf-panel select,
+.pf-panel input[type="text"],
+.pf-panel input[type="date"] {
+  width: 100%; min-height: 40px; padding: 0 12px; border: 1px solid var(--line-strong); border-radius: 9px;
+  background: var(--surface); color: var(--ink); font-family: inherit; font-size: 14.5px;
+}
+.pf-fields label { display: block; margin-top: 16px; font-size: 13.5px; font-weight: 700; }
+.pf-fields label:first-of-type { margin-top: 0; }
+.pf-fields input { margin-top: 6px; }
+
+.pf-warnings { padding: 16px; border: 1px solid var(--line-strong); border-radius: 12px; background: var(--sky); }
+.pf-warnings h2 { color: var(--blue-dark); }
+.pf-warnings ul { margin: 0; padding: 0 0 0 16px; list-style: disc; }
+.pf-warnings li { color: var(--ink); font-size: 13.5px; line-height: 1.6; word-break: keep-all; }
+.pf-warnings li + li { margin-top: 6px; }
+
+.pf-order { margin: 0; padding: 0; list-style: none; counter-reset: pf-order; }
+.pf-order li {
+  display: grid; grid-template-columns: 22px minmax(0, 1fr) auto auto; align-items: center; gap: 6px;
+  padding: 6px 0; border-bottom: 1px solid var(--line); counter-increment: pf-order;
+}
+.pf-order li::before { content: counter(pf-order); color: var(--blue); font-size: 13px; font-weight: 800; }
+.pf-order li > span { min-width: 0; font-size: 14px; line-height: 1.45; word-break: keep-all; }
+.pf-order small { margin-left: 8px; color: var(--muted); font-size: 12.5px; }
+.pf-order button { min-height: 30px; padding: 0 10px; }
+
+.pf-modules { margin: 0; padding: 0; list-style: none; }
+.pf-modules li { padding: 11px 0; border-bottom: 1px solid var(--line); }
+.pf-modules li:first-child { padding-top: 0; }
+.pf-module-title {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
+  margin: 0; color: var(--body); font-size: 14.5px; line-height: 1.45; word-break: keep-all;
+}
+.pf-modules li[data-selected] .pf-module-title { color: var(--ink); font-weight: 700; }
+.pf-badge {
+  padding: 2px 7px; border: 1px solid var(--line-strong); border-radius: 999px;
+  color: var(--blue-dark); font-size: 12px; font-weight: 700; white-space: nowrap;
+}
+.pf-badge[data-tone="warn"] { border-color: currentColor; color: var(--blue); }
+
+/* 제외 · 요약 · 상세 — 한 줄짜리 선택 띠 */
+.pf-level { display: inline-flex; margin: 8px 0 0; padding: 0; border: 1px solid var(--line-strong); border-radius: 9px; overflow: hidden; }
+.pf-level label { position: relative; cursor: pointer; }
+.pf-level input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.pf-level span { display: block; min-width: 56px; padding: 6px 12px; color: var(--muted); font-size: 13px; font-weight: 700; text-align: center; }
+.pf-level label + label span { border-left: 1px solid var(--line-strong); }
+.pf-level input:checked + span { background: var(--blue); color: var(--on-blue); }
+/* "제외"는 고른 상태가 아니므로 강조색을 쓰지 않습니다. 실은 항목만 눈에 띄게. */
+.pf-level label:first-of-type input:checked + span { background: var(--line); color: var(--body); }
+.pf-level input:focus-visible + span { outline: 2px solid var(--blue); outline-offset: -2px; }
+
+.pf-checks { margin: 0; padding: 0; list-style: none; }
+.pf-checks label { display: flex; align-items: center; gap: 9px; padding: 5px 0; font-size: 14.5px; cursor: pointer; }
+.pf-checks input { width: 16px; height: 16px; accent-color: var(--blue); }
+
+/* ── 문서(종이) ──────────────────────────────────────── */
+.pf-stage { min-width: 0; padding: 32px 24px 64px; overflow-x: auto; }
+.pf-doc {
+  --d-ink: #0d1526;
+  --d-body: #334155;
+  --d-muted: #5b6b82;
+  --d-line: #d6dfeb;
+  --d-accent: #1d5fd0;
+  --d-accent-dark: #1b3a76;
+
+  width: 210mm; min-height: 297mm; margin: 0 auto; padding: 14mm;
+  background: #fff; color: var(--d-ink);
+  font-size: 9.5pt; line-height: 1.55; word-break: keep-all;
+  box-shadow: 0 1px 0 rgba(13, 21, 38, .06), 0 30px 70px -30px rgba(13, 21, 38, .45);
+}
+.pf-doc a { color: var(--d-accent-dark); text-decoration: underline; text-underline-offset: 2pt; text-decoration-color: var(--d-line); }
+.pf-doc p, .pf-doc ul, .pf-doc dl, .pf-doc figure { margin: 0; }
+
+.pf-head {
+  display: flex; align-items: flex-end; justify-content: space-between; gap: 10mm;
+  padding-bottom: 5mm; border-bottom: 1.5pt solid var(--d-ink);
+}
+.pf-head h1 {
+  max-width: none; color: var(--d-ink);
+  font-size: 23pt; line-height: 1.15; letter-spacing: -.03em; font-weight: 800;
+}
+.pf-head h1 span { margin-left: 3mm; color: var(--d-muted); font-size: 10pt; font-weight: 500; letter-spacing: 0; }
+.pf-role { margin-top: 2.5mm !important; color: var(--d-accent-dark); font-size: 11.5pt; font-weight: 700; letter-spacing: -.01em; }
+.pf-contact { padding: 0; list-style: none; color: var(--d-body); font-size: 9pt; line-height: 1.65; text-align: right; white-space: nowrap; }
+
+.pf-summary { margin-top: 5mm !important; color: var(--d-body); font-size: 10pt; line-height: 1.7; }
+
+.pf-metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 2.5mm; margin-top: 5mm !important; }
+.pf-metrics > div {
+  padding: 2.5mm 3mm; border: .6pt solid var(--d-line); border-top: 1.6pt solid var(--d-accent);
+  break-inside: avoid;
+}
+.pf-metrics dt { color: var(--d-accent-dark); font-size: 13pt; font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+.pf-metrics dd { margin: .8mm 0 0; color: var(--d-ink); font-size: 9pt; line-height: 1.45; }
+.pf-doc .pf-condition { color: var(--d-muted); }
+
+.pf-h {
+  display: flex; align-items: center; gap: 2.5mm;
+  margin: 7mm 0 0; padding-bottom: 1.6mm; border-bottom: .6pt solid var(--d-line);
+  color: var(--d-accent); font-size: 10.5pt; font-weight: 800; letter-spacing: .04em;
+  break-after: avoid;
+}
+.pf-h::before { content: ""; width: 5mm; height: 1.6pt; background: var(--d-accent); print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+
+/* 기본 이력표: 구분 | (기간) | 내용. 표 하나가 쪽 사이에서 갈라지지 않게 합니다. */
+.pf-basic { break-inside: avoid; }
+.pf-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+.pf-table tr { break-inside: avoid; }
+.pf-table th, .pf-table td { padding: 1.9mm 0; border-bottom: .5pt solid var(--d-line); text-align: left; vertical-align: top; }
+.pf-table th { width: 31mm; padding-right: 3mm; color: var(--d-accent); font-size: 9pt; font-weight: 800; }
+.pf-table .pf-when { width: 49mm; padding-right: 4mm; color: var(--d-body); font-size: 9pt; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.pf-table td strong { display: block; font-weight: 700; }
+.pf-table td span { display: block; margin-top: .4mm; color: var(--d-muted); font-size: 9pt; }
+
+.pf-item { margin-top: 6mm; }
+.pf-item + .pf-item { padding-top: 5mm; border-top: .5pt solid var(--d-line); }
+.pf-item-lead { break-inside: avoid; }
+.pf-item-head { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: baseline; gap: 3mm; break-after: avoid; }
+.pf-no { color: var(--d-accent); font-size: 9pt; font-weight: 800; font-variant-numeric: tabular-nums; }
+.pf-item h3 { margin: 0; font-size: 12.5pt; line-height: 1.35; letter-spacing: -.02em; font-weight: 800; }
+.pf-chip {
+  display: inline-block; margin-left: 2.5mm; padding: .3mm 2mm; border: .6pt solid var(--d-accent); border-radius: 99pt;
+  color: var(--d-accent); font-size: 9pt; font-weight: 700; letter-spacing: 0; vertical-align: middle;
+}
+.pf-meta { margin-top: .6mm !important; color: var(--d-muted); font-size: 9pt; }
+.pf-period { color: var(--d-muted); font-size: 9pt; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.pf-headline { margin-top: 2.6mm !important; color: var(--d-ink); font-weight: 600; line-height: 1.6; }
+/* 프로젝트 사례의 소개는 한 줄 요약이 아니라 문단이라 본문 굵기로 둡니다. */
+.pf-item[data-kind="project"] .pf-headline { color: var(--d-body); font-weight: 400; line-height: 1.65; }
+.pf-tags { margin-top: 1.6mm !important; color: var(--d-muted); font-size: 9pt; }
+.pf-points { margin-top: 1.8mm !important; padding: 0; list-style: none; }
+.pf-points li { position: relative; padding: 0 0 .9mm 3.6mm; color: var(--d-body); }
+.pf-points li::before { content: ""; position: absolute; left: 0; top: 2.1mm; width: 1.2mm; height: 1.2mm; border-radius: 50%; background: var(--d-accent); print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+/* 항목의 수치: 값 | 무엇의 값인지 | 산출 조건. 칸으로 두면 수치가 많은 카드가 반 쪽을 차지합니다. */
+.pf-item-metrics { width: 100%; margin-top: 2.8mm; border-collapse: collapse; border-top: 1.2pt solid var(--d-accent); font-size: 9pt; break-before: avoid; }
+.pf-item-metrics tr { break-inside: avoid; }
+.pf-item-metrics th, .pf-item-metrics td { padding: 1.2mm 3mm 1.2mm 0; border-bottom: .5pt solid var(--d-line); text-align: left; vertical-align: top; line-height: 1.45; }
+.pf-item-metrics th { width: 1%; color: var(--d-accent-dark); font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.pf-item-metrics td:last-child { padding-right: 0; }
+.pf-team { break-before: avoid; margin-top: 2.6mm !important; padding-left: 3mm; border-left: 1.6pt solid var(--d-line); color: var(--d-body); font-size: 9pt; }
+.pf-team strong { margin-right: 1.5mm; color: var(--d-accent-dark); }
+
+.pf-cover { margin-top: 3.5mm !important; break-inside: avoid; }
+.pf-cover img { display: block; max-width: 100%; height: auto; max-height: 82mm; border: .5pt solid var(--d-line); }
+.pf-cover figcaption { margin-top: 1.4mm; color: var(--d-muted); font-size: 9pt; line-height: 1.5; }
+
+/* 상세 본문. 원장과 프로젝트 사례의 마크다운이 그대로 들어옵니다. */
+.pf-body { margin-top: 3mm; color: var(--d-body); }
+.pf-body h2 { margin: 3.6mm 0 1.2mm; color: var(--d-ink); font-size: 10.5pt; font-weight: 800; letter-spacing: -.01em; break-after: avoid; }
+.pf-body h3 { margin: 3mm 0 1mm; color: var(--d-ink); font-size: 10pt; font-weight: 700; break-after: avoid; }
+.pf-body p { margin: 0 0 1.8mm; line-height: 1.65; }
+.pf-body strong { color: var(--d-ink); }
+.pf-body ul, .pf-body ol { margin: 0 0 1.8mm; padding: 0 0 0 4.4mm; }
+.pf-body ul { list-style: disc; }
+.pf-body ol { list-style: decimal; }
+.pf-body li { margin-bottom: .7mm; line-height: 1.6; }
+.pf-body li::marker { color: var(--d-accent); }
+.pf-body blockquote { margin: 0 0 1.8mm; padding-left: 3mm; border-left: 1.6pt solid var(--d-line); color: var(--d-muted); }
+.pf-body table { width: 100%; margin: 0 0 2.2mm; border-collapse: collapse; font-size: 9pt; break-inside: avoid; }
+.pf-body th, .pf-body td { padding: 1.3mm 2mm; border: .5pt solid var(--d-line); text-align: left; line-height: 1.5; }
+.pf-body th { color: var(--d-accent-dark); font-weight: 700; }
+.pf-body code { padding: 0 1mm; border: .5pt solid var(--d-line); border-radius: 2pt; color: var(--d-accent-dark); font-size: 9pt; font-family: inherit; }
+.pf-body pre { margin: 0 0 2.2mm; padding: 2.4mm 3mm; border: .5pt solid var(--d-line); overflow: hidden; white-space: pre-wrap; font-size: 9pt; line-height: 1.5; font-family: inherit; break-inside: avoid; }
+.pf-body pre code { padding: 0; border: 0; color: inherit; }
+.pf-body img { max-width: 100%; height: auto; }
+
+.pf-links { display: flex; flex-wrap: wrap; gap: 1mm 5mm; margin-top: 2.4mm !important; font-size: 9pt; }
+.pf-foot { margin-top: 8mm !important; padding-top: 3mm; border-top: .5pt solid var(--d-line); color: var(--d-muted); font-size: 9pt; }
+
+/* ── 좁은 화면: 조작 화면 아래에 문서를 놓습니다 ─────── */
+@media (max-width: 1099px) {
+  .pf-app { grid-template-columns: minmax(0, 1fr); }
+  .pf-panel { position: static; max-height: none; border-right: 0; border-bottom: 1px solid var(--line); }
+  .pf-stage { padding: 20px 12px 48px; }
+}
+@media (max-width: 860px) {
+  /* 종이 폭(210mm)이 화면보다 넓으면 미리보기는 화면 폭에 맞춥니다. 인쇄 결과는 그대로 A4입니다. */
+  .pf-doc { width: 100%; min-height: 0; padding: 8mm 6mm; }
+  .pf-head { flex-direction: column; align-items: flex-start; gap: 4mm; }
+  .pf-contact { text-align: left; white-space: normal; }
+  .pf-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pf-table th { width: 20mm; }
+  .pf-table .pf-when { width: 32mm; white-space: normal; }
+  .pf-item-head { grid-template-columns: auto minmax(0, 1fr); }
+  .pf-period { grid-column: 2; }
+}
+
+/* ── 인쇄: 조작 화면을 빼고 문서만 남깁니다 ──────────── */
+@media print {
+  html, body, .pf-page { background: #fff !important; }
+  .pf-panel, .pf-loading { display: none !important; }
+  .pf-app { display: block; min-height: 0; }
+  .pf-stage { padding: 0; overflow: visible; }
+  /* 여백은 @page가 잡습니다. 종이 모양(폭 · 안쪽 여백 · 그림자)은 화면용이라 걷어냅니다. */
+  .pf-doc { width: auto; min-height: 0; margin: 0; padding: 0; box-shadow: none; }
+  .pf-head { flex-direction: row; align-items: flex-end; gap: 10mm; }
+  .pf-contact { text-align: right; white-space: nowrap; }
+  .pf-metrics { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .pf-table th { width: 31mm; }
+  .pf-table .pf-when { width: 49mm; white-space: nowrap; }
+  .pf-item-head { grid-template-columns: auto minmax(0, 1fr) auto; }
+  .pf-period { grid-column: auto; }
+}
