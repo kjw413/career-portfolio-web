@@ -3,7 +3,8 @@ import type { Impact } from "../../lib/content";
 
 export default function ImpactGrid({ impacts }: { impacts: Impact[] }) {
   return (
-    <div className="impact-grid">
+    // 카드 수에 맞춰 열을 정합니다(3장은 3열, 4장은 2×2). 마지막 줄에 카드 하나만 남지 않게 합니다.
+    <div className="impact-grid" data-count={impacts.length}>
       {impacts.map((impact, index) => (
         <article className="impact-card" key={impact.id}>
           <div className="impact-card-top">

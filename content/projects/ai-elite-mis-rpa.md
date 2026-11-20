@@ -16,6 +16,8 @@ order: 3
 cover:
   src: "/projects/mis-rpa-time-saving.svg"
   caption: "하루 40분 수작업을 3분 자동 실행으로 — 본인 수집 시간 일 40분 절감"
+thumb:
+  src: "/projects/mis-rpa-thumb.svg"
 gallery:
   - src: "/projects/mis-rpa-console.svg"
     caption: "실행 흐름 재구성 — 3종을 5개 공장에서 순차 수집하고 그리드 지문 검사를 통과한 뒤 가공을 시작합니다. 사내 MIS 화면은 공개할 수 없어 실제 캡처 대신 실행 순서를 도식으로 옮겼습니다."

@@ -37,8 +37,13 @@ export type Project = {
   featured: number | null;
   /** 카탈로그 override가 없을 때 사용하는 아카이브 정렬 순서 */
   order: number;
-  /** 대표 이미지 — 카드 썸네일과 상세 페이지 상단에 사용 */
+  /** 대표 이미지 — 상세 페이지 상단에 사용하고, thumb가 없으면 카드 썸네일도 겸함 */
   cover: Media | null;
+  /**
+   * 카드 전용 썸네일(2:1). 상세 페이지용 대표 이미지가 가로로 긴 도표라 카드에서
+   * 잘릴 때만 따로 둡니다. 없으면 cover를 씁니다.
+   */
+  thumb: Media | null;
   /** 상세 페이지 하단 스크린샷·GIF 갤러리 */
   gallery: Media[];
   /** 마크다운 본문을 렌더링한 HTML */
@@ -47,7 +52,7 @@ export type Project = {
 
 export type ProjectSummary = Omit<
   Project,
-  "bodyHtml" | "cover" | "gallery" | "tags" | "intro" | "kind" | "period"
+  "bodyHtml" | "cover" | "thumb" | "gallery" | "tags" | "intro" | "kind" | "period"
 >;
 
 const CONTENT_DIR = path.join(process.cwd(), "content", "projects");
@@ -173,6 +178,7 @@ function parseProject(fileName: string): Project {
     featured: typeof data.featured === "number" ? data.featured : null,
     order: typeof data.order === "number" ? data.order : 999,
     cover,
+    thumb: toMedia(data.thumb) ?? cover,
     gallery,
     bodyHtml: renderMarkdown(content),
   };

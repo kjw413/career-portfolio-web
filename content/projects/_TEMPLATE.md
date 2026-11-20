@@ -28,6 +28,8 @@ order: 9                           # override order가 없을 때의 아카이�
 # cover:                           # 카드 썸네일 + 상세 페이지 상단 대표 이미지
 #   src: "/projects/my-screenshot.png"
 #   caption: "무엇을 보여주는 화면인지 한 줄"
+# thumb:                           # (선택) 카드 전용 2:1 이미지. cover가 가로로 긴 도표라
+#   src: "/projects/my-thumb.svg"  #  카드에서 잘릴 때만 따로 둡니다
 # gallery:                         # 상세 페이지 하단 스크린샷·GIF 목록
 #   - src: "/projects/run.gif"
 #     caption: "실행 과정 (18초)"

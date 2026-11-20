@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { fillMetrics, getAffiliations, getPublicCards } from "../../lib/ledger";
+import PageHeader from "../components/PageHeader";
 
 export const metadata: Metadata = {
   title: "경험 카드 — 김종우 포트폴리오",
@@ -16,19 +17,7 @@ export default function ExperienceIndex() {
 
   return (
     <main className="project-page">
-      <header className="site-header">
-        <Link className="wordmark" href="/" aria-label="홈으로">
-          <span>KJ</span>김종우
-        </Link>
-        <nav aria-label="주요 메뉴">
-          <Link href="/#impact">주요 성과</Link>
-          <Link href="/#projects">프로젝트</Link>
-          <Link href="/#profile">보유 기술</Link>
-          <a href="https://github.com/kjw413" target="_blank" rel="noreferrer">
-            GitHub ↗
-          </a>
-        </nav>
-      </header>
+      <PageHeader current="experience" />
 
       <article className="project-detail">
         <Link className="back-link" href="/">

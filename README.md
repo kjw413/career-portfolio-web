@@ -143,6 +143,7 @@ npm run poster    # 장면을 띄워 밝은 화면·어두운 화면 포스터�
 | `/experience/` | 경험 카드 목록 (소속별) |
 | `/experience/<카드 ID>/` | 경험 하나의 수행 내용과 수치의 산출 조건 · 확인 근거 |
 | `/projects/<slug>/` | 프로젝트 사례 |
+| `/resume/` | 이력서 PDF의 원본 페이지 (A4 두 쪽, 메뉴에는 없음) |
 | `/llms.txt`, `/ai/ledger.json`, `/ai/ledger.md` | AI가 읽는 표면 (빌드가 생성) |
 
 ## 포트폴리오 내용 수정
@@ -150,7 +151,10 @@ npm run poster    # 장면을 띄워 밝은 화면·어두운 화면 포스터�
 - 사진: `public/profile.webp` 추가 후 `content/profile.json`의 `photoSrc`를 `/profile.webp`로 설정
   (첫 화면에는 116px 원형으로 들어가므로 정사각형에 가까운 이미지가 좋습니다)
 - 이력서: `public/resume.pdf` 추가 후 `resumeHref`를 `/resume.pdf`로 설정
-- 제출용 포트폴리오 PDF: `npm run pdf`로 `public/portfolio.pdf` 다시 생성
+- 제출용 포트폴리오 PDF: `npm run build && npm run pdf`로 `public/portfolio.pdf` 다시 생성.
+  `/resume/` 페이지를 Chromium으로 A4 인쇄하며 글꼴이 PDF 안에 들어갑니다. playwright가 필요합니다
+  (`npm i -D playwright && npx playwright install chromium`, 또는 `CHROMIUM_PATH` 지정).
+  사실·프로젝트를 고쳤다면 PDF도 다시 만들어 함께 커밋합니다.
 - 첫 화면 이력 카드: `content/profile.json`의 `education`, `career`, `certifications` 수정
 - 경력·교육 연혁: `content/ledger/affiliations.json`과 해당 경험 카드 수정
   (세부 항목은 카드의 `headline`·`highlights`에서 자동으로 만들어집니다)

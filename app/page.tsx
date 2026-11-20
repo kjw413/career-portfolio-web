@@ -103,10 +103,10 @@ export default function Home() {
                   )}
                 </span>
               </div>
-              {project.cover && (
+              {project.thumb && (
                 <div className="card-cover">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={project.cover.src} alt="" loading="lazy" />
+                  <img src={project.thumb.src} alt="" loading="lazy" />
                 </div>
               )}
               <h3>{project.title}</h3>

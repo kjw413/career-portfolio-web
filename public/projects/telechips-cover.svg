@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600" width="1200" height="600" role="img" aria-label="TOPST D3 보드에서 카메라 입력을 YOLOv5로 적색 신호 인지하고, SPI와 CAN이 보드 밖 통신에서 막히자 UART로 바꿔 MICOM 제어까지 연결한 경로.">
+  <defs>
+    <style>
+      text { font-family: "Pretendard", "Pretendard Variable", "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif; }
+      .eyebrow { fill: #1d5fd0; font-size: 18px; font-weight: 800; letter-spacing: .04em; }
+      .meta { fill: #55637a; font-size: 15px; font-weight: 600; }
+      .step { fill: #1d5fd0; font-size: 15px; font-weight: 800; letter-spacing: .08em; }
+      .title { fill: #0d1526; font-size: 27px; font-weight: 800; letter-spacing: -.02em; }
+      .sub { fill: #55637a; font-size: 16px; font-weight: 600; }
+      .row { fill: #3d4a5c; font-size: 17px; font-weight: 700; }
+      .row-ok { fill: #1b3a76; font-size: 17px; font-weight: 800; }
+      .row-x { fill: #9aa6b8; font-size: 15px; font-weight: 600; }
+      .row-pick { fill: #1d5fd0; font-size: 15px; font-weight: 800; }
+      .foot { fill: #3d4a5c; font-size: 17px; font-weight: 600; }
+      .foot-strong { fill: #0d1526; font-weight: 800; }
+      .card { fill: #ffffff; stroke: #d9e4f2; stroke-width: 1.5; }
+      .card-accent { fill: #ffffff; stroke: #1d5fd0; stroke-width: 2; }
+      .edge { fill: none; stroke: #1d5fd0; stroke-width: 3; }
+      .strike { stroke: #b8c3d3; stroke-width: 1.5; }
+    </style>
+    <pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.3" fill="#dde6f2"/>
+    </pattern>
+    <filter id="lift" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="14" stdDeviation="16" flood-color="#1b3a76" flood-opacity=".10"/>
+    </filter>
+    <marker id="head" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#1d5fd0"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="600" fill="#f5f8fd"/>
+  <rect width="1200" height="600" fill="url(#dots)"/>
+
+  <text class="eyebrow" x="64" y="72">인지 → 통신 → 제어</text>
+  <text class="meta" x="1136" y="72" text-anchor="end">TOPST D3 · 메인 코어(Linux)와 MICOM</text>
+
+  <!-- 인지 -->
+  <rect class="card" x="64" y="104" width="320" height="328" rx="20" filter="url(#lift)"/>
+  <text class="step" x="96" y="148">01 인지</text>
+  <text class="title" x="96" y="196">적색 신호 인지</text>
+  <text class="sub" x="96" y="226">YOLOv5 · 카메라 640×480 · 15fps</text>
+  <rect x="96" y="262" width="256" height="136" rx="12" fill="#0f1b33"/>
+  <rect x="150" y="286" width="60" height="96" rx="10" fill="#1a2846" stroke="#2f4672"/>
+  <circle cx="180" cy="310" r="14" fill="#ef4444"/>
+  <circle cx="180" cy="358" r="14" fill="#2b3a5a"/>
+  <rect x="160" y="290" width="40" height="40" rx="4" fill="none" stroke="#38bdf8" stroke-width="2.5"/>
+  <text x="228" y="314" fill="#9fd8ff" font-size="15" font-weight="800">red</text>
+  <text x="228" y="336" fill="#7d93b8" font-size="14" font-weight="600">탐지 → 플래그</text>
+
+  <path class="edge" d="M392 268 H 432" marker-end="url(#head)"/>
+
+  <!-- 통신 -->
+  <rect class="card-accent" x="440" y="104" width="320" height="328" rx="20" filter="url(#lift)"/>
+  <text class="step" x="472" y="148">02 통신</text>
+  <text class="title" x="472" y="196">보드 간 통신</text>
+  <text class="sub" x="472" y="226">제출 10일 전 경로 전환</text>
+
+  <rect x="472" y="252" width="256" height="40" rx="9" fill="#f3f6fa"/>
+  <text class="row" x="490" y="278" fill="#9aa6b8">SPI</text>
+  <text class="row-x" x="560" y="278">보드 밖 통신 막힘</text>
+  <line class="strike" x1="488" y1="272" x2="530" y2="272"/>
+
+  <rect x="472" y="300" width="256" height="40" rx="9" fill="#f3f6fa"/>
+  <text class="row" x="490" y="326" fill="#9aa6b8">CAN</text>
+  <text class="row-x" x="560" y="326">Bus Off 오류 분석</text>
+  <line class="strike" x1="488" y1="320" x2="533" y2="320"/>
+
+  <rect x="472" y="348" width="256" height="44" rx="9" fill="#eef4ff" stroke="#1d5fd0" stroke-width="1.5"/>
+  <text class="row-ok" x="490" y="376">UART</text>
+  <text class="row-pick" x="560" y="376">채택 · 동작 확인</text>
+
+  <path class="edge" d="M768 268 H 808" marker-end="url(#head)"/>
+
+  <!-- 제어 -->
+  <rect class="card" x="816" y="104" width="320" height="328" rx="20" filter="url(#lift)"/>
+  <text class="step" x="848" y="148">03 제어</text>
+  <text class="title" x="848" y="196">MICOM 제어</text>
+  <text class="sub" x="848" y="226">GPIO · 세그먼트 표시</text>
+  <rect x="848" y="262" width="256" height="136" rx="12" fill="#f3f6fa"/>
+  <g fill="#1d5fd0">
+    <rect x="896" y="290" width="44" height="8" rx="4"/>
+    <rect x="888" y="298" width="8" height="34" rx="4"/>
+    <rect x="940" y="298" width="8" height="34" rx="4"/>
+    <rect x="896" y="332" width="44" height="8" rx="4"/>
+    <rect x="888" y="340" width="8" height="34" rx="4" opacity=".25"/>
+    <rect x="940" y="340" width="8" height="34" rx="4"/>
+    <rect x="896" y="374" width="44" height="8" rx="4"/>
+  </g>
+  <circle cx="1000" cy="312" r="9" fill="#1d5fd0"/>
+  <circle cx="1032" cy="312" r="9" fill="#c9d8ec"/>
+  <circle cx="1064" cy="312" r="9" fill="#c9d8ec"/>
+  <text x="992" y="360" fill="#55637a" font-size="14" font-weight="700">GPIO 출력</text>
+
+  <text class="foot" x="64" y="510">메인 코어의 인지 결과가 MICOM 제어까지 이어지는 경로를 맡았습니다. <tspan class="foot-strong">SPI·CAN이 보드 밖에서 막히자 UART로 바꿔 동작을 확인했습니다.</tspan></text>
+</svg>

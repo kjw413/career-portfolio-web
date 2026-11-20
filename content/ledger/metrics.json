@@ -487,5 +487,37 @@
       "235 KB",
       "236 KB"
     ]
+  },
+  "efa-review-share": {
+    "display": "54.3% → 14.5%",
+    "label": "고장이력 중 사람이 확인해야 하는 기록 비율",
+    "condition": "2026년 실제 고장이력 전수 · 규칙 개선 v1.13 → v1.15",
+    "basis": "프로젝트 검증 기록 (equipment-failure-analyzer docs/TEST_RESULTS.md, 2026-11-12·13)",
+    "status": "확정",
+    "cardIds": [
+      "EXP-BG-FAILURE-ANALYZER"
+    ],
+    "aliases": [
+      "검토 대상 비율",
+      "검토 필요 비율",
+      "합산 검토 대상"
+    ],
+    "notes": "합산 검토 = 후보 검토 + 규칙 미일치 + 비가동코드 미기입. 대상은 2026년 기록 전수(11월 11일까지)이고 v1.13은 고장 분야·상세설비·세부 부품·고장 현상을 독립된 네 축으로 판정하기 시작한 버전이다. 중간값 29.8%(v1.14). 현장 정답셋이 없어 정확도가 아니므로 자동분류 비율을 정확도로 바꿔 쓰지 않는다. 기록 건수·정지시간 같은 사내 실수치는 공개하지 않는다."
+  },
+  "efa-tests": {
+    "display": "자동 테스트 1,165개",
+    "value": 1165,
+    "unit": "개",
+    "label": "설비 고장 분석기 회귀 테스트 규모",
+    "condition": "2026-11-20 프로젝트 정리 시점 · 변경 대상과 나머지로 나눠 전체 통과",
+    "basis": "프로젝트 검증 기록 (equipment-failure-analyzer docs/TEST_RESULTS.md, 2026-11-20)",
+    "status": "확정",
+    "cardIds": [
+      "EXP-BG-FAILURE-ANALYZER"
+    ],
+    "aliases": [
+      "테스트 수",
+      "회귀 테스트"
+    ]
   }
 }

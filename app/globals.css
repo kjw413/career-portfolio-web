@@ -30,6 +30,9 @@
   --cyan: #38bdf8;
   --on-blue: #ffffff;
   --on-blue-soft: #dceafd;
+  /* 사람이 확인해야 하는 상태(검토 필요). 경고가 아니라 '손이 필요함'이라 주황 계열로 둡니다. */
+  --review: #b45309;
+  --review-bg: #fdf0dc;
 
   /* 선과 그림자 */
   --line: #dde5ef;
@@ -102,6 +105,8 @@
     --cyan: #5fcbff;
     --on-blue: #06122a;
     --on-blue-soft: #0d1e3c;
+    --review: #fbbf24;
+    --review-bg: rgba(251, 191, 36, .14);
 
     --line: #1f2c44;
     --line-strong: #33466a;
@@ -219,6 +224,12 @@ summary:focus-visible {
 nav { display: flex; gap: clamp(18px, 2.4vw, 36px); font-size: 14.5px; font-weight: 700; }
 nav a { position: relative; transition: color .2s ease; }
 nav a:hover { color: var(--blue); }
+/* 하위 페이지에서 지금 보고 있는 갈래(프로젝트 · 경험 카드) */
+nav a[aria-current] { color: var(--blue); }
+nav a[aria-current]::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -7px; height: 2px;
+  border-radius: 2px; background: currentColor;
+}
 .site-header[data-tone="stage"] nav a:hover { color: var(--scene-glow); }
 
 /* 읽은 만큼 차오르는 선. 스크롤 연동 애니메이션을 지원하는 브라우저에서만 그립니다. */
@@ -315,6 +326,11 @@ nav a:hover { color: var(--blue); }
   content: ""; width: 22px; height: 1.5px;
   background: linear-gradient(90deg, var(--scene-raw), var(--scene-glow));
 }
+/*
+ * Tailwind의 기본 초기화(preflight)는 h1~h6의 굵기를 inherit로 되돌립니다. 그대로 두면 섹션
+ * 제목과 카드 제목이 본문과 같은 400으로 나와 위계가 사라집니다. 제목 굵기를 여기서 다시 정합니다.
+ */
+h2, h3, h4 { font-weight: 700; }
 h1 {
   margin: 0; max-width: 760px; font-size: clamp(34px, 3.8vw, 56px);
   line-height: 1.16; letter-spacing: -.035em; font-weight: 800;
@@ -397,7 +413,7 @@ h1 {
   content: ""; position: absolute; left: 18px; right: 18px; top: -1px; height: 1px;
   background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--scene-glow) 70%, transparent), transparent);
 }
-.hero-metrics dt { color: var(--stage-ink); font-size: clamp(20px, 1.75vw, 25px); font-weight: 600; }
+.hero-metrics dt { color: var(--stage-ink); font-size: clamp(20px, 1.75vw, 25px); font-weight: 700; }
 .hero-metrics dt a { color: inherit; text-decoration: none; }
 .hero-metrics dt a:hover { color: var(--scene-glow); text-decoration: underline; text-underline-offset: 4px; }
 .hero-metrics dd { margin: 5px 0 0; color: var(--stage-body); font-size: 13.5px; line-height: 1.5; word-break: keep-all; }
@@ -457,8 +473,8 @@ h1 {
 }
 .section-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 30px; margin-bottom: 48px; }
 .section-heading h2 {
-  margin: 0; font-size: clamp(30px, 3.4vw, 46px); line-height: 1.2;
-  letter-spacing: -.03em; word-break: keep-all;
+  margin: 0; font-size: clamp(30px, 3.4vw, 46px); line-height: 1.2; font-weight: 800;
+  letter-spacing: -.035em; word-break: keep-all;
 }
 .section-heading > p { margin: 0 0 4px; color: var(--body); font-size: 15.5px; line-height: 1.75; word-break: keep-all; }
 /* 설명문을 없앤 섹션에서는 링크만 오른쪽 아래에 놓입니다. */
@@ -467,6 +483,7 @@ h1 {
 /* ── 주요 성과 ────────────────────────────────────────── */
 .impact-section { padding: var(--section-y) var(--section-x); background: var(--paper); }
 .impact-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.impact-grid[data-count="4"] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .impact-card {
   position: relative; min-width: 0; padding: 30px; display: flex; flex-direction: column;
   border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface);
@@ -487,6 +504,15 @@ h1 {
 .impact-card h3 { margin: 26px 0 16px; padding-top: 22px; border-top: 1px solid var(--line); font-size: 20px; letter-spacing: -.015em; word-break: keep-all; }
 .impact-story { margin: 0; color: var(--body); font-size: 14.5px; line-height: 1.75; word-break: keep-all; }
 .impact-link { margin-top: auto; padding-top: 26px; color: var(--blue); font-weight: 700; display: flex; justify-content: space-between; }
+/*
+ * 같은 줄의 카드끼리 결과 · 제목 · 설명 · 링크의 높이를 맞춥니다(subgrid). 결과 문구가 한 줄인
+ * 카드 옆에 두 줄인 카드가 와도 제목 선이 어긋나지 않고, 빈 줄을 미리 잡아 둘 필요가 없습니다.
+ */
+@supports (grid-template-rows: subgrid) {
+  .impact-card { display: grid; grid-row: span 5; grid-template-rows: subgrid; row-gap: 0; }
+  .impact-result strong { min-height: 0; }
+  .impact-link { align-self: end; }
+}
 
 /* ── 대표 프로젝트 ────────────────────────────────────── */
 .projects-section { padding: var(--section-y) var(--section-x); background: var(--surface); border-top: 1px solid var(--line); }
@@ -513,7 +539,8 @@ h1 {
 .project-card:first-child > * { grid-column: 1; }
 .project-card:first-child .card-cover { grid-column: 2; grid-row: 1 / -1; margin-top: 0; aspect-ratio: auto; min-height: 100%; }
 .project-card:first-child .card-cover img { object-position: left top; }
-.card-top { display: flex; justify-content: space-between; gap: 12px; color: var(--blue); font-weight: 700; }
+/* "진행 중" 칩이 있는 카드와 없는 카드의 첫 줄 높이를 같게 둬, 같은 줄 카드의 이미지 윗선을 맞춥니다. */
+.card-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 26px; color: var(--blue); font-weight: 700; }
 /* 분류와 "진행 중" 칩이 한 줄에 안 들어가면 칩만 아랫줄로 내립니다. */
 .project-card .card-top span:last-child {
   display: inline-flex; align-items: center; justify-content: flex-end;
@@ -557,8 +584,9 @@ h1 {
   color: var(--invert-accent); font-weight: 700;
 }
 .capability-card h3 { margin: 24px 0 14px; font-size: 21px; letter-spacing: -.015em; }
-.capability-card > p { margin: 0 0 26px; color: var(--invert-body); font-size: 14.5px; line-height: 1.75; word-break: keep-all; }
-.skill-list { margin-top: auto; display: flex; flex-direction: column; border-top: 1px solid var(--invert-line); }
+/* 설명이 두 줄이든 세 줄이든 아래 기술 목록이 같은 높이에서 시작하게, 설명 칸을 세 줄로 잡아 둡니다. */
+.capability-card > p { min-height: calc(1.75em * 3); margin: 0 0 26px; color: var(--invert-body); font-size: 14.5px; line-height: 1.75; word-break: keep-all; }
+.skill-list { display: flex; flex-direction: column; border-top: 1px solid var(--invert-line); }
 .skill-list span { padding: 9px 0; color: var(--invert-ink); border-bottom: 1px solid var(--invert-line-soft); letter-spacing: .01em; }
 
 /* ── 경력 · 교육 타임라인 ─────────────────────────────── */
@@ -652,7 +680,7 @@ h1 {
 /* ── 전체 프로젝트 저장소 ─────────────────────────────── */
 .archive-section { padding: var(--section-y) var(--section-x); background: var(--surface); border-top: 1px solid var(--line); }
 .archive-header { display: flex; justify-content: space-between; align-items: flex-end; gap: 30px; margin-bottom: 40px; }
-.archive-header h2 { margin: 0; font-size: clamp(30px, 3.4vw, 46px); line-height: 1.2; letter-spacing: -.03em; }
+.archive-header h2 { margin: 0; font-size: clamp(30px, 3.4vw, 46px); line-height: 1.2; font-weight: 800; letter-spacing: -.035em; }
 .filter-row { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
 .filter-row button {
   padding: 10px 15px; border: 1px solid var(--line); border-radius: 999px; background: transparent;
@@ -673,18 +701,26 @@ h1 {
 .archive-empty { margin: 0; padding: 36px 8px; color: var(--muted); font-size: 15px; border-bottom: 1px solid var(--line); }
 
 /* ── 학력 · 자격 · 병역 ───────────────────────────────── */
-.qualification-section { display: grid; grid-template-columns: .85fr 1.15fr; background: var(--surface); border-top: 1px solid var(--line); }
+/*
+ * 두 칸으로 나뉜 섹션이라 칸 안에서 var(--section-x)를 쓰면 100%가 칸 너비로 계산돼 다른 섹션의
+ * 정렬선에서 벗어납니다(1920px 화면에서 268px). 섹션 너비(100cqw)로 같은 정렬선을 다시 구합니다.
+ */
+.qualification-section {
+  container-type: inline-size;
+  --edge: max(var(--gutter), calc((100cqw - var(--container)) / 2));
+  display: grid; grid-template-columns: .85fr 1.15fr; background: var(--surface); border-top: 1px solid var(--line);
+}
 .qualification-intro {
-  padding: var(--section-y) clamp(32px, 6vw, 92px) var(--section-y) var(--section-x);
+  padding: var(--section-y) clamp(32px, 6vw, 92px) var(--section-y) var(--edge);
   background:
     radial-gradient(ellipse 80% 70% at 0% 100%, color-mix(in srgb, var(--scene-glow) 14%, transparent), transparent 70%),
     var(--invert-bg);
   color: var(--invert-ink);
 }
 .qualification-intro .section-index { color: var(--invert-accent); }
-.qualification-intro h2 { margin: 0; font-size: clamp(30px, 3.4vw, 46px); line-height: 1.2; letter-spacing: -.03em; }
+.qualification-intro h2 { margin: 0; font-size: clamp(30px, 3.4vw, 46px); line-height: 1.2; font-weight: 800; letter-spacing: -.035em; }
 .qualification-intro > p:last-child { max-width: 460px; margin: 26px 0 0; color: var(--invert-body); font-size: 15.5px; line-height: 1.75; }
-.qualification-list { padding: 58px var(--section-x) 58px clamp(30px, 5vw, 78px); align-self: center; }
+.qualification-list { padding: 58px var(--edge) 58px clamp(30px, 5vw, 78px); align-self: center; }
 .qualification-list > div { display: grid; grid-template-columns: 88px 1fr 1.35fr; gap: 24px; padding: 26px 0; border-bottom: 1px solid var(--line); align-items: center; }
 .qualification-list span { color: var(--blue); font-weight: 700; }
 .qualification-list strong { font-size: 16.5px; letter-spacing: -.01em; word-break: keep-all; }
@@ -701,7 +737,7 @@ footer {
 }
 footer > div:first-child { display: flex; justify-content: space-between; align-items: flex-end; gap: 30px; padding-bottom: 60px; border-bottom: 1px solid var(--invert-line); }
 footer > div:first-child p { align-self: flex-start; margin: 8px 0 0; color: var(--invert-accent); font-size: var(--label); font-weight: 700; letter-spacing: .12em; }
-footer h2 { margin: 0; font-size: clamp(30px, 3.8vw, 52px); line-height: 1.2; letter-spacing: -.03em; text-align: right; word-break: keep-all; }
+footer h2 { margin: 0; font-size: clamp(30px, 3.8vw, 52px); line-height: 1.2; font-weight: 700; letter-spacing: -.035em; text-align: right; word-break: keep-all; }
 .footer-links { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 24px; padding: 26px 0 80px; }
 .footer-links a { color: var(--invert-accent); font-size: 14.5px; font-weight: 700; letter-spacing: .01em; }
 .footer-links a:hover { color: var(--invert-ink); }
@@ -728,11 +764,15 @@ footer h2 { margin: 0; font-size: clamp(30px, 3.8vw, 52px); line-height: 1.2; le
 .project-detail h1 { font-size: clamp(30px, 3.4vw, 46px); line-height: 1.25; letter-spacing: -.03em; word-break: keep-all; }
 .detail-repo { margin: 14px 0 0; color: var(--muted); font: 13px/1.4 ui-monospace, "Consolas", monospace; letter-spacing: .02em; }
 .detail-intro { margin: 24px 0 0; max-width: 720px; color: var(--body); font-size: 16.5px; line-height: 1.8; word-break: keep-all; }
+/*
+ * 칸 사이의 1px 선은 바탕색(var(--line))이 틈으로 비쳐 그려집니다. 격자로 두면 항목이 3개일 때
+ * 빈 칸이 회색으로 남으므로, 줄마다 남는 폭을 항목이 나눠 갖는 flex로 둡니다.
+ */
 .detail-meta {
-  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+  display: flex; flex-wrap: wrap;
   gap: 1px; margin-top: 40px; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: var(--line);
 }
-.detail-meta div { padding: 20px 22px; background: var(--surface); }
+.detail-meta div { flex: 1 1 180px; min-width: 0; padding: 20px 22px; background: var(--surface); }
 .detail-meta span { display: block; color: var(--blue); font-weight: 700; }
 .detail-meta strong { display: block; margin-top: 9px; font-size: 15px; line-height: 1.5; word-break: keep-all; }
 .detail-meta a { color: var(--blue-dark); text-decoration: underline; text-underline-offset: 3px; }
@@ -772,6 +812,63 @@ footer h2 { margin: 0; font-size: clamp(30px, 3.8vw, 52px); line-height: 1.2; le
 .markdown-body table { width: 100%; margin: 0 0 18px; border-collapse: collapse; font-size: 14.5px; }
 .markdown-body th, .markdown-body td { padding: 11px 13px; border: 1px solid var(--line); text-align: left; line-height: 1.6; }
 .markdown-body th { background: var(--sky); color: var(--blue-dark); font-size: 13.5px; font-weight: 700; }
+
+/*
+ * 사례 본문 안의 판정 예시 표(원문 → 네 축 → 판정). 그림 대신 표로 두어 다크 모드와 좁은
+ * 화면에서도 글자 그대로 읽히게 합니다. 좁은 화면에서는 행마다 카드로 접습니다.
+ */
+.markdown-body .axis-figure { margin: 8px 0 24px; }
+.markdown-body .axis-table {
+  margin: 0; border-collapse: separate; border-spacing: 0;
+  border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: var(--surface);
+}
+.markdown-body .axis-table caption {
+  caption-side: bottom; padding: 12px 2px 0; text-align: left;
+  color: var(--muted); font-size: 13.5px; line-height: 1.6;
+}
+.markdown-body .axis-table th,
+.markdown-body .axis-table td { padding: 14px 12px; border: 0; border-bottom: 1px solid var(--line); vertical-align: middle; }
+.markdown-body .axis-table thead th {
+  background: var(--paper); color: var(--muted); font-size: var(--label); font-weight: 700;
+  letter-spacing: var(--label-track); white-space: nowrap;
+}
+.markdown-body .axis-table tbody tr:last-child > * { border-bottom: 0; }
+.markdown-body .axis-table tbody th { width: 34%; padding-left: 18px; background: transparent; color: var(--ink); font-weight: 400; text-align: left; }
+.axis-raw { display: block; font-size: 15.5px; font-weight: 700; letter-spacing: -.01em; line-height: 1.5; word-break: keep-all; }
+.axis-raw mark {
+  padding: 0 3px; border-radius: 4px; color: inherit;
+  background: color-mix(in srgb, var(--scene-raw) 30%, transparent);
+}
+.axis-note { display: block; margin-top: 4px; color: var(--muted); font-size: 13px; line-height: 1.5; word-break: keep-all; }
+.markdown-body .axis-table td { color: var(--blue-dark); font-size: 14.5px; font-weight: 700; white-space: nowrap; }
+.markdown-body .axis-table td.is-empty { color: var(--muted); font-weight: 500; }
+.axis-status {
+  display: inline-block; padding: 4px 10px; border: 1.5px solid transparent; border-radius: 999px;
+  font-size: var(--label); font-weight: 800; letter-spacing: .01em; white-space: nowrap;
+}
+.axis-table tr[data-status="full"] .axis-status { background: var(--blue); color: var(--on-blue); }
+.axis-table tr[data-status="partial"] .axis-status { border-color: var(--blue); color: var(--blue); }
+.axis-table tr[data-status="review"] .axis-status { background: var(--review-bg); color: var(--review); }
+
+/* 처리 단계. 넓은 화면에서는 가로로, 좁은 화면에서는 세로로 잇습니다. */
+.markdown-body ol.flow-steps {
+  counter-reset: flow; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px; margin: 8px 0 24px;
+}
+.markdown-body ol.flow-steps li {
+  counter-increment: flow; position: relative; padding: 16px 14px;
+  border: 1px solid var(--line); border-radius: 12px; background: var(--surface);
+  font-size: 14px; line-height: 1.65;
+}
+.markdown-body ol.flow-steps li::before {
+  content: counter(flow, decimal-leading-zero); position: static; display: block;
+  color: var(--blue); font-size: var(--label); font-weight: 800; letter-spacing: .06em;
+}
+.markdown-body ol.flow-steps li + li::after {
+  content: ""; position: absolute; left: -12px; top: 50%; width: 12px; height: 2px; background: var(--line-strong);
+}
+.flow-steps strong { display: block; margin: 6px 0 4px; color: var(--ink); font-size: 16px; letter-spacing: -.01em; }
+.flow-steps span { display: block; color: var(--body); word-break: keep-all; }
 
 .detail-footer { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 66px; padding-top: 32px; border-top: 1px solid var(--line); }
 .project-page footer { padding: 26px clamp(24px, 6vw, 92px); }
@@ -842,11 +939,104 @@ footer h2 { margin: 0; font-size: clamp(30px, 3.8vw, 52px); line-height: 1.2; le
 .section-link:hover { color: var(--blue-dark); }
 
 /*
- * 크게 보여 주는 수치에만 고정폭을 씁니다. 12.5px 라벨까지 monospace로 두면
- * 글꼴이 없는 환경에서 Courier로 떨어져 오히려 읽기 나빠집니다.
+ * 크게 보여 주는 수치는 본문 글꼴의 고정폭 숫자(tabular-nums)로 씁니다. 영문 고정폭 글꼴에는
+ * 한글이 없어 '일 40분'·'5개 공장'처럼 한글이 섞이면 띄어쓰기만 넓게 벌어져 오타처럼 보입니다.
  */
 .hero-metrics dt, .metric-evidence-list dt {
-  font-family: var(--mono); font-variant-numeric: tabular-nums; letter-spacing: -.02em;
+  font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; letter-spacing: -.025em;
+}
+
+/* ── 이력서 (A4 인쇄용, /resume/) ─────────────────────── */
+/*
+ * public/portfolio.pdf의 원본입니다(npm run pdf). 종이처럼 보이도록 테마와 무관하게 밝게
+ * 두고, 이 페이지 안에서만 쓰는 토큰을 따로 둡니다. 화면에서는 A4 한 장 너비로 가운데에 놓고,
+ * 인쇄할 때는 그림자와 바탕을 걷어 냅니다.
+ */
+.resume {
+  color-scheme: light;
+  --r-ink: #0d1526;
+  --r-body: #2f3b4d;
+  --r-muted: #5b687c;
+  --r-line: #dde5ef;
+  --r-accent: #1d5fd0;
+  --r-accent-dark: #1b3a76;
+  --r-tint: #f1f5fb;
+  --r-page: #e7ecf3;
+  --r-paper: #ffffff;
+  min-height: 100vh; padding: 40px 16px; background: var(--r-page);
+}
+.resume-sheet {
+  width: 210mm; min-height: 297mm; margin: 0 auto; padding: 16mm 15mm 14mm;
+  background: var(--r-paper); color: var(--r-ink);
+  box-shadow: 0 30px 80px -30px rgba(13, 21, 38, .35);
+  font-size: 13.5px; line-height: 1.6; word-break: keep-all;
+}
+.resume-head {
+  display: flex; justify-content: space-between; align-items: flex-end; gap: 24px;
+  padding-bottom: 14px; border-bottom: 2px solid var(--r-ink);
+}
+.resume-name { margin: 0; font-size: 30px; font-weight: 800; letter-spacing: -.03em; line-height: 1.2; }
+.resume-name span { margin-left: 10px; color: var(--r-muted); font-size: 14px; font-weight: 600; letter-spacing: .02em; }
+.resume-head h1 {
+  margin: 6px 0 0; max-width: none; color: var(--r-accent);
+  font-size: 16px; font-weight: 700; line-height: 1.4; letter-spacing: -.01em;
+}
+.resume-contact { margin: 0; padding: 0; list-style: none; color: var(--r-body); font-size: 12.5px; line-height: 1.7; text-align: right; }
+.resume-summary { margin: 14px 0 0; color: var(--r-body); font-size: 13.5px; line-height: 1.75; }
+.resume-metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin: 14px 0 0; }
+.resume-metrics div { padding: 10px 12px; border-radius: 8px; background: var(--r-tint); }
+.resume-metrics dt {
+  color: var(--r-accent-dark); font-size: 17px; font-weight: 800; letter-spacing: -.02em;
+  font-variant-numeric: tabular-nums;
+}
+.resume-metrics dd { margin: 2px 0 0; color: var(--r-muted); font-size: 12px; line-height: 1.45; }
+.resume-section {
+  display: grid; grid-template-columns: 24mm minmax(0, 1fr); gap: 0 5mm;
+  margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--r-line);
+}
+.resume-section h2 { margin: 0; color: var(--r-accent); font-size: 13px; font-weight: 800; letter-spacing: .02em; line-height: 1.6; }
+.resume-entry { break-inside: avoid; }
+.resume-entry + .resume-entry { margin-top: 11px; }
+.resume-entry-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin: 0; }
+.resume-entry-head strong { font-size: 14.5px; font-weight: 800; letter-spacing: -.01em; }
+.resume-entry-head span { flex: none; color: var(--r-muted); font-size: 12.5px; font-variant-numeric: tabular-nums; }
+.resume-entry-role { margin: 1px 0 0; color: var(--r-muted); font-size: 12.5px; }
+.resume-entry-text { margin: 4px 0 0; color: var(--r-body); font-size: 13px; line-height: 1.65; }
+.resume-items { margin: 6px 0 0; padding: 0; list-style: none; }
+.resume-items li { position: relative; padding-left: 12px; color: var(--r-body); font-size: 13px; line-height: 1.6; }
+.resume-items li + li { margin-top: 3px; }
+.resume-items li::before {
+  content: ""; position: absolute; left: 0; top: .72em;
+  width: 4px; height: 4px; border-radius: 50%; background: var(--r-accent);
+}
+.resume-items b { color: var(--r-ink); font-weight: 700; }
+.resume-facts, .resume-skills { display: grid; gap: 5px; margin: 0; }
+.resume-facts div { display: grid; grid-template-columns: 16mm minmax(0, 1fr); gap: 10px; }
+.resume-skills div { display: grid; grid-template-columns: 30mm minmax(0, 1fr); gap: 10px; }
+.resume-facts dt, .resume-skills dt { color: var(--r-muted); font-size: 12.5px; font-weight: 700; }
+.resume-facts dd, .resume-skills dd { margin: 0; color: var(--r-body); font-size: 13px; }
+.resume-facts dd strong { margin-right: 8px; color: var(--r-ink); }
+.resume-facts dd span { color: var(--r-muted); font-size: 12.5px; }
+.resume-project-meta { display: grid; gap: 1px; margin: 4px 0 0; color: var(--r-muted); font-size: 12px; }
+.resume-foot {
+  display: flex; justify-content: space-between; gap: 16px; margin: 18px 0 0; padding-top: 10px;
+  border-top: 1px solid var(--r-line); color: var(--r-muted); font-size: 12px;
+}
+@media screen and (max-width: 820px) {
+  .resume { padding: 0; }
+  .resume-sheet { width: auto; min-height: 0; padding: 28px 20px 32px; box-shadow: none; }
+  .resume-head { flex-direction: column; align-items: flex-start; }
+  .resume-contact { text-align: left; }
+  .resume-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .resume-section { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+}
+@page { size: A4; margin: 12mm 13mm; }
+@media print {
+  /* 인쇄 배경을 켜도(printBackground) 본문 바깥이 회색으로 남지 않게 합니다. */
+  body { background: none; }
+  .resume { min-height: 0; padding: 0; background: none; }
+  .resume-sheet { width: auto; min-height: 0; padding: 0; box-shadow: none; }
+  .resume-break { break-before: page; }
 }
 
 /* ── 등장 효과 ───────────────────────────────────────── */
@@ -910,7 +1100,6 @@ footer h2 { margin: 0; font-size: clamp(30px, 3.8vw, 52px); line-height: 1.2; le
   }
 }
 @media (max-width: 950px) {
-  .detail-meta { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .impact-grid { grid-template-columns: 1fr; }
   .capability-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .capability-card { border-bottom: 1px solid var(--invert-line); }
@@ -924,6 +1113,30 @@ footer h2 { margin: 0; font-size: clamp(30px, 3.8vw, 52px); line-height: 1.2; le
   .qualification-list { padding: 42px var(--section-x) 60px; }
 }
 @media (max-width: 760px) {
+  .impact-grid[data-count="4"] { grid-template-columns: 1fr; }
+  .markdown-body ol.flow-steps { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  .markdown-body ol.flow-steps li + li::after { left: 26px; top: -11px; width: 2px; height: 10px; }
+  .markdown-body .axis-table,
+  .markdown-body .axis-table tbody,
+  .markdown-body .axis-table tr,
+  .markdown-body .axis-table caption { display: block; }
+  .markdown-body .axis-table { border: 0; border-radius: 0; overflow: visible; background: transparent; }
+  .markdown-body .axis-table thead { display: none; }
+  .markdown-body .axis-table caption { padding: 0 2px 12px; }
+  .markdown-body .axis-table tbody tr {
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 16px;
+    margin-bottom: 12px; padding: 4px 16px 14px;
+    border: 1px solid var(--line); border-radius: 14px; background: var(--surface);
+  }
+  .markdown-body .axis-table tbody th { grid-column: 1 / -1; width: auto; padding: 12px 0; border-bottom: 1px solid var(--line); }
+  .markdown-body .axis-table tbody tr:last-child > th { border-bottom: 1px solid var(--line); }
+  .markdown-body .axis-table td { padding: 10px 0 0; border: 0; white-space: normal; }
+  .markdown-body .axis-table td::before {
+    content: attr(data-label); display: block; margin-bottom: 2px;
+    color: var(--muted); font-size: var(--label); font-weight: 600;
+  }
+  .markdown-body .axis-table td:last-child { grid-column: 1 / -1; padding-top: 12px; }
+  .markdown-body .axis-table td:last-child::before { display: none; }
   .project-grid { grid-template-columns: minmax(0, 1fr); }
   .project-card { min-height: 0; }
   .project-card:first-child { display: flex; }
@@ -985,13 +1198,15 @@ footer h2 { margin: 0; font-size: clamp(30px, 3.8vw, 52px); line-height: 1.2; le
   .section-heading > p { display: none; }
   .capability-grid { grid-template-columns: minmax(0, 1fr); }
   .capability-card { min-height: 0; border-left: 1px solid var(--invert-line); }
+  .capability-card > p { min-height: 0; }
+  /* 일반 표는 좁은 화면에서 가로로 밀어 읽게 합니다(페이지 전체가 옆으로 밀리지 않게). */
+  .markdown-body table:not(.axis-table) { display: block; overflow-x: auto; }
   .qualification-list > div { grid-template-columns: 1fr; gap: 9px; }
   footer > div:first-child { align-items: flex-start; flex-direction: column; }
   footer h2 { text-align: left; }
   .footer-links { align-items: flex-start; flex-direction: column; gap: 14px; }
   .footer-bottom { flex-direction: column; gap: 10px; }
   .project-detail { padding-top: 36px; }
-  .detail-meta { grid-template-columns: 1fr; }
   .detail-footer .button { width: 100%; }
 }
 

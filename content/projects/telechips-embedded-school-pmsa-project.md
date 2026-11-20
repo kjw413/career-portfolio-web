@@ -12,6 +12,9 @@ github: "https://github.com/kjw413/telechips-embedded-school-pmsa-project"
 visibility: "PUBLIC"
 status: "completed"
 order: 7
+cover:
+  src: "/projects/telechips-cover.svg"
+  caption: "담당한 경로 — 카메라 인지 결과를 보드 간 통신으로 넘겨 MICOM 제어까지. SPI·CAN이 보드 밖에서 막히자 제출 10일 전 UART로 바꿨습니다."
 ---
 
 ## 개요
