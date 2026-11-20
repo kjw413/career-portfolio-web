@@ -14,6 +14,23 @@ export type Media = {
   tall: boolean;
 };
 
+/**
+ * 포트폴리오 PDF(/casebook/)에서 프로젝트 한 쪽을 채우는 요약입니다. 상세 페이지 본문을
+ * 잘라 쓰지 않고 frontmatter에 따로 둡니다. 수치는 문장에 적지 않고 원장 ID로 가리킵니다.
+ */
+export type Casebook = {
+  /** 본인 역할. 팀 작업이면 팀과 본인 범위를 함께 적습니다. */
+  role: string;
+  problem: string;
+  /** 한 일. 3~4개 */
+  approach: string[];
+  /** 결과로 보여 줄 수치 ID (metrics.json, 확정만) */
+  metricIds: string[];
+  /** 수치를 읽는 법이나 사용 현황처럼 숫자가 아닌 결과 */
+  note: string | null;
+  image: Media | null;
+};
+
 export type Project = {
   slug: string;
   /** 상세 사례 제목. 카탈로그 override가 없을 때 표시 제목으로도 사용 */
@@ -48,11 +65,12 @@ export type Project = {
   gallery: Media[];
   /** 마크다운 본문을 렌더링한 HTML */
   bodyHtml: string;
+  casebook: Casebook | null;
 };
 
 export type ProjectSummary = Omit<
   Project,
-  "bodyHtml" | "cover" | "thumb" | "gallery" | "tags" | "intro" | "kind" | "period"
+  "bodyHtml" | "cover" | "thumb" | "gallery" | "tags" | "intro" | "kind" | "period" | "casebook"
 >;
 
 const CONTENT_DIR = path.join(process.cwd(), "content", "projects");
@@ -119,6 +137,34 @@ function toGallery(value: unknown): Media[] {
   return value.map(toMedia).filter((item): item is Media => item !== null);
 }
 
+function toCasebook(value: unknown, fileName: string): Casebook | null {
+  if (value === undefined || value === null) return null;
+  if (typeof value !== "object" || Array.isArray(value)) {
+    throw new Error(`content/projects/${fileName}: casebook은 객체여야 합니다.`);
+  }
+  const record = value as Record<string, unknown>;
+  const where = `content/projects/${fileName}: casebook`;
+  const role = toStringOrNull(record.role);
+  const problem = toStringOrNull(record.problem);
+  const strings = (input: unknown) =>
+    Array.isArray(input) ? input.map((item) => toStringOrNull(item)).filter((item): item is string => item !== null) : [];
+  const approach = strings(record.approach);
+  if (!role || !problem || approach.length === 0) {
+    throw new Error(`${where}.role, problem, approach는 필수입니다.`);
+  }
+  const imageSrc = toStringOrNull(record.image);
+  const image = imageSrc ? toMedia({ src: imageSrc, caption: record.imageCaption }) : null;
+  if (imageSrc && !image) throw new Error(`${where}.image 파일이 public/에 없습니다: ${imageSrc}`);
+  return {
+    role,
+    problem,
+    approach,
+    metricIds: strings(record.metricIds),
+    note: toStringOrNull(record.note),
+    image,
+  };
+}
+
 /** 마크다운 본문 안의 루트 경로 이미지에도 basePath를 적용한다. */
 function renderMarkdown(content: string): string {
   const renderer = new marked.Renderer();
@@ -181,6 +227,7 @@ function parseProject(fileName: string): Project {
     thumb: toMedia(data.thumb) ?? cover,
     gallery,
     bodyHtml: renderMarkdown(content),
+    casebook: toCasebook(data.casebook, fileName),
   };
 }
 

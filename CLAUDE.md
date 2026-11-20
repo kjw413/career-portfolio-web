@@ -70,7 +70,8 @@ npm run lint          # ESLint
 npm run build         # 위 검사 → AI 내보내기 생성 → 정적 빌드
 npm run ai:exports    # public/ai/*, llms.txt 재생성 (빌드가 자동 실행)
 npm run poster        # 3D 장면을 고쳤을 때 정적 포스터를 다시 생성 (playwright 필요)
-npm run pdf           # /resume/ 페이지를 A4로 인쇄해 public/portfolio.pdf 재생성 (build 후, playwright 필요)
+npm run pdf           # /resume/ → public/portfolio.pdf(이력서), /casebook/ → public/portfolio-cases.pdf(포트폴리오)
+                      # 재생성 (build 후, playwright 필요). 2MB를 넘거나 한 쪽이 넘치면 실패
 npm run lint:claims -- --file 초안.txt --job "제조 AI·데이터" --date 2026-09-12
                       # 자기소개서 초안을 원장과 대조
 ```
@@ -79,8 +80,11 @@ npm run lint:claims -- --file 초안.txt --job "제조 AI·데이터" --date 202
 폐기된 표기, 금지 표현, 확정 전 수치, 직무에서 제외한 경험, 재직기간을 잡습니다.
 
 `app/components/hero-scene/`를 고쳤으면 `npm run poster`로 포스터를 다시 만듭니다.
-원장·프로필·대표 프로젝트를 고쳤으면 `npm run pdf`로 이력서 PDF도 다시 만듭니다. 사이트의
-'이력서' 버튼이 이 파일을 내려받게 하므로, 그대로 두면 사이트와 PDF가 갈라집니다.
+원장·프로필·대표 프로젝트를 고쳤으면 `npm run pdf`로 이력서·포트폴리오 PDF도 다시 만듭니다.
+사이트의 '이력서'·'포트폴리오 PDF' 버튼이 이 파일들을 내려받게 하므로, 그대로 두면 사이트와
+PDF가 갈라집니다. 포트폴리오 PDF는 지원 직무를 적지 않은 공용본이고, 일부 기업의 첨부 한도
+(2MB)를 지키도록 생성 스크립트와 테스트가 크기를 검사합니다. 대표 프로젝트는 frontmatter의
+`casebook`으로 한 쪽 요약을 갖습니다. 사진·나이 같은 개인정보는 이 PDF에 넣지 않습니다(4절).
 포스터는 3D를 켜지 않는 환경에서 그대로 남는 그림이라, 장면과 갈라지면 안 됩니다.
 
 `public/ai/`, `public/llms.txt`, `public/llms-full.txt`는 생성물이라 커밋하지 않습니다.

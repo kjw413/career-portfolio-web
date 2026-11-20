@@ -10,7 +10,7 @@ const profile: Profile = {
   name: "김종우", nameEn: "Jong Woo Kim",
   role: "전자전기공학 학사 · 제조 현장 3년차", major: "전자전기공학",
   summary: "5개 공장의 에너지·생산 데이터를 통합했습니다.",
-  photoSrc: null, resumeHref: null,
+  photoSrc: null, resumeHref: null, casebookHref: null,
   githubUrl: "https://github.com/kjw413", emailHref: "mailto:kjw2110@naver.com",
   education: {
     school: "홍익대학교 (서울)", degree: "전자전기공학부 학사",

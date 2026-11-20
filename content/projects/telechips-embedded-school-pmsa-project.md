@@ -15,6 +15,17 @@ order: 7
 cover:
   src: "/projects/telechips-cover.svg"
   caption: "담당한 경로 — 카메라 인지 결과를 보드 간 통신으로 넘겨 MICOM 제어까지. SPI·CAN이 보드 밖에서 막히자 제출 10일 전 UART로 바꿨습니다."
+casebook:
+  role: "팀 프로젝트 · 보드 간 통신, 적색 신호 인지, 최종 발표 담당"
+  problem: "페달 오조작(가속·제동 혼동) 상황을 감지해 운전자를 보조하는 시스템을, 인지를 맡는 메인 코어(Linux)와 제어를 맡는 MICOM 두 축으로 나눠 완성해야 했습니다."
+  approach:
+    - "YOLOv5로 카메라 입력({{metric:telechips-vision}})에서 신호등 적색 상태를 탐지하고 IPC 플래그로 제어 측에 전달했습니다."
+    - "SPI 내부 루프백 테스트를 수행하고 드라이버 구조와 콜플로우를 문서화했습니다."
+    - "CAN은 필터·종단저항·Bus Off 오류를 분석했지만 보드 외부 통신을 해결하지 못해, 제출 10일 전 UART로 전환해 시스템을 완성했습니다."
+    - "통합 테스트에서 생긴 약 5초의 동작 지연을 디버그 출력으로 추적하고 레지스터 설정을 조정해 해결했습니다."
+  metricIds: [telechips-hours, telechips-rank]
+  image: "/projects/telechips-cover.svg"
+  imageCaption: "인지 → 보드 간 통신 → MICOM 제어 구성"
 ---
 
 ## 개요

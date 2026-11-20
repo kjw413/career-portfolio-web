@@ -215,6 +215,15 @@ export default function Home() {
               이력서
             </a>
           )}
+          {profile.casebookHref && (
+            <a
+              href={withBasePath(profile.casebookHref)}
+              download={`${profile.name}_포트폴리오.pdf`}
+              data-goatcounter-click="click-casebook"
+            >
+              포트폴리오 PDF
+            </a>
+          )}
         </div>
         <div className="footer-bottom">
           <span>© 2026 김종우 · 방문 통계는 쿠키 없이 페이지와 유입 경로만 집계합니다</span>
