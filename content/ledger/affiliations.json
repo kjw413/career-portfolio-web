@@ -7,7 +7,7 @@
     "start": "2024-12-23",
     "end": null,
     "endLabel": "재직 중",
-    "summary": "5개 공장의 에너지·생산 데이터를 통합하고, 매일 반복되던 수집·검토 업무를 자동화했습니다.",
+    "summary": "5개 공장의 에너지·생산 데이터를 통합하고, 매일 반복되던 수집·검토 업무와 설비 고장이력 분석을 자동화했습니다.",
     "tags": [
       "생산기술",
       "제조 데이터",
@@ -17,6 +17,7 @@
     "cardIds": [
       "EXP-BG-ENERGY-WEB",
       "EXP-BG-ENERGY-FORECAST",
+      "EXP-BG-FAILURE-ANALYZER",
       "EXP-BG-DATA-RPA",
       "EXP-BG-INVEST-RPA",
       "EXP-BG-SYSTEM-COLLAB",

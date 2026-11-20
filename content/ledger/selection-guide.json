@@ -1,7 +1,7 @@
 [
   {
     "job": "생산기술·설비기술",
-    "primary": ["EXP-BG-MIXEDPACK", "EXP-BG-ENERGY-WEB"],
+    "primary": ["EXP-BG-MIXEDPACK", "EXP-BG-ENERGY-WEB", "EXP-BG-FAILURE-ANALYZER"],
     "secondary": ["EXP-BG-DATA-RPA", "EXP-BG-INVEST-RPA", "EXP-BG-SYSTEM-COLLAB", "EXP-BG-PLC-ROBOT"],
     "exclude": ["EXP-TELECHIPS-EMBEDDED", "EXP-UNIV-MCU"],
     "excludeReason": "직무와 무관한 임베디드 세부내용은 기본 제외"
@@ -9,14 +9,14 @@
   {
     "job": "MES 운영·스마트팩토리",
     "primary": ["EXP-BG-DATA-RPA", "EXP-BG-SYSTEM-COLLAB"],
-    "secondary": ["EXP-BG-ENERGY-WEB", "EXP-BG-ENERGY-FORECAST"],
+    "secondary": ["EXP-BG-ENERGY-WEB", "EXP-BG-ENERGY-FORECAST", "EXP-BG-FAILURE-ANALYZER"],
     "exclude": ["EXP-CLUB-BUDGET"],
     "excludeReason": "B2B 수주 프로젝트만 요구하는 프로젝트란에는 사내 개선활동을 입력하지 않는다"
   },
   {
     "job": "제조 AI·데이터",
     "primary": ["EXP-BG-ENERGY-FORECAST", "EXP-BG-ENERGY-WEB"],
-    "secondary": ["EXP-DATA-LAG3", "EXP-BG-DATA-RPA"],
+    "secondary": ["EXP-DATA-LAG3", "EXP-BG-DATA-RPA", "EXP-BG-FAILURE-ANALYZER"],
     "exclude": ["EXP-CLUB-BUDGET", "EXP-MIL-LEADERSHIP"],
     "excludeReason": "관련성 낮은 일반 활동은 역량 문항 외에는 제외"
   },
@@ -58,7 +58,7 @@
   {
     "job": "제조 일반·비반도체",
     "primary": ["EXP-BG-MIXEDPACK", "EXP-BG-DATA-RPA"],
-    "secondary": ["EXP-BG-ENERGY-WEB", "EXP-INBODY-CLAIM"],
+    "secondary": ["EXP-BG-ENERGY-WEB", "EXP-BG-FAILURE-ANALYZER", "EXP-INBODY-CLAIM"],
     "exclude": [],
     "excludeReason": "EDU-SEMI-01은 기본 제외"
   },

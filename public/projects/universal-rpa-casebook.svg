@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600" width="1200" height="600" role="img" aria-label="Universal RPA Studio의 다섯 화면(프로젝트, 기록, 편집, 실행, 보고서)과 결과를 확인하는 네 가지 장치(산출물 해시, 단계별 기대값 검증, 실패 단계 기록, 체크포인트).">
+  <defs>
+    <style>
+      text { font-family: "Pretendard", "Pretendard Variable", "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif; }
+      .eyebrow { fill: #1d5fd0; font-size: 18px; font-weight: 800; letter-spacing: .04em; }
+      .meta { fill: #55637a; font-size: 15px; font-weight: 600; }
+      .step { fill: #1d5fd0; font-size: 14px; font-weight: 800; letter-spacing: .08em; }
+      .title { fill: #0d1526; font-size: 25px; font-weight: 800; letter-spacing: -.02em; }
+      .sub { fill: #3d4a5c; font-size: 15.5px; font-weight: 600; }
+      .panel-title { fill: #ffffff; font-size: 19px; font-weight: 800; letter-spacing: -.01em; }
+      .panel-sub { fill: #b9c9e6; font-size: 14.5px; font-weight: 600; }
+      .chip { fill: #ffffff; font-size: 16px; font-weight: 700; }
+      .chip-sub { fill: #b9c9e6; font-size: 13.5px; font-weight: 600; }
+      .foot { fill: #3d4a5c; font-size: 16px; font-weight: 600; }
+      .card { fill: #ffffff; stroke: #d9e4f2; stroke-width: 1.5; }
+      .card-accent { fill: #ffffff; stroke: #1d5fd0; stroke-width: 2; }
+      .chip-box { fill: #24467f; }
+    </style>
+    <pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.3" fill="#dde6f2"/>
+    </pattern>
+    <filter id="lift" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#1b3a76" flood-opacity=".10"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="600" fill="#f5f8fd"/>
+  <rect width="1200" height="600" fill="url(#dots)"/>
+
+  <text class="eyebrow" x="64" y="70">한 번 시연하면, 그대로 다시 실행</text>
+  <text class="meta" x="1136" y="70" text-anchor="end">Windows · 로컬 전용 · 실행 파일 하나로 배포</text>
+
+  <!-- 다섯 화면 -->
+  <g filter="url(#lift)">
+    <rect class="card" x="64" y="98" width="192" height="200" rx="18"/>
+    <rect class="card-accent" x="284" y="98" width="192" height="200" rx="18"/>
+    <rect class="card" x="504" y="98" width="192" height="200" rx="18"/>
+    <rect class="card" x="724" y="98" width="192" height="200" rx="18"/>
+    <rect class="card" x="944" y="98" width="192" height="200" rx="18"/>
+  </g>
+
+  <text class="step" x="88" y="136">01</text>
+  <text class="title" x="88" y="172">프로젝트</text>
+  <text class="sub" x="88" y="222">업무 하나를</text>
+  <text class="sub" x="88" y="246">프로젝트로 묶음</text>
+
+  <text class="step" x="308" y="136">02</text>
+  <text class="title" x="308" y="172">기록</text>
+  <text class="sub" x="308" y="222">대상 창을 고르고</text>
+  <text class="sub" x="308" y="246">업무를 한 번 시연</text>
+
+  <text class="step" x="528" y="136">03</text>
+  <text class="title" x="528" y="172">편집</text>
+  <text class="sub" x="528" y="222">실패 처리·대기 조건</text>
+  <text class="sub" x="528" y="246">결과 기대값 지정</text>
+
+  <text class="step" x="748" y="136">04</text>
+  <text class="title" x="748" y="172">실행</text>
+  <text class="sub" x="748" y="222">사전 검증 후 실행</text>
+  <text class="sub" x="748" y="246">실패 단계만 재시도</text>
+
+  <text class="step" x="968" y="136">05</text>
+  <text class="title" x="968" y="172">보고서</text>
+  <text class="sub" x="968" y="222">반복별 성공·실패</text>
+  <text class="sub" x="968" y="246">실행 환경 기록</text>
+
+  <!-- 화면 사이 화살표 -->
+  <g fill="#1d5fd0">
+    <path d="M262 192 l12 6 -12 6z"/>
+    <path d="M482 192 l12 6 -12 6z"/>
+    <path d="M702 192 l12 6 -12 6z"/>
+    <path d="M922 192 l12 6 -12 6z"/>
+  </g>
+
+  <!-- 결과 확인 장치 -->
+  <rect x="64" y="330" width="1072" height="184" rx="20" fill="#1b3a76"/>
+  <text class="panel-title" x="96" y="374">'돌았다'가 아니라 '제대로 됐다'를 확인하는 장치</text>
+  <text class="panel-sub" x="1104" y="374" text-anchor="end">실패를 조용히 넘기지 않습니다</text>
+
+  <rect class="chip-box" x="96" y="398" width="238" height="88" rx="12"/>
+  <text class="chip" x="116" y="434">산출물 해시</text>
+  <text class="chip-sub" x="116" y="462">내용·머리글 해시로 결과 대조</text>
+
+  <rect class="chip-box" x="350" y="398" width="238" height="88" rx="12"/>
+  <text class="chip" x="370" y="434">단계별 기대값 검증</text>
+  <text class="chip-sub" x="370" y="462">화면 값이 다르면 그 단계에서 정지</text>
+
+  <rect class="chip-box" x="604" y="398" width="238" height="88" rx="12"/>
+  <text class="chip" x="624" y="434">실패 단계 기록</text>
+  <text class="chip-sub" x="624" y="462">반복 회차·시도 횟수·오류 코드</text>
+
+  <rect class="chip-box" x="858" y="398" width="246" height="88" rx="12"/>
+  <text class="chip" x="878" y="434">체크포인트</text>
+  <text class="chip-sub" x="878" y="462">중단 지점부터 이어서 실행</text>
+
+  <text class="foot" x="64" y="556">런타임 LLM 없이 결정론적으로 동작하고, UAC·MFA·CAPTCHA 같은 보안 경계는 우회하지 않습니다.</text>
+</svg>

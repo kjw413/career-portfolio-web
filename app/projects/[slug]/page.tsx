@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { fillMetrics, getCardsForProject } from "../../../lib/ledger";
 import { getProject, getProjects } from "../../../lib/projects";
+import PageHeader from "../../components/PageHeader";
 
 export const dynamicParams = false;
 
@@ -36,19 +37,7 @@ export default async function ProjectPage({
 
   return (
     <main className="project-page">
-      <header className="site-header">
-        <Link className="wordmark" href="/" aria-label="홈으로">
-          <span>KJ</span>김종우
-        </Link>
-        <nav aria-label="주요 메뉴">
-          <Link href="/#projects">프로젝트</Link>
-          <Link href="/#experience">경력</Link>
-          <Link href="/#profile">보유 기술</Link>
-          <a href="https://github.com/kjw413" target="_blank" rel="noreferrer">
-            GitHub ↗
-          </a>
-        </nav>
-      </header>
+      <PageHeader current="projects" />
 
       <article className="project-detail">
         <Link className="back-link" href="/#archive">

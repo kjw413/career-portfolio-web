@@ -1,95 +1,170 @@
+/**
+ * 이력서 PDF(public/portfolio.pdf)와 포트폴리오 PDF(public/portfolio-cases.pdf)를 만듭니다.
+ *
+ * 사이트의 /resume/, /casebook/ 페이지를 Chromium으로 A4 인쇄합니다. 페이지가 원장·프로필·프로젝트에서
+ * 내용을 읽으므로, 사실을 고친 뒤 이 스크립트를 다시 돌리면 PDF도 같은 값으로 바뀝니다.
+ * 글꼴은 PDF 안에 함께 들어가므로 받는 쪽 컴퓨터에 한글 글꼴이 없어도 그대로 보입니다.
+ *
+ *   npm run build && npm run pdf
+ *
+ * 이전에는 글꼴을 넣지 않은 PDF를 직접 써서, Chrome에서 영문 자간이 벌어지고(G i t H u b)
+ * 받는 환경에 따라 글자가 비어 보였습니다.
+ */
+
 import fs from "node:fs";
+import http from "node:http";
 import path from "node:path";
+import process from "node:process";
+import { createRequire } from "node:module";
 
-const output = path.join(process.cwd(), "public", "portfolio.pdf");
+const ROOT = process.cwd();
+const OUT_DIR = path.join(ROOT, "out");
+const PORT = 4398;
 
-const pages = [
-  [
-    { size: 25, y: 790, text: "김종우 | 커리어 포트폴리오" },
-    { size: 12, y: 763, text: "공장 데이터를 모으고, 자동화하고, 예측하는 엔지니어" },
-    { size: 9, y: 741, text: "GitHub  github.com/kjw413   |   Email  kjw2110@naver.com" },
-    { size: 15, y: 700, text: "PROFILE" },
-    { size: 10, y: 678, text: "빙그레 생산기술팀에서 5개 공장의 에너지·생산 데이터를 통합하고," },
-    { size: 10, y: 660, text: "매일 반복되던 수집과 검토 업무를 자동화했습니다. 전자전기공학 전공과" },
-    { size: 10, y: 642, text: "1,000시간 임베디드 교육을 바탕으로 설비·제어와 AI 도구를 함께 다룹니다." },
-    { size: 15, y: 600, text: "KEY IMPACT" },
-    { size: 11, y: 575, text: "01  MIS 데이터 수집 자동화" },
-    { size: 9, y: 555, text: "5개 공장 화면 수집·검증·표준 데이터셋 생성을 하나의 파이프라인으로 구성" },
-    { size: 11, y: 520, text: "02  공장 에너지 데이터 통합" },
-    { size: 9, y: 500, text: "전력·연료·용수와 생산 실적의 수집·저장·예측·진단·보고를 웹 서비스로 연결" },
-    { size: 11, y: 465, text: "03  카메라 인지 결과를 임베디드 제어까지 연결" },
-    { size: 9, y: 445, text: "YOLOv5 적색 신호 인지와 UART 기반 통신 경로를 구현해 실제 동작을 확인" },
-    { size: 15, y: 400, text: "EXPERIENCE" },
-    { size: 11, y: 375, text: "빙그레 | 생산담당 생산기술팀 사원 | 2024.12–현재" },
-    { size: 9, y: 355, text: "유틸리티·에너지 관리, 생산부문 시스템 개선" },
-    { size: 15, y: 310, text: "EDUCATION & CERTIFICATIONS" },
-    { size: 10, y: 285, text: "홍익대학교(서울) 전자전기공학부 학사 | 2018.03–2024.02 | 3.50/4.50" },
-    { size: 10, y: 263, text: "ADsP 데이터분석 준전문가 · 컴퓨터활용능력 1급 · OPIc IH" },
-  ],
-  [
-    { size: 22, y: 790, text: "SELECTED PROJECTS" },
-    { size: 14, y: 748, text: "My Agent Switchboard" },
-    { size: 9, y: 727, text: "MULTI-AGENT · ORCHESTRATION · AI TOOLING" },
-    { size: 10, y: 705, text: "여러 AI 에이전트의 역할과 현재 작업을 구분하고, 필요한 시점에 작업 주체를" },
-    { size: 10, y: 687, text: "전환·조율하기 위한 멀티 에이전트 오케스트레이션 도구입니다." },
-    { size: 9, y: 665, text: "github.com/kjw413/my-agent-switchboard" },
-    { size: 14, y: 615, text: "공장 에너지 AI 플랫폼" },
-    { size: 10, y: 592, text: "5개 공장의 에너지·생산 데이터를 통합하고 AI 예측과 실측을 함께 제공하는" },
-    { size: 10, y: 574, text: "사내 웹 서비스. 수집부터 진단과 보고까지 하나의 흐름으로 연결했습니다." },
-    { size: 14, y: 525, text: "Universal RPA Studio" },
-    { size: 10, y: 502, text: "반복적인 화면 작업을 자동화할 수 있도록 구성한 제조·업무 자동화 프로젝트입니다." },
-    { size: 14, y: 453, text: "MIS 데이터 수집 자동화" },
-    { size: 10, y: 430, text: "공장별 MIS 조회와 전사 과정을 자동화하고 검증 가능한 표준 데이터셋을 만듭니다." },
-    { size: 14, y: 381, text: "페달 오조작 감지 보조 시스템" },
-    { size: 10, y: 358, text: "영상 인지 결과를 보드 통신과 제어까지 연결한 임베디드 교육 프로젝트입니다." },
-    { size: 15, y: 300, text: "CAPABILITIES" },
-    { size: 10, y: 275, text: "데이터 파이프라인 · 업무 자동화 · 에너지 예측 · 웹 서비스 · 임베디드 제어" },
-    { size: 9, y: 218, text: "상세 수행 과정과 최신 프로젝트는 웹 포트폴리오에서 확인할 수 있습니다." },
-    { size: 10, y: 195, text: "kjw413.github.io/career-portfolio-web/" },
-    { size: 8, y: 60, text: "Updated 2026.09.27" },
-  ],
+/**
+ * 일부 기업(현대자동차 등)은 포트폴리오를 2MB 이하 PDF로만 받습니다. 넘으면 실패시켜,
+ * 이미지를 늘리다가 제출할 수 없는 파일이 사이트에 올라가는 일을 막습니다.
+ * 같은 한도를 app/casebook.test.ts도 검사합니다.
+ */
+const MAX_PDF_BYTES = 2 * 1024 * 1024;
+
+const TARGETS = [
+  { route: "/resume/", output: "public/portfolio.pdf", maxBytes: MAX_PDF_BYTES },
+  // 장마다 높이를 A4 한 쪽으로 고정하므로, 내용이 넘치면 잘리지 않게 여기서 멈춥니다.
+  { route: "/casebook/", output: "public/portfolio-cases.pdf", maxBytes: MAX_PDF_BYTES, fixedPages: ".cb-page" },
 ];
 
-const utf16Hex = (text) => {
-  const bytes = Buffer.from(`\ufeff${text}`, "utf16le");
-  for (let index = 0; index < bytes.length; index += 2) {
-    [bytes[index], bytes[index + 1]] = [bytes[index + 1], bytes[index]];
-  }
-  return bytes.toString("hex").toUpperCase();
+const MIME = {
+  ".html": "text/html; charset=utf-8",
+  ".css": "text/css",
+  ".js": "text/javascript",
+  ".json": "application/json",
+  ".svg": "image/svg+xml",
+  ".png": "image/png",
+  ".webp": "image/webp",
+  ".woff2": "font/woff2",
+  ".txt": "text/plain; charset=utf-8",
 };
 
-const objects = [];
-const add = (body) => (objects.push(body), objects.length);
-const catalogId = add("");
-const pagesId = add("");
-const fontId = add("<< /Type /Font /Subtype /Type0 /BaseFont /HYSMyeongJo-Medium /Encoding /UniKS-UCS2-H /DescendantFonts [4 0 R] >>");
-add("<< /Type /Font /Subtype /CIDFontType0 /BaseFont /HYSMyeongJo-Medium /CIDSystemInfo << /Registry (Adobe) /Ordering (Korea1) /Supplement 2 >> >>");
-
-const pageIds = [];
-for (const lines of pages) {
-  const commands = ["0.09 0.12 0.16 rg", "BT"];
-  for (const line of lines) {
-    commands.push(`/F1 ${line.size} Tf`, `1 0 0 1 52 ${line.y} Tm`, `<${utf16Hex(line.text)}> Tj`);
-  }
-  commands.push("ET");
-  const stream = `${commands.join("\n")}\n`;
-  const contentId = add(`<< /Length ${Buffer.byteLength(stream)} >>\nstream\n${stream}endstream`);
-  pageIds.push(add(`<< /Type /Page /Parent ${pagesId} 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 ${fontId} 0 R >> >> /Contents ${contentId} 0 R >>`));
+function serve() {
+  const server = http.createServer((request, response) => {
+    const requested = decodeURIComponent((request.url ?? "/").split("?")[0]);
+    let file = path.join(OUT_DIR, requested);
+    if (fs.existsSync(file) && fs.statSync(file).isDirectory()) {
+      file = path.join(file, "index.html");
+    }
+    if (!fs.existsSync(file)) {
+      response.writeHead(404);
+      response.end("not found");
+      return;
+    }
+    response.writeHead(200, {
+      "content-type": MIME[path.extname(file)] ?? "application/octet-stream",
+    });
+    fs.createReadStream(file).pipe(response);
+  });
+  return new Promise((resolve) => server.listen(PORT, () => resolve(server)));
 }
 
-objects[catalogId - 1] = `<< /Type /Catalog /Pages ${pagesId} 0 R >>`;
-objects[pagesId - 1] = `<< /Type /Pages /Kids [${pageIds.map((id) => `${id} 0 R`).join(" ")}] /Count ${pageIds.length} >>`;
+async function print(browser, target) {
+  const output = path.join(ROOT, target.output);
+  const page = await browser.newPage({ colorScheme: "light" });
+  try {
+    await page.goto(`http://127.0.0.1:${PORT}${target.route}`, { waitUntil: "networkidle" });
+    // 웹폰트는 렌더를 막지 않도록 늦게 붙습니다(layout.tsx). 다 붙은 뒤에 인쇄합니다.
+    await page.evaluate(async () => {
+      for (const link of document.querySelectorAll("link[data-webfont]")) link.media = "all";
+      await document.fonts.ready;
+      await Promise.all(
+        [...document.images].map((image) =>
+          image.complete ? null : new Promise((resolve) => image.addEventListener("load", resolve, { once: true })),
+        ),
+      );
+    });
+    const loaded = await page.evaluate(() =>
+      [...document.fonts].some(
+        (face) => face.family.replace(/["']/g, "") === "Pretendard Variable" && face.status === "loaded",
+      ),
+    );
+    if (!loaded) {
+      console.warn(
+        "웹폰트(Pretendard Variable)를 받지 못했습니다. 이 PC에 Pretendard가 설치돼 있지 않으면 " +
+          "시스템 한글 글꼴로 인쇄됩니다. 네트워크를 확인하세요.",
+      );
+    }
+    await page.emulateMedia({ media: "print" });
 
-let pdf = "%PDF-1.4\n%\xE2\xE3\xCF\xD3\n";
-const offsets = [0];
-objects.forEach((body, index) => {
-  offsets.push(Buffer.byteLength(pdf, "binary"));
-  pdf += `${index + 1} 0 obj\n${body}\nendobj\n`;
+    let expectedPages = null;
+    if (target.fixedPages) {
+      const overflow = await page.evaluate((selector) => {
+        const sheets = [...document.querySelectorAll(selector)];
+        return {
+          count: sheets.length,
+          over: sheets
+            .map((sheet, index) => ({
+              index: index + 1,
+              title: sheet.querySelector("h2, h1")?.textContent?.trim() ?? "",
+              by: sheet.scrollHeight - sheet.clientHeight,
+            }))
+            .filter((sheet) => sheet.by > 1),
+        };
+      }, target.fixedPages);
+      if (overflow.over.length > 0) {
+        const list = overflow.over.map((sheet) => `  ${sheet.index}쪽 ${sheet.title}: ${sheet.by}px 넘침`).join("\n");
+        throw new Error(`${target.route} 내용이 A4 한 쪽을 넘었습니다. 문장을 줄이세요.\n${list}`);
+      }
+      expectedPages = overflow.count;
+    }
+
+    await page.pdf({ path: output, format: "A4", printBackground: true, preferCSSPageSize: true });
+    const bytes = fs.statSync(output).size;
+    const pages = (fs.readFileSync(output, "latin1").match(/\/Type\s*\/Page[^s]/g) ?? []).length;
+    const size = `${(bytes / 1024).toFixed(0)}KB`;
+    if (expectedPages !== null && pages !== expectedPages) {
+      throw new Error(`${target.output}: ${expectedPages}쪽이어야 하는데 ${pages}쪽입니다. 빈 쪽이나 넘친 쪽을 확인하세요.`);
+    }
+    if (bytes > target.maxBytes) {
+      throw new Error(
+        `${target.output}: ${size}로 한도 ${(target.maxBytes / 1024 / 1024).toFixed(0)}MB를 넘었습니다. ` +
+          "사례 이미지를 줄이거나 SVG로 바꾸세요.",
+      );
+    }
+    console.log(`Generated ${target.output} (${pages} pages, ${size})`);
+  } finally {
+    await page.close();
+  }
+}
+
+async function main() {
+  for (const target of TARGETS) {
+    if (!fs.existsSync(path.join(OUT_DIR, target.route, "index.html"))) {
+      throw new Error(`out${target.route}index.html이 없습니다. \`npm run build\`를 먼저 실행하세요.`);
+    }
+  }
+
+  const require = createRequire(import.meta.url);
+  let chromium;
+  try {
+    ({ chromium } = require("playwright"));
+  } catch {
+    throw new Error(
+      "playwright가 필요합니다. 이 스크립트는 배포에 쓰이지 않고 PDF를 다시 만들 때만 씁니다.\n" +
+        "  npm i -D playwright && npx playwright install chromium\n" +
+        "브라우저 경로를 직접 줄 수도 있습니다: CHROMIUM_PATH=/path/to/chromium npm run pdf",
+    );
+  }
+
+  const server = await serve();
+  const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || undefined });
+  try {
+    for (const target of TARGETS) await print(browser, target);
+  } finally {
+    await browser.close();
+    server.close();
+  }
+}
+
+main().catch((error) => {
+  console.error(error.message);
+  process.exit(1);
 });
-const xref = Buffer.byteLength(pdf, "binary");
-pdf += `xref\n0 ${objects.length + 1}\n0000000000 65535 f \n`;
-for (const offset of offsets.slice(1)) pdf += `${String(offset).padStart(10, "0")} 00000 n \n`;
-pdf += `trailer\n<< /Size ${objects.length + 1} /Root ${catalogId} 0 R >>\nstartxref\n${xref}\n%%EOF\n`;
-
-fs.writeFileSync(output, Buffer.from(pdf, "binary"));
-console.log(`Generated ${path.relative(process.cwd(), output)} (${pages.length} pages)`);

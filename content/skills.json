@@ -10,8 +10,8 @@
     "index": "B",
     "title": "소프트웨어 · 자동화",
     "text": "반복 업무의 입력부터 검증, 보고까지를 프로그램으로 만들어 현업이 직접 쓰게 합니다.",
-    "skills": ["Streamlit", "FastAPI", "RPA", "MySQL", "Tkinter", "Git"],
-    "cardIds": ["EXP-BG-DATA-RPA", "EXP-BG-INVEST-RPA"]
+    "skills": ["Streamlit", "FastAPI", "PySide6 · Tkinter", "RPA", "Excel VBA", "MySQL", "Git"],
+    "cardIds": ["EXP-BG-DATA-RPA", "EXP-BG-INVEST-RPA", "EXP-BG-FAILURE-ANALYZER"]
   },
   {
     "index": "C",
@@ -24,7 +24,7 @@
     "index": "D",
     "title": "제조 도메인",
     "text": "생산·유틸리티·설비에서 일어나는 현상을 데이터로 옮기고 개선 과제로 정리합니다.",
-    "skills": ["에너지", "유틸리티", "냉동", "생산관리", "투자 타당성", "공정 개선"],
-    "cardIds": ["EXP-BG-MIXEDPACK", "EXP-BG-SYSTEM-COLLAB", "EXP-UNIV-POWERFLOW"]
+    "skills": ["에너지", "유틸리티", "냉동", "설비 고장 분석", "생산관리", "투자 타당성", "공정 개선"],
+    "cardIds": ["EXP-BG-MIXEDPACK", "EXP-BG-SYSTEM-COLLAB", "EXP-UNIV-POWERFLOW", "EXP-BG-FAILURE-ANALYZER"]
   }
 ]
