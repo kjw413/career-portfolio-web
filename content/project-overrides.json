@@ -19,13 +19,20 @@
     "repoName": "universal-rpa",
     "title": "Universal RPA Studio",
     "category": "제조·자동화",
-    "featured": 3,
-    "order": 3,
+    "order": 6,
     "included": true
   },
   {
     "repoName": "AI-Elite_MIS_RPA",
     "title": "MIS 데이터 수집 자동화",
+    "category": "제조·자동화",
+    "featured": 3,
+    "order": 3,
+    "included": true
+  },
+  {
+    "repoName": "investment_checker",
+    "title": "투자 실적 검증 도구",
     "category": "제조·자동화",
     "featured": 4,
     "order": 4,
@@ -43,7 +50,7 @@
     "repoName": "my-agent-switchboard",
     "title": "My Agent Switchboard",
     "category": "웹·도구",
-    "order": 6,
+    "order": 7,
     "included": true
   },
   {

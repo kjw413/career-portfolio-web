@@ -8,14 +8,14 @@ period:
   start: "2024-06-17"
   end: "2024-12-20"
   asOf: "2026-09-12"
-headline: "차량용 페달 오조작 방지 보조시스템에서 통신과 적색 신호 인지를 담당 — {{metric:telechips-rank}}"
+headline: "차량용 페달 오조작 방지 보조시스템에서 통신과 적색 신호 인지를 담당 — 동작 지연 {{metric:telechips-latency}}"
 highlights:
   - "SPI 내부 루프백 테스트 수행과 드라이버 콜플로우 문서화"
   - "CAN can0·can1의 필터·종단저항·Bus Off 오류를 분석했으나 보드 외부 통신을 해결하지 못해 제출 10일 전 UART로 전환"
   - "YOLOv5로 신호등 적색등을 인지({{metric:telechips-vision}})하고 IPC 플래그로 제어측에 전달"
-  - "통합 테스트의 {{metric:telechips-latency}} — 레지스터 설정 조정으로 해소"
+  - "통합 테스트의 동작 지연을 {{metric:telechips-latency}}로 줄여 실시간성 개선 — 디버그 출력으로 추적하고 레지스터 설정 조정"
 teamContext: "텔레칩스 임베디드 스쿨 1기 팀 프로젝트다. 담당 범위는 통신, 인지, 최종 발표다."
-metricIds: [telechips-rank, telechips-hours, telechips-latency, telechips-vision]
+metricIds: [telechips-latency, telechips-rank, telechips-vision, telechips-hours]
 tags: [임베디드SW, 자동차전장, Linux, FreeRTOS, CAN, UART, SPI, AI비전]
 useFor:
   [임베디드·자동차 전장 SW, 기술지원·CS·품질, 어려움 극복·제약 하 문제해결, 제조 AI·데이터]
@@ -29,7 +29,7 @@ evidence:
 canonical:
   - "SPI 내부 루프백 테스트를 수행하고 드라이버 구조와 콜플로우를 문서화했다."
   - "CAN can0·can1 송수신을 시도하며 필터·종단저항·Bus Off 오류를 분석했지만 보드 외부 통신을 해결하지 못해, 제출 10일 전 UART로 전환해 시스템을 완성했다."
-  - "통합 테스트에서 발생한 약 5초의 동작 지연을 디버그 출력으로 추적하고 레지스터 설정을 조정해 해결했다."
+  - "통합 테스트에서 4초였던 동작 지연을 디버그 출력으로 추적하고 레지스터 설정을 조정해 0.5초로 줄였다."
 forbidden:
   - "CAN 통신을 구현했다"
   - "CAN can0·can1 송수신 구현"
@@ -53,7 +53,7 @@ R5 FreeRTOS입니다.
   부족해 부품을 직접 구매하고 데이터시트를 읽으며 회로와 통신 조건을 점검했으나 보드 외부
   통신 오류를 해결하지 못함
 - **UART 전환** — 제출 10일 전, 전체 시스템 완성을 위해 UART로 전환
-- **지연 해결** — 통합 테스트에서 {{metric:telechips-latency}}. 디버그 출력을 추가해 데이터
+- **실시간성 개선** — 통합 테스트의 동작 지연을 {{metric:telechips-latency}}로 줄임. 디버그 출력을 추가해 데이터
   전달 과정을 추적하고 드라이버 문서를 대조한 뒤, 데이터 처리 기준을 정하는 레지스터 설정을
   조정해 해결
 - **인지** — YOLOv5로 신호등 적색등을 인지({{metric:telechips-vision}})하고 결과를 IPC
