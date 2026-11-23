@@ -11,7 +11,6 @@ stack: "Python · PySide · Windows · pytest"
 github: "https://github.com/kjw413/universal-rpa"
 visibility: "PUBLIC"
 status: "ongoing"
-featured: 2
 order: 2
 cover:
   src: "/projects/universal-rpa-flow.svg"

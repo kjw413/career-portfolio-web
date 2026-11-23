@@ -36,8 +36,8 @@ describe("Home featured projects", () => {
     ).toEqual([
       "공장 에너지 AI 플랫폼",
       "설비 고장 분석기",
-      "Universal RPA Studio",
       "MIS 데이터 수집 자동화",
+      "투자 실적 검증 도구",
       "페달 오조작 감지 보조 시스템",
     ]);
   });

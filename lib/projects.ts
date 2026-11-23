@@ -260,12 +260,17 @@ export function getProject(slug: string): Project | null {
 }
 
 export function getFeaturedProjects(catalog: CatalogProject[]): Project[] {
+  return getCatalogProjects(catalog.filter((project) => project.featured !== null));
+}
+
+/** 상세 페이지가 있는 프로젝트 전부를 카탈로그 순서(대표 먼저)로, 카탈로그의 제목·요약을 입혀 돌려줍니다. */
+export function getCatalogProjects(catalog: CatalogProject[]): Project[] {
   const detailsByRepo = new Map(
     getProjects().map((project) => [project.repoName, project]),
   );
 
   return catalog
-    .filter((project) => project.featured !== null && project.detailHref !== null)
+    .filter((project) => project.detailHref !== null)
     .map((catalogProject): Project | null => {
       const details = detailsByRepo.get(catalogProject.repoName);
       if (!details) return null;

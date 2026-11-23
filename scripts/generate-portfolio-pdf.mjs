@@ -1,7 +1,10 @@
 /**
  * 이력서 PDF(public/portfolio.pdf)와 포트폴리오 PDF(public/portfolio-cases.pdf)를 만듭니다.
  *
- * 사이트의 /resume/, /casebook/ 페이지를 Chromium으로 A4 인쇄합니다. 페이지가 원장·프로필·프로젝트에서
+ * 사이트의 /resume/, /casebook/ 페이지를 Chromium으로 A4 인쇄합니다. /casebook/은 화면에서 구성을
+ * 골라 브라우저로 저장할 수도 있어서, 기본 구성과 별도로 모든 프로젝트를 넣은 최대 구성도 한 번
+ * 인쇄해 어느 쪽도 넘치지 않는지, 최대 구성도 2MB 안인지 확인하고 결과를
+ * public/portfolio-cases.meta.json에 남깁니다(화면이 읽어 예상 용량으로 보여 줌). 페이지가 원장·프로필·프로젝트에서
  * 내용을 읽으므로, 사실을 고친 뒤 이 스크립트를 다시 돌리면 PDF도 같은 값으로 바뀝니다.
  * 글꼴은 PDF 안에 함께 들어가므로 받는 쪽 컴퓨터에 한글 글꼴이 없어도 그대로 보입니다.
  *
@@ -30,8 +33,18 @@ const MAX_PDF_BYTES = 2 * 1024 * 1024;
 
 const TARGETS = [
   { route: "/resume/", output: "public/portfolio.pdf", maxBytes: MAX_PDF_BYTES },
-  // 장마다 높이를 A4 한 쪽으로 고정하므로, 내용이 넘치면 잘리지 않게 여기서 멈춥니다.
-  { route: "/casebook/", output: "public/portfolio-cases.pdf", maxBytes: MAX_PDF_BYTES, fixedPages: ".cb-page" },
+  {
+    route: "/casebook/",
+    output: "public/portfolio-cases.pdf",
+    maxBytes: MAX_PDF_BYTES,
+    // 장마다 높이를 A4 한 쪽으로 고정하므로, 내용이 넘치면 잘리지 않게 여기서 멈춥니다.
+    fixedPages: ".cb-page",
+    // 화면이 주소(?p=…)를 읽은 뒤 켜는 표시. 켜지기 전에 인쇄하면 기본 구성이 찍힙니다.
+    ready: "[data-casebook-ready='true']",
+    // 모든 프로젝트 · 모든 항목. 어떤 조합도 이보다 길거나 크지 않습니다.
+    maxRoute: "/casebook/?p=all",
+    meta: "public/portfolio-cases.meta.json",
+  },
 ];
 
 const MIME = {
@@ -66,11 +79,12 @@ function serve() {
   return new Promise((resolve) => server.listen(PORT, () => resolve(server)));
 }
 
-async function print(browser, target) {
-  const output = path.join(ROOT, target.output);
+/** 페이지를 열고 글꼴·그림이 다 붙을 때까지 기다린 뒤 인쇄해, 파일 크기와 쪽수를 돌려줍니다. */
+async function render(browser, url, output, target) {
   const page = await browser.newPage({ colorScheme: "light" });
   try {
-    await page.goto(`http://127.0.0.1:${PORT}${target.route}`, { waitUntil: "networkidle" });
+    await page.goto(`http://127.0.0.1:${PORT}${url}`, { waitUntil: "networkidle" });
+    if (target.ready) await page.waitForSelector(target.ready, { state: "attached" });
     // 웹폰트는 렌더를 막지 않도록 늦게 붙습니다(layout.tsx). 다 붙은 뒤에 인쇄합니다.
     await page.evaluate(async () => {
       for (const link of document.querySelectorAll("link[data-webfont]")) link.media = "all";
@@ -103,7 +117,7 @@ async function print(browser, target) {
           over: sheets
             .map((sheet, index) => ({
               index: index + 1,
-              title: sheet.querySelector("h2, h1")?.textContent?.trim() ?? "",
+              title: sheet.querySelector(".cb-title, .resume-name")?.textContent?.trim() ?? "",
               by: sheet.scrollHeight - sheet.clientHeight,
             }))
             .filter((sheet) => sheet.by > 1),
@@ -111,7 +125,7 @@ async function print(browser, target) {
       }, target.fixedPages);
       if (overflow.over.length > 0) {
         const list = overflow.over.map((sheet) => `  ${sheet.index}쪽 ${sheet.title}: ${sheet.by}px 넘침`).join("\n");
-        throw new Error(`${target.route} 내용이 A4 한 쪽을 넘었습니다. 문장을 줄이세요.\n${list}`);
+        throw new Error(`${url} 내용이 A4 한 쪽을 넘었습니다. 문장을 줄이세요.\n${list}`);
       }
       expectedPages = overflow.count;
     }
@@ -119,19 +133,45 @@ async function print(browser, target) {
     await page.pdf({ path: output, format: "A4", printBackground: true, preferCSSPageSize: true });
     const bytes = fs.statSync(output).size;
     const pages = (fs.readFileSync(output, "latin1").match(/\/Type\s*\/Page[^s]/g) ?? []).length;
-    const size = `${(bytes / 1024).toFixed(0)}KB`;
     if (expectedPages !== null && pages !== expectedPages) {
-      throw new Error(`${target.output}: ${expectedPages}쪽이어야 하는데 ${pages}쪽입니다. 빈 쪽이나 넘친 쪽을 확인하세요.`);
+      throw new Error(`${url}: ${expectedPages}쪽이어야 하는데 ${pages}쪽입니다. 빈 쪽이나 넘친 쪽을 확인하세요.`);
     }
     if (bytes > target.maxBytes) {
       throw new Error(
-        `${target.output}: ${size}로 한도 ${(target.maxBytes / 1024 / 1024).toFixed(0)}MB를 넘었습니다. ` +
+        `${url}: ${(bytes / 1024).toFixed(0)}KB로 한도 ${(target.maxBytes / 1024 / 1024).toFixed(0)}MB를 넘었습니다. ` +
           "사례 이미지를 줄이거나 SVG로 바꾸세요.",
       );
     }
-    console.log(`Generated ${target.output} (${pages} pages, ${size})`);
+    return { bytes, pages };
   } finally {
     await page.close();
+  }
+}
+
+async function print(browser, target) {
+  const output = path.join(ROOT, target.output);
+  const result = await render(browser, target.route, output, target);
+  console.log(`Generated ${target.output} (${result.pages} pages, ${(result.bytes / 1024).toFixed(0)}KB)`);
+
+  if (target.maxRoute) {
+    const scratch = path.join(OUT_DIR, "_max-check.pdf");
+    try {
+      const max = await render(browser, target.maxRoute, scratch, target);
+      console.log(`Checked ${target.maxRoute} (${max.pages} pages, ${(max.bytes / 1024).toFixed(0)}KB)`);
+      if (target.meta) {
+        const meta = {
+          maxBytes: target.maxBytes,
+          defaultPages: result.pages,
+          defaultBytes: result.bytes,
+          allPages: max.pages,
+          allBytes: max.bytes,
+          generatedAt: new Date().toISOString().slice(0, 10),
+        };
+        fs.writeFileSync(path.join(ROOT, target.meta), `${JSON.stringify(meta, null, 2)}\n`);
+      }
+    } finally {
+      fs.rmSync(scratch, { force: true });
+    }
   }
 }
 

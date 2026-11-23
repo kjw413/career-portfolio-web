@@ -11,6 +11,21 @@ github: "https://github.com/kjw413/investment_checker"
 visibility: "PUBLIC"
 status: "completed"
 order: 8
+cover:
+  src: "/projects/investment-checker-flow.svg"
+  caption: "MIS 등록 내역과 실제 투자실적을 맞춘 뒤 여섯 항목을 점검해 정정 대상 보고서를 만드는 흐름"
+casebook:
+  role: "단독 설계·개발"
+  problem: "전사 투자내역이 MIS에 제대로 등록됐는지 매달 실제 투자실적과 한 건씩 눈으로 대조해야 했고, 건수가 많아질수록 미등록이나 계정코드 누락을 놓치기 쉬웠습니다."
+  approach:
+    - "가장 최근 MIS 등록 내역과 실제 투자실적 엑셀을 읽어 자코드·공장 기준으로 맞추고, 요약표나 2행 헤더가 있는 양식도 헤더 위치와 필요한 열을 자동으로 찾게 했습니다."
+    - "전산 미등록, 계정코드 미기입·오기입, 승인금액·모코드·투자자 미기입 여섯 항목을 점검합니다."
+    - "계정코드는 품의금액이 자본적·수익적 중 어디에 잡혔는지로 기대값을 정하고, 판정 근거가 비어 있으면 경고를 띄우고 그 건은 판정을 보류합니다."
+    - "자코드별 요약 시트와 오류 유형별 상세 시트로 담당 부서가 고칠 항목만 남긴 보고서를 만들고, 사내 자료인 입출력 파일은 저장소에서 제외했습니다."
+  metricIds: [invest-rpa-saving]
+  note: "이 사례가 사내 업무혁신 사례로 이어져, 사내 AI 전문가 육성과정({{metric:aielite-ratio}}) 선정의 계기가 되었습니다."
+  image: "/projects/investment-checker-flow.svg"
+  imageCaption: "두 자료를 맞춰 정정 대상만 남기는 흐름 (사내 데이터는 싣지 않음)"
 ---
 
 ## 개요

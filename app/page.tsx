@@ -224,6 +224,11 @@ export default function Home() {
               포트폴리오 PDF
             </a>
           )}
+          {profile.casebookHref && (
+            <a href={withBasePath("/casebook/")} data-goatcounter-click="click-casebook-builder">
+              PDF 구성 고르기
+            </a>
+          )}
         </div>
         <div className="footer-bottom">
           <span>© 2026 김종우 · 방문 통계는 쿠키 없이 페이지와 유입 경로만 집계합니다</span>

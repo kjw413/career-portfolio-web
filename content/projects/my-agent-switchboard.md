@@ -12,6 +12,16 @@ github: "https://github.com/kjw413/my-agent-switchboard"
 visibility: "PUBLIC"
 status: "ongoing"
 order: 5
+casebook:
+  role: "설계·개발 · 오픈소스 도구의 보완 킷"
+  problem: "Claude와 GPT(Codex)를 함께 부리는 오픈소스 도구 agent-switchboard가 Gemini 구독이 없으면 위임할 곳이 없어, 몇 분마다 작업을 멈추고 해제 명령을 손으로 입력해야 했습니다."
+  approach:
+    - "막히는 원인을 소스 코드 수준에서 찾았습니다. 기본 지시문이 Gemini를 워커로 고정했고, Codex 위임은 인정되지 않았으며, 고친 설정은 시작할 때마다 되돌아갔습니다."
+    - "해킹이나 우회 없이 도구에 이미 있는 공식 환경변수와 보호 규칙만으로, 차단 대신 기록하는 모드와 실제로 가진 Claude·Codex 기준 지시문으로 바꿨습니다."
+    - "roles.json 한 파일에서 역할별 모델을 바꾸면 롤 파일이 자동으로 맞춰지게 했습니다."
+    - "설치기는 건드리는 파일을 먼저 백업하고 바뀔 내용을 미리 보여 주며, 실제 switchboard 두 버전으로 설치 결과가 바뀌지 않는지 테스트합니다."
+  metricIds: [switchboard-gate-blocks, switchboard-manual-unblocks]
+  note: "설정을 적용한 2026-08-29부터 2026-09-27까지 여러 번 재시작해도 설정이 한 번도 되돌아가지 않았습니다."
 ---
 
 ## 문제 정의
