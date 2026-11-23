@@ -12,6 +12,17 @@ github: "https://github.com/kjw413/career-portfolio-web"
 visibility: "PUBLIC"
 status: "ongoing"
 order: 9
+casebook:
+  role: "설계·구현 (개인 작업)"
+  problem: "지원서에 적은 'Three.js로 3D 원격 모니터링을 만들고 싶다'는 포부는 확인할 방법이 없으면 문장으로만 남습니다. 채용담당자가 짧게 읽는 사이트라 3D가 읽기를 방해해서도 안 됐습니다."
+  approach:
+    - "다섯 사업장의 전력·연료·용수 데이터가 하나의 통합 화면으로 모이는 흐름을 남한 지도 위에 그리고, 스크롤하면 수집·검증·예측 단계를 차례로 비추게 했습니다."
+    - "모션 축소 설정, WebGL2 미지원, 메모리 4GB 미만, 화면 너비 720px 미만, 청크 로드 실패 때는 같은 구도의 정적 이미지를 그대로 두도록 대체 경로를 먼저 만들었습니다."
+    - "외부 3D 자산 없이 지도·패널을 캔버스 텍스처로 그리고, 데이터 펄스 30개를 Points 하나로 묶어 그리는 비용을 줄였습니다."
+    - "본문이 그려진 뒤 유휴 시간에 별도 청크로 불러와, 3D를 켜도 첫 화면이 늦게 뜨지 않게 했습니다."
+  metricIds: [scene-drawcalls, scene-triangles, scene-chunk-size]
+  image: "/projects/scene-poster-crop.webp"
+  imageCaption: "첫 화면 3D 장면 — 3D를 켜지 않는 환경에서 보이는 정적 포스터"
 ---
 
 ## 문제 정의

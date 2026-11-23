@@ -443,6 +443,28 @@
     ],
     "notes": "증빙 확인 전에는 정량 문구로 사용하지 않는다."
   },
+  "switchboard-gate-blocks": {
+    "display": "34회 → 0회",
+    "label": "게이트에 막힌 호출",
+    "condition": "같은 작업 흐름의 게이트 로그 · 개선 전 7.1일 vs 개선 후 3.1일 · 저자 PC 한 대",
+    "basis": "프로젝트 사례 기록 (저장소 측정 결과, Python·PowerShell 두 방법으로 계산해 일치 확인)",
+    "status": "확정",
+    "cardIds": [],
+    "doNotConfuseWith": [
+      "switchboard-manual-unblocks"
+    ]
+  },
+  "switchboard-manual-unblocks": {
+    "display": "37회 → 0회",
+    "label": "손으로 게이트를 푼 횟수",
+    "condition": "같은 작업 흐름의 게이트 로그 · 개선 전 7.1일 vs 개선 후 3.1일 · 저자 PC 한 대",
+    "basis": "프로젝트 사례 기록 (저장소 측정 결과, Python·PowerShell 두 방법으로 계산해 일치 확인)",
+    "status": "확정",
+    "cardIds": [],
+    "doNotConfuseWith": [
+      "switchboard-gate-blocks"
+    ]
+  },
   "scene-triangles": {
     "display": "삼각형 1,467개",
     "value": 1467,

@@ -36,7 +36,7 @@ order: 9                           # override order가 없을 때의 아카이�
 #   - src: "/projects/detail.png"
 #     caption: "세부 화면"
 #     tall: true                   # 세로로 긴 캡처는 원본 비율 유지
-# casebook:                        # (대표 프로젝트면 필수) 포트폴리오 PDF(/casebook/)의 한 쪽 요약
+# casebook:                        # (필수) 포트폴리오 PDF(/casebook/)의 한 쪽 요약
 #   role: "본인 역할 — 팀 작업이면 팀과 본인 범위를 함께"
 #   problem: "무엇이 문제였는지 한두 문장"
 #   approach:                       # 한 일 3~4개. 수치는 {{metric:id}}로

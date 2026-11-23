@@ -144,7 +144,7 @@ npm run poster    # 장면을 띄워 밝은 화면·어두운 화면 포스터�
 | `/experience/<카드 ID>/` | 경험 하나의 수행 내용과 수치의 산출 조건 · 확인 근거 |
 | `/projects/<slug>/` | 프로젝트 사례 |
 | `/resume/` | 이력서 PDF의 원본 페이지 (A4 두 쪽, 메뉴에는 없음) |
-| `/casebook/` | 포트폴리오 PDF의 원본 페이지 (기본 정보 + 대표 프로젝트 한 쪽씩, 메뉴에는 없음) |
+| `/casebook/` | 포트폴리오 PDF 만들기 — 넣을 프로젝트·1쪽 구성을 골라 브라우저에서 PDF로 저장. 고른 구성은 주소(`?p=…&hide=…`)에 남음. 기본 구성이 `npm run pdf`의 원본 (바닥글에서만 연결) |
 | `/llms.txt`, `/ai/ledger.json`, `/ai/ledger.md` | AI가 읽는 표면 (빌드가 생성) |
 
 ## 포트폴리오 내용 수정
@@ -155,8 +155,10 @@ npm run poster    # 장면을 띄워 밝은 화면·어두운 화면 포스터�
 - 제출용 PDF: `npm run build && npm run pdf`로 `public/portfolio.pdf`(이력서, `/resume/`)와
   `public/portfolio-cases.pdf`(포트폴리오, `/casebook/`)를 다시 생성. 두 페이지를 Chromium으로 A4
   인쇄하며 글꼴이 PDF 안에 들어갑니다. 포트폴리오 PDF는 2MB를 넘거나 프로젝트 한 쪽이 넘치면
-  실패합니다(현대자동차 등 일부 기업의 첨부 한도). 프로젝트 쪽의 문장은 각 사례 frontmatter의
-  `casebook`에 있습니다. playwright가 필요합니다
+  실패합니다(현대자동차 등 일부 기업의 첨부 한도). 모든 프로젝트를 넣은 최대 구성도 한 번
+  인쇄해 같은 검사를 하고, 결과를 `public/portfolio-cases.meta.json`에 남깁니다(구성 화면이 읽어
+  예상 용량으로 표시). 프로젝트 쪽의 문장은 각 사례 frontmatter의 `casebook`에 있고, 사이트의
+  모든 프로젝트가 casebook을 가져야 합니다(테스트가 검사). playwright가 필요합니다
   (`npm i -D playwright && npx playwright install chromium`, 또는 `CHROMIUM_PATH` 지정).
   사실·프로젝트를 고쳤다면 PDF도 다시 만들어 함께 커밋합니다.
 - 첫 화면 이력 카드: `content/profile.json`의 `education`, `career`, `certifications` 수정
