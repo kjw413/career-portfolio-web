@@ -9,6 +9,7 @@ import {
   renderCardBody,
 } from "../../../lib/ledger";
 import { getProject } from "../../../lib/projects";
+import PageHeader from "../../components/PageHeader";
 
 export const dynamicParams = false;
 
@@ -58,19 +59,7 @@ export default async function ExperiencePage({
 
   return (
     <main className="project-page">
-      <header className="site-header">
-        <Link className="wordmark" href="/" aria-label="홈으로">
-          <span>KJ</span>김종우
-        </Link>
-        <nav aria-label="주요 메뉴">
-          <Link href="/experience/">경험</Link>
-          <Link href="/#projects">프로젝트</Link>
-          <Link href="/#profile">보유 기술</Link>
-          <a href="https://github.com/kjw413" target="_blank" rel="noreferrer">
-            GitHub ↗
-          </a>
-        </nav>
-      </header>
+      <PageHeader current="experience" />
 
       <article className="project-detail">
         <Link className="back-link" href="/experience/">

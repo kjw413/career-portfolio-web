@@ -16,11 +16,24 @@ order: 3
 cover:
   src: "/projects/mis-rpa-time-saving.svg"
   caption: "하루 40분 수작업을 3분 자동 실행으로 — 본인 수집 시간 일 40분 절감"
+thumb:
+  src: "/projects/mis-rpa-thumb.svg"
 gallery:
   - src: "/projects/mis-rpa-console.svg"
     caption: "실행 흐름 재구성 — 3종을 5개 공장에서 순차 수집하고 그리드 지문 검사를 통과한 뒤 가공을 시작합니다. 사내 MIS 화면은 공개할 수 없어 실제 캡처 대신 실행 순서를 도식으로 옮겼습니다."
   - src: "/projects/mis-rpa-pipeline.svg"
     caption: "수집과 가공을 분리한 3종 파이프라인과 오적재 방어 장치"
+casebook:
+  role: "단독 설계·개발"
+  problem: "사내 MIS에는 데이터를 꺼낼 API가 없어, 5개 공장의 생산실적·유틸리티·재공품 데이터를 매일 화면에서 조회해 옮겨 담아야 했습니다."
+  approach:
+    - "공장별 조회조건과 화면 좌표를 표준화하고 순차 수집·실패 재시도·로그 기록·결과 검증 절차를 구현했습니다."
+    - "그리드 지문(SHA-1) 검사로 직전 공장 데이터를 다시 복사한 경우 적재를 거부해, 다른 공장 데이터가 섞이는 사고를 막았습니다."
+    - "수집과 가공을 분리하고 웹앱과의 접점을 공유 폴더의 엑셀 파일 하나로 두어, 한쪽이 실패해도 다른 쪽이 멈추지 않게 했습니다."
+    - "운영 중 조회 기간이 잘못 들어간 사고는 화면에 실제로 들어간 기간을 다시 읽어 확인하도록 고치고 회귀 테스트로 남겼습니다."
+  metricIds: [mis-rpa-cycle, mis-rpa-daily-saving]
+  image: "/projects/mis-rpa-pipeline.svg"
+  imageCaption: "수집 → 가공 → 웹앱 적재 흐름"
 ---
 
 ## 성과

@@ -28,12 +28,23 @@ order: 9                           # override order가 없을 때의 아카이�
 # cover:                           # 카드 썸네일 + 상세 페이지 상단 대표 이미지
 #   src: "/projects/my-screenshot.png"
 #   caption: "무엇을 보여주는 화면인지 한 줄"
+# thumb:                           # (선택) 카드 전용 2:1 이미지. cover가 가로로 긴 도표라
+#   src: "/projects/my-thumb.svg"  #  카드에서 잘릴 때만 따로 둡니다
 # gallery:                         # 상세 페이지 하단 스크린샷·GIF 목록
 #   - src: "/projects/run.gif"
 #     caption: "실행 과정 (18초)"
 #   - src: "/projects/detail.png"
 #     caption: "세부 화면"
 #     tall: true                   # 세로로 긴 캡처는 원본 비율 유지
+# casebook:                        # (대표 프로젝트면 필수) 포트폴리오 PDF(/casebook/)의 한 쪽 요약
+#   role: "본인 역할 — 팀 작업이면 팀과 본인 범위를 함께"
+#   problem: "무엇이 문제였는지 한두 문장"
+#   approach:                       # 한 일 3~4개. 수치는 {{metric:id}}로
+#     - "..."
+#   metricIds: [metric-id]          # 결과 칸에 띄울 원장 수치 (확정만)
+#   note: "수치를 읽는 법이나 사용 현황"   # (선택)
+#   image: "/projects/my-figure.svg"  # A4 한 쪽에 들어갈 그림 하나 (가로형, 가벼운 SVG 권장)
+#   imageCaption: "그림 설명"
 ---
 
 ## 문제 정의

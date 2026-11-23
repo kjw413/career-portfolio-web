@@ -8,35 +8,42 @@
     "included": true
   },
   {
-    "repoName": "universal-rpa",
-    "title": "Universal RPA Studio",
+    "repoName": "equipment-failure-analyzer",
+    "title": "설비 고장 분석기",
     "category": "제조·자동화",
     "featured": 2,
     "order": 2,
     "included": true
   },
   {
-    "repoName": "AI-Elite_MIS_RPA",
-    "title": "MIS 데이터 수집 자동화",
+    "repoName": "universal-rpa",
+    "title": "Universal RPA Studio",
     "category": "제조·자동화",
     "featured": 3,
     "order": 3,
     "included": true
   },
   {
+    "repoName": "AI-Elite_MIS_RPA",
+    "title": "MIS 데이터 수집 자동화",
+    "category": "제조·자동화",
+    "featured": 4,
+    "order": 4,
+    "included": true
+  },
+  {
     "repoName": "telechips-embedded-school-pmsa-project",
     "title": "페달 오조작 감지 보조 시스템",
     "category": "임베디드",
-    "featured": 4,
-    "order": 4,
+    "featured": 5,
+    "order": 5,
     "included": true
   },
   {
     "repoName": "my-agent-switchboard",
     "title": "My Agent Switchboard",
     "category": "웹·도구",
-    "featured": 5,
-    "order": 5,
+    "order": 6,
     "included": true
   },
   {

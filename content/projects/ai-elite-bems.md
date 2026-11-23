@@ -27,6 +27,18 @@ gallery:
     caption: "시스템 구조 — 수집(RPA) → 저장·계산(MySQL · 예측모델 · LLM) → 사용(브라우저 UI)의 3단 분리"
   - src: "/projects/bems-feature-selection.svg"
     caption: "재공품 피처 선별 — 외부 추천 80개를 잔차 상관 · ablation · 도메인 지식으로 13개 spec까지 좁힌 과정"
+casebook:
+  role: "사내 AI 전문가 과정 팀과제 · 예측모델 설계·개발과 웹 시스템 기획·개발"
+  problem: "5개 공장의 전력·연료·용수와 생산실적이 공장마다 다른 형식으로 흩어져 있어, 월간 에너지 실적 보고를 담당자들이 따로 취합해야 했습니다."
+  approach:
+    - "공장별 데이터 형식을 표준화해 MySQL에 저장하고, 조회·원단위 분석·예측·AI 보고서를 한 웹 시스템으로 묶었습니다."
+    - "부스팅 3종을 가중 결합한 구간 예측(P05~P95) 모델을 만들고, 재공품 피처는 잔차 상관·ablation·현장 지식으로 {{metric:forecast-feature-funnel}}로 걸렀습니다."
+    - "모델이 학습할 수 없는 신설 라인은 잔차 기반 사후 보정으로 처리해 연료 오차를 {{metric:forecast-newline-fuel}}로 낮췄습니다."
+    - "Streamlit 초기판을 React·Next.js 화면과 FastAPI 브리지로 교체해, 계산 코어는 그대로 두고 사내에서 운영하고 있습니다."
+  metricIds: [forecast-mape-all, forecast-mape-baseline, bems-monthly-saving]
+  note: "예측치는 일일 점검의 판단 기준이 아니라, 실적과 함께 보며 추가 확인을 위한 보조지표로 씁니다."
+  image: "/projects/bems-energy-usage.png"
+  imageCaption: "에너지 사용·비용 화면 — API를 연결하지 않은 예시 데이터 모드로 캡처"
 ---
 
 ## 개요

@@ -63,6 +63,16 @@ export default function Hero({
               이력서
             </a>
           )}
+          {profile.casebookHref && (
+            <a
+              className="button secondary"
+              href={withBasePath(profile.casebookHref)}
+              download={`${profile.name}_포트폴리오.pdf`}
+              data-goatcounter-click="click-casebook"
+            >
+              포트폴리오 PDF
+            </a>
+          )}
           <a
             className="button secondary"
             href={profile.githubUrl}

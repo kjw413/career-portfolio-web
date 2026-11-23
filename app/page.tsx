@@ -103,10 +103,10 @@ export default function Home() {
                   )}
                 </span>
               </div>
-              {project.cover && (
+              {project.thumb && (
                 <div className="card-cover">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={project.cover.src} alt="" loading="lazy" />
+                  <img src={project.thumb.src} alt="" loading="lazy" />
                 </div>
               )}
               <h3>{project.title}</h3>
@@ -213,6 +213,15 @@ export default function Home() {
           {profile.resumeHref && (
             <a href={withBasePath(profile.resumeHref)} data-goatcounter-click="click-resume">
               이력서
+            </a>
+          )}
+          {profile.casebookHref && (
+            <a
+              href={withBasePath(profile.casebookHref)}
+              download={`${profile.name}_포트폴리오.pdf`}
+              data-goatcounter-click="click-casebook"
+            >
+              포트폴리오 PDF
             </a>
           )}
         </div>

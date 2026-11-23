@@ -35,10 +35,10 @@ describe("Home featured projects", () => {
         .map((heading) => heading.textContent),
     ).toEqual([
       "공장 에너지 AI 플랫폼",
+      "설비 고장 분석기",
       "Universal RPA Studio",
       "MIS 데이터 수집 자동화",
       "페달 오조작 감지 보조 시스템",
-      "My Agent Switchboard",
     ]);
   });
 });

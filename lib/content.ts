@@ -17,6 +17,8 @@ export type Career = {
 export type Profile = {
   name: string; nameEn: string; role: string; major: string; summary: string;
   photoSrc: string | null; resumeHref: string | null;
+  /** 사례 중심 포트폴리오 PDF (/casebook/을 인쇄한 파일) */
+  casebookHref: string | null;
   githubUrl: string; emailHref: string | null;
   education: Education; career: Career; certifications: string[];
   /** 첫 화면에 띄울 수치. 값이 아니라 원장의 수치 ID를 적습니다. */
@@ -125,6 +127,7 @@ function parseProfile(value: unknown): Profile {
     summary: requireString(profile.summary, "profile.summary"),
     photoSrc: requireNullableString(profile.photoSrc, "profile.photoSrc"),
     resumeHref: requireNullableString(profile.resumeHref, "profile.resumeHref"),
+    casebookHref: requireNullableString(profile.casebookHref ?? null, "profile.casebookHref"),
     githubUrl: requireString(profile.githubUrl, "profile.githubUrl"),
     emailHref: requireNullableString(profile.emailHref, "profile.emailHref"),
     education: parseEducation(profile.education),
